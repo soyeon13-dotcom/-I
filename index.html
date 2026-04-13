@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>쿠폰 자동추천 서비스</title>
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --primary:     #0F41A6;
+  --primary-dk:  #0A2F7A;
+  --primary-lt:  #E8EEFF;
+  --secondary:   #2BA8D9;
+  --secondary-lt:#E6F6FC;
+  --accent:      #F2EB80;
+  --accent-dk:   #D4CC50;
+
+  --gray-100: #F5F5F5;
+  --gray-200: #EBEBEB;
+  --gray-300: #D6D6D6;
+  --gray-400: #ABABAB;
+  --gray-500: #808080;
+  --gray-600: #5C5C5C;
+  --gray-700: #3D3D3D;
+  --gray-800: #242424;
+  --gray-900: #111111;
+
+  --danger:  #C0392B;
+  --success: #1A7A45;
+  --warning: #B8690A;
+
+  --bg:      #FFFFFF;
+  --surface: #F5F5F5;
+  --border:  #EBEBEB;
+
+  --sidebar-w: 240px;
+  --header-h:  68px;
+  --font: system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system, sans-serif;
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { border: none; cursor: pointer; background: none; font-family: var(--font); }
+input  { font-family: var(--font); outline: none; border: none; background: none; }
+body   { font-family: var(--font); background: var(--surface); color: var(--gray-900); min-height: 100vh; }
+
+/* ============================================================
+   SCREEN SYSTEM
+   ============================================================ */
+.screen { display: none; }
+.screen.active { display: block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.fade-in { animation: fadeIn .25s ease forwards; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes popIn { from{transform:scale(0.6);opacity:0} to{transform:scale(1);opacity:1} }
+
+/* ============================================================
+   ONBOARDING SHELL
+   ============================================================ */
+.ob-page {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 48px 24px;
+  background: var(--surface);
+}
+.ob-card {
+  background: white; border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(0,0,0,.08);
+  width: 100%; max-width: 520px; padding: 52px 56px; position: relative;
+}
+.ob-card.wide  { max-width: 780px; }
+.ob-card.xwide { max-width: 1000px; }
+
+/* Progress */
+.ob-prog { margin-bottom: 36px; }
+.ob-prog-info { display:flex; justify-content:space-between; margin-bottom:8px; }
+.ob-prog-step { font-size:14px; font-weight:700; color:var(--gray-500); }
+.ob-prog-track { height:5px; background:var(--gray-200); border-radius:3px; overflow:hidden; }
+.ob-prog-fill  { height:100%; background:var(--primary); border-radius:3px; transition:width .4s ease; }
+
+/* Back / Skip */
+.ob-back {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:15px; font-weight:600; color:var(--gray-500); cursor:pointer; margin-bottom:28px;
+}
+.ob-back:hover { color:var(--gray-800); }
+.ob-skip {
+  position:absolute; top:28px; right:36px;
+  font-size:14px; color:var(--gray-400); cursor:pointer; font-weight:600;
+}
+.ob-skip:hover { color:var(--gray-700); }
+
+.ob-h2  { font-size:30px; font-weight:900; color:var(--gray-900); line-height:1.3; margin-bottom:8px; }
+.ob-sub { font-size:16px; color:var(--gray-600); margin-bottom:28px; line-height:1.6; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+  display:flex; align-items:center; justify-content:center;
+  width:100%; min-height:56px; border-radius:10px;
+  background:var(--primary); color:white;
+  font-size:18px; font-weight:700;
+  transition:background .15s, transform .1s;
+}
+.btn-primary:hover  { background:var(--primary-dk); }
+.btn-primary:active { transform:scale(.98); }
+
+.btn-accent {
+  display:flex; align-items:center; justify-content:center;
+  width:100%; min-height:56px; border-radius:10px;
+  background:var(--accent); color:var(--gray-900);
+  font-size:18px; font-weight:700;
+  transition:background .15s;
+}
+.btn-accent:hover { background:var(--accent-dk); }
+
+.btn-secondary {
+  display:flex; align-items:center; justify-content:center;
+  width:100%; min-height:52px; border-radius:10px;
+  background:var(--secondary-lt); color:var(--secondary);
+  font-size:16px; font-weight:700;
+  transition:background .15s;
+}
+.btn-secondary:hover { background:#BDE9F6; }
+
+.btn-outline {
+  display:flex; align-items:center; justify-content:center;
+  width:100%; min-height:52px; border-radius:10px;
+  background:white; color:var(--gray-700); border:2px solid var(--gray-300);
+  font-size:16px; font-weight:600;
+  transition:border-color .15s, color .15s;
+}
+.btn-outline:hover { border-color:var(--primary); color:var(--primary); }
+
+.btn-ghost {
+  display:flex; align-items:center; justify-content:center;
+  width:100%; min-height:48px; border-radius:10px;
+  background:transparent; color:var(--gray-400);
+  font-size:15px; font-weight:600;
+}
+.btn-ghost:hover { color:var(--gray-600); }
+
+.ob-btns { display:flex; flex-direction:column; gap:12px; }
+
+/* ============================================================
+   INPUT FIELDS
+   ============================================================ */
+.field-wrap {
+  width:100%; min-height:60px; border-radius:10px;
+  border:2px solid var(--gray-300); background:white;
+  display:flex; align-items:center; padding:0 20px;
+  transition:border-color .2s; margin-bottom:14px;
+}
+.field-wrap:focus-within { border-color:var(--primary); }
+.field-wrap input {
+  flex:1; font-size:20px; font-weight:600; color:var(--gray-900);
+  background:transparent;
+}
+.field-wrap input::placeholder { color:var(--gray-400); font-weight:400; }
+.field-prefix { font-size:18px; font-weight:700; color:var(--gray-400); margin-right:10px; }
+
+/* OTP single field */
+.otp-panel { display:none; margin-top:18px; }
+.otp-panel.vis { display:block; }
+.otp-lbl { font-size:15px; color:var(--gray-600); margin-bottom:10px; font-weight:600; }
+.otp-footer { font-size:14px; color:var(--gray-400); margin-top:10px; }
+.otp-resend { color:var(--primary); font-weight:700; cursor:pointer; }
+
+/* ============================================================
+   OPTION CARDS (onboarding selections)
+   ============================================================ */
+.opt-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:28px; }
+.opt-card {
+  padding:28px 20px; border:2px solid var(--gray-200); border-radius:12px;
+  cursor:pointer; transition:all .15s; background:white; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+}
+.opt-card:hover { border-color:var(--primary); }
+.opt-card.sel { border-color:var(--primary); background:var(--primary-lt); }
+.opt-card .opt-title { font-size:18px; font-weight:800; color:var(--gray-900); }
+.opt-card .opt-sub   { font-size:13px; color:var(--gray-500); line-height:1.4; }
+.opt-card.sel .opt-sub { color:var(--primary); }
+
+/* Category chips (onboarding) */
+.cat-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:32px; }
+.cat-chip {
+  padding:22px 10px; border:2px solid var(--gray-200); border-radius:12px;
+  cursor:pointer; transition:all .15s; background:white; text-align:center;
+  font-size:15px; font-weight:700; color:var(--gray-800);
+}
+.cat-chip:hover { border-color:var(--primary); }
+.cat-chip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+
+/* Brand chips */
+.brand-grid { display:grid; grid-template-columns:repeat(8,1fr); gap:14px; margin-bottom:32px; }
+.brand-chip {
+  padding:18px 8px; border:2px solid var(--gray-200); border-radius:12px;
+  cursor:pointer; transition:all .15s; background:white; text-align:center;
+  font-size:13px; font-weight:700; color:var(--gray-800);
+}
+.brand-chip:hover { border-color:var(--primary); }
+.brand-chip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+
+/* Service list */
+.svc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
+.svc-card {
+  padding:18px 20px; background:var(--gray-100); border-radius:12px;
+  border:2px solid transparent; display:flex; align-items:center; gap:14px;
+}
+.svc-info { flex:1; }
+.svc-name { font-size:16px; font-weight:700; color:var(--gray-900); }
+.svc-desc { font-size:13px; color:var(--gray-500); margin-top:2px; }
+.conn-btn {
+  padding:10px 18px; border-radius:8px; font-size:14px; font-weight:700;
+  background:var(--primary-lt); color:var(--primary);
+  cursor:pointer; transition:all .2s; white-space:nowrap; border:2px solid var(--primary-lt);
+}
+.conn-btn:hover { background:var(--primary); color:white; }
+.conn-btn.done { background:#D4F0E1; color:var(--success); border-color:#D4F0E1; }
+
+/* Loading steps */
+.ld-steps { display:flex; flex-direction:column; gap:12px; width:100%; max-width:440px; margin:0 auto; }
+.ld-step {
+  display:flex; align-items:center; gap:16px;
+  padding:18px 20px; background:var(--gray-100); border-radius:12px;
+  opacity:.3; transition:opacity .35s; border-left:4px solid var(--gray-300);
+}
+.ld-step.on   { opacity:1; border-left-color:var(--secondary); }
+.ld-step.done { opacity:1; border-left-color:var(--success); }
+.step-circ {
+  width:38px; height:38px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900;
+  background:var(--gray-300); color:white;
+}
+.step-circ.spinning { background:none; border:3px solid var(--gray-200); border-top-color:var(--primary); animation:spin .8s linear infinite; }
+.step-circ.done-circ { background:var(--success); color:white; }
+.step-txt { font-size:18px; font-weight:700; color:var(--gray-900); }
+.step-sub { font-size:13px; color:var(--gray-500); margin-top:2px; }
+
+/* ============================================================
+   SIGNUP SPLIT LAYOUT
+   ============================================================ */
+.su-split {
+  background:white; border-radius:16px; box-shadow:0 4px 32px rgba(0,0,0,.08);
+  width:100%; max-width:1000px;
+  display:grid; grid-template-columns:1fr 1fr; overflow:hidden; min-height:640px;
+}
+.su-left {
+  background:var(--primary); padding:64px 52px;
+  display:flex; flex-direction:column; justify-content:center;
+}
+.su-left .tag { display:inline-block; background:rgba(255,255,255,.18); color:white; font-size:14px; font-weight:700; padding:7px 18px; border-radius:6px; margin-bottom:28px; }
+.su-left h1 { font-size:38px; font-weight:900; color:white; line-height:1.25; margin-bottom:16px; }
+.su-left p  { font-size:17px; color:rgba(255,255,255,.82); line-height:1.65; margin-bottom:40px; }
+.su-left-benefits { display:flex; flex-direction:column; gap:16px; }
+.b-row { display:flex; align-items:flex-start; gap:0; }
+.b-dot { width:8px; height:8px; background:var(--accent); border-radius:50%; margin-top:7px; margin-right:12px; flex-shrink:0; }
+.b-txt { font-size:16px; color:rgba(255,255,255,.9); font-weight:500; }
+
+.su-right { padding:64px 52px; display:flex; flex-direction:column; justify-content:center; }
+.su-right h2 { font-size:28px; font-weight:900; color:var(--gray-900); margin-bottom:6px; }
+.su-right .sub-txt { font-size:15px; color:var(--gray-500); margin-bottom:32px; }
+.su-btns { display:flex; flex-direction:column; gap:12px; }
+.divider { display:flex; align-items:center; gap:12px; color:var(--gray-400); font-size:13px; }
+.divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--gray-200); }
+.su-footer { font-size:12px; color:var(--gray-400); text-align:center; margin-top:20px; line-height:1.7; }
+.su-footer u { cursor:pointer; }
+
+/* Social buttons */
+.social-btn {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  width:100%; min-height:54px; border-radius:10px;
+  font-size:16px; font-weight:700; cursor:pointer; transition:opacity .15s, transform .1s;
+}
+.social-btn:active { transform:scale(.98); }
+.btn-main  { background:var(--primary); color:white; }
+.btn-main:hover { background:var(--primary-dk); }
+.btn-kakao { background:#FEE500; color:#3A1D00; }
+.btn-naver { background:#03C75A; color:white; }
+.btn-toss  { background:#0064FF; color:white; }
+
+/* ============================================================
+   SPLASH
+   ============================================================ */
+#s-splash {
+  min-height:100vh; background:var(--primary);
+  display:flex; align-items:center; justify-content:center;
+}
+.sp-inner { text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px; }
+.sp-logo { width:120px; height:120px; background:white; border-radius:24px; display:flex; align-items:center; justify-content:center; }
+.sp-logo-txt { font-size:36px; font-weight:900; color:var(--primary); letter-spacing:-2px; }
+.sp-title { font-size:40px; font-weight:900; color:white; letter-spacing:-1px; }
+.sp-sub   { font-size:20px; color:rgba(255,255,255,.80); }
+.sp-spin  { width:40px; height:40px; border:4px solid rgba(255,255,255,.3); border-top-color:white; border-radius:50%; animation:spin .8s linear infinite; margin-top:16px; }
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+#app-shell { display:none; min-height:100vh; flex-direction:column; }
+#app-shell.active { display:flex; }
+
+/* HEADER */
+.app-header {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  height:var(--header-h); background:white; border-bottom:2px solid var(--gray-200);
+  display:flex; align-items:center; padding:0 32px; gap:24px;
+}
+.hdr-logo { font-size:22px; font-weight:900; color:var(--primary); white-space:nowrap; letter-spacing:-0.5px; }
+.hdr-search {
+  flex:1; max-width:480px; display:flex; align-items:center; gap:10px;
+  background:var(--gray-100); border:2px solid var(--gray-200); border-radius:10px;
+  padding:0 18px; height:46px;
+}
+.hdr-search input { flex:1; font-size:15px; color:var(--gray-900); background:transparent; }
+.hdr-search input::placeholder { color:var(--gray-400); }
+.hdr-search-lbl { font-size:14px; color:var(--gray-400); font-weight:600; }
+.hdr-right { margin-left:auto; display:flex; align-items:center; gap:16px; }
+.hdr-bell-btn {
+  position:relative; height:44px; padding:0 18px; border-radius:8px;
+  background:var(--primary-lt); color:var(--primary);
+  font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;
+  border:2px solid var(--primary-lt); display:flex; align-items:center; gap:6px;
+}
+.hdr-bell-btn:hover { background:var(--primary); color:white; }
+.bell-badge {
+  position:absolute; top:-4px; right:-4px; width:18px; height:18px;
+  background:var(--danger); color:white; font-size:10px; font-weight:900;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  border:2px solid white;
+}
+.hdr-user { font-size:15px; font-weight:700; color:var(--gray-700); }
+
+/* SIDEBAR */
+.app-body { display:flex; padding-top:var(--header-h); min-height:100vh; }
+.sidebar {
+  width:var(--sidebar-w); flex-shrink:0; background:white;
+  border-right:2px solid var(--gray-200);
+  position:fixed; top:var(--header-h); bottom:0; left:0;
+  overflow-y:auto; padding:28px 16px;
+  display:flex; flex-direction:column; gap:2px;
+}
+.sb-section-lbl { font-size:11px; font-weight:800; color:var(--gray-400); letter-spacing:.8px; padding:16px 12px 8px; text-transform:uppercase; }
+.sb-item {
+  display:flex; align-items:center; gap:0;
+  padding:14px 16px; border-radius:10px;
+  font-size:16px; font-weight:600; color:var(--gray-600); cursor:pointer; transition:all .15s;
+}
+.sb-item:hover { background:var(--gray-100); color:var(--gray-900); }
+.sb-item.on { background:var(--primary); color:white; }
+.sb-badge {
+  margin-left:auto; background:var(--danger); color:white;
+  font-size:11px; font-weight:800; padding:3px 9px; border-radius:50px;
+}
+.sb-item.on .sb-badge { background:rgba(255,255,255,.3); }
+.sb-sav-card {
+  margin-top:auto; background:var(--primary); border-radius:12px; padding:20px; color:white;
+}
+.sb-sav-lbl { font-size:13px; color:rgba(255,255,255,.65); margin-bottom:4px; }
+.sb-sav-amt { font-size:26px; font-weight:900; }
+.sb-sav-sub { font-size:13px; color:rgba(255,255,255,.55); margin-top:4px; }
+
+/* MAIN CONTENT */
+.main-content { flex:1; margin-left:var(--sidebar-w); padding:36px 40px; }
+.page-title { font-size:28px; font-weight:900; color:var(--gray-900); margin-bottom:4px; }
+.page-sub   { font-size:16px; color:var(--gray-500); margin-bottom:32px; }
+.sec-lbl    { font-size:13px; font-weight:800; color:var(--gray-500); letter-spacing:.5px; margin-bottom:12px; text-transform:uppercase; }
+.app-page   { display:none; }
+.app-page.active { display:block; }
+
+/* ============================================================
+   HOME: CAROUSEL (만료 임박)
+   ============================================================ */
+.carousel-wrap { position:relative; overflow:hidden; margin-bottom:32px; }
+.carousel-track { display:flex; transition:transform .4s cubic-bezier(.25,.46,.45,.94); gap:20px; }
+.carousel-slide {
+  flex:0 0 calc(33.333% - 14px); background:var(--primary);
+  border-radius:16px; padding:28px 30px; color:white; cursor:pointer;
+  transition:transform .15s; position:relative;
+}
+.carousel-slide:hover { transform:translateY(-2px); }
+.carousel-slide .cs-brand   { font-size:13px; font-weight:700; color:rgba(255,255,255,.7); margin-bottom:8px; }
+.carousel-slide .cs-title   { font-size:22px; font-weight:900; margin-bottom:10px; line-height:1.2; }
+.carousel-slide .cs-disc    { font-size:36px; font-weight:900; line-height:1; margin-bottom:12px; }
+.carousel-slide .cs-exp-badge {
+  display:inline-block; background:var(--accent); color:var(--gray-900);
+  font-size:13px; font-weight:800; padding:5px 14px; border-radius:6px;
+}
+.carousel-slide .cs-exp-ok  { display:inline-block; background:rgba(255,255,255,.2); color:white; font-size:13px; font-weight:700; padding:5px 14px; border-radius:6px; }
+
+.carousel-nav { display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+.c-btn {
+  padding:10px 24px; border-radius:8px; background:white;
+  border:2px solid var(--gray-300); font-size:15px; font-weight:700; color:var(--gray-700);
+  cursor:pointer; transition:all .15s;
+}
+.c-btn:hover { border-color:var(--primary); color:var(--primary); }
+.c-btn:disabled { opacity:.3; cursor:default; }
+.carousel-dots { display:flex; gap:8px; }
+.c-dot { width:10px; height:10px; border-radius:50%; background:var(--gray-300); cursor:pointer; transition:background .2s; }
+.c-dot.on { background:var(--primary); width:28px; border-radius:5px; }
+
+/* ============================================================
+   HOME: COUPON GRID
+   ============================================================ */
+.home-layout { display:grid; grid-template-columns:1fr 320px; gap:28px; align-items:start; }
+
+.cpn-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.cpn-card {
+  background:white; border-radius:14px;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
+  padding:22px; cursor:pointer; transition:all .15s;
+  border:2px solid var(--gray-200); display:flex; flex-direction:column; gap:14px;
+}
+.cpn-card:hover { border-color:var(--primary); box-shadow:0 6px 20px rgba(15,65,166,.12); }
+.cpn-brand  { font-size:13px; font-weight:700; color:var(--gray-500); letter-spacing:.3px; text-transform:uppercase; }
+.cpn-title  { font-size:18px; font-weight:800; color:var(--gray-900); line-height:1.25; }
+.cpn-disc   { font-size:32px; font-weight:900; color:var(--primary); }
+.cpn-footer { display:flex; align-items:center; justify-content:space-between; padding-top:10px; border-top:1px solid var(--gray-200); }
+.cpn-cond   { font-size:13px; color:var(--gray-500); }
+.cpn-exp    { font-size:14px; font-weight:800; }
+.exp-red  { color:var(--danger); }
+.exp-org  { color:var(--warning); }
+.exp-gry  { color:var(--gray-400); }
+.dl-btn {
+  display:flex; align-items:center; justify-content:center;
+  width:100%; height:44px; border-radius:8px;
+  background:var(--primary-lt); color:var(--primary);
+  font-size:15px; font-weight:700; cursor:pointer; transition:all .15s;
+  border:2px solid var(--primary-lt);
+}
+.dl-btn:hover { background:var(--primary); color:white; }
+.dl-btn.downloaded { background:#D4F0E1; color:var(--success); border-color:#D4F0E1; cursor:default; }
+
+/* RIGHT PANEL */
+.right-panel { display:flex; flex-direction:column; gap:20px; }
+.panel-card { background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.06); padding:24px; border:2px solid var(--gray-200); }
+.panel-title { font-size:16px; font-weight:800; color:var(--gray-900); margin-bottom:18px; padding-bottom:12px; border-bottom:2px solid var(--gray-200); }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.stat-box { background:var(--gray-100); border-radius:10px; padding:16px; }
+.stat-lbl { font-size:13px; color:var(--gray-500); font-weight:600; margin-bottom:4px; }
+.stat-val { font-size:24px; font-weight:900; color:var(--gray-900); }
+.stat-val.primary { color:var(--primary); }
+.stat-val.danger  { color:var(--danger); }
+
+/* ============================================================
+   DOWNLOAD PAGE
+   ============================================================ */
+.dl-hero {
+  background:linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius:16px; padding:36px 40px; color:white; margin-bottom:28px;
+}
+.dl-hero h2 { font-size:28px; font-weight:900; margin-bottom:8px; }
+.dl-hero p  { font-size:16px; color:rgba(255,255,255,.82); }
+.dl-hero-count { font-size:48px; font-weight:900; margin-top:16px; }
+.dl-hero-count span { font-size:18px; font-weight:600; margin-left:6px; }
+
+/* ============================================================
+   WALLET: FILTER + GRID
+   ============================================================ */
+.wallet-layout { display:grid; grid-template-columns:260px 1fr; gap:24px; }
+.filter-panel {
+  background:white; border-radius:14px; padding:24px;
+  box-shadow:0 2px 12px rgba(0,0,0,.06); border:2px solid var(--gray-200);
+  position:sticky; top:calc(var(--header-h) + 36px); align-self:start;
+}
+.filter-title { font-size:16px; font-weight:800; color:var(--gray-900); margin-bottom:16px; }
+.filter-section { margin-bottom:20px; }
+.filter-section-lbl { font-size:12px; font-weight:800; color:var(--gray-500); letter-spacing:.5px; margin-bottom:8px; }
+.filter-btn {
+  display:flex; align-items:center; justify-content:space-between;
+  width:100%; padding:12px 14px; border-radius:8px;
+  font-size:16px; font-weight:600; color:var(--gray-700); cursor:pointer;
+  transition:all .15s; border:2px solid transparent; margin-bottom:4px;
+}
+.filter-btn:hover { background:var(--gray-100); }
+.filter-btn.on { background:var(--primary-lt); color:var(--primary); border-color:var(--primary-lt); font-weight:800; }
+.filter-count { font-size:13px; font-weight:700; color:var(--gray-400); }
+.filter-btn.on .filter-count { color:var(--primary); opacity:.7; }
+.filter-divider { height:1px; background:var(--gray-200); margin:16px 0; }
+
+.wallet-content { display:flex; flex-direction:column; gap:16px; }
+.wallet-tabs { display:flex; gap:0; border-bottom:2px solid var(--gray-200); margin-bottom:20px; }
+.wlt-tab {
+  padding:13px 24px; font-size:16px; font-weight:700; color:var(--gray-500);
+  border-bottom:3px solid transparent; margin-bottom:-2px; cursor:pointer; transition:all .15s;
+}
+.wlt-tab:hover { color:var(--gray-900); }
+.wlt-tab.on { color:var(--primary); border-bottom-color:var(--primary); }
+.wallet-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+
+/* ============================================================
+   DETAIL PAGE
+   ============================================================ */
+.det-layout { display:grid; grid-template-columns:1fr 380px; gap:28px; align-items:start; }
+.breadcrumb { display:flex; align-items:center; gap:8px; margin-bottom:24px; font-size:15px; color:var(--gray-500); }
+.breadcrumb .bc-link { cursor:pointer; font-weight:600; }
+.breadcrumb .bc-link:hover { color:var(--primary); }
+.bc-sep { color:var(--gray-300); }
+.bc-cur { color:var(--gray-900); font-weight:700; }
+
+.det-hero-card {
+  background:var(--primary); border-radius:16px; padding:40px; color:white; text-align:center;
+}
+.det-hero-brand { font-size:16px; color:rgba(255,255,255,.7); font-weight:700; margin-bottom:8px; letter-spacing:.5px; }
+.det-hero-disc  { font-size:64px; font-weight:900; line-height:1; }
+.det-hero-cond  { font-size:16px; color:rgba(255,255,255,.80); margin-top:12px; }
+.det-hero-badge { display:inline-block; background:var(--accent); color:var(--gray-900); font-size:14px; font-weight:800; padding:6px 18px; border-radius:6px; margin-top:16px; }
+
+.det-info-card { background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.06); padding:28px; border:2px solid var(--gray-200); }
+.det-urgency { background:#FFF0EE; border-left:4px solid var(--danger); border-radius:0 10px 10px 0; padding:16px 20px; margin-bottom:20px; }
+.det-urg-txt { font-size:16px; font-weight:800; color:var(--danger); }
+.det-sec h3 { font-size:12px; font-weight:800; color:var(--gray-500); letter-spacing:.6px; margin-bottom:10px; text-transform:uppercase; }
+.det-row { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid var(--gray-100); }
+.det-row:last-child { border:none; }
+.det-lbl { font-size:15px; color:var(--gray-500); }
+.det-val { font-size:15px; font-weight:700; color:var(--gray-900); text-align:right; }
+
+.det-action-card { background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.06); padding:28px; border:2px solid var(--gray-200); display:flex; flex-direction:column; gap:14px; }
+.det-price-box { background:var(--primary-lt); border-radius:10px; padding:20px; text-align:center; }
+.det-price-lbl { font-size:14px; color:var(--gray-600); margin-bottom:4px; }
+.det-price-val { font-size:40px; font-weight:900; color:var(--primary); }
+
+/* ============================================================
+   BARCODE PAGE
+   ============================================================ */
+.brc-center { max-width:600px; margin:0 auto; display:flex; flex-direction:column; gap:20px; }
+.brc-card { background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.06); padding:40px; text-align:center; border:2px solid var(--gray-200); }
+.brc-card h3 { font-size:24px; font-weight:900; color:var(--gray-900); margin-bottom:8px; }
+.brc-card p  { font-size:16px; color:var(--gray-500); margin-bottom:28px; }
+.brc-svg { width:100%; max-width:440px; height:120px; }
+.brc-num { font-family:'Courier New',monospace; font-size:24px; font-weight:700; letter-spacing:4px; color:var(--gray-900); margin-top:16px; }
+.brc-note { background:var(--secondary-lt); border-left:4px solid var(--secondary); border-radius:0 10px 10px 0; padding:16px 20px; }
+.brc-note span { font-size:15px; color:var(--secondary); font-weight:700; }
+
+/* ============================================================
+   MYPAGE
+   ============================================================ */
+.mypage-layout { display:grid; grid-template-columns:300px 1fr; gap:28px; align-items:start; }
+.user-card { background:var(--primary); border-radius:16px; padding:32px; color:white; margin-bottom:20px; }
+.user-name { font-size:24px; font-weight:900; margin-bottom:4px; }
+.user-info { font-size:15px; color:rgba(255,255,255,.75); }
+.user-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px; }
+.u-stat { background:rgba(255,255,255,.15); border-radius:10px; padding:14px; text-align:center; }
+.u-stat-val { font-size:24px; font-weight:900; }
+.u-stat-lbl { font-size:12px; color:rgba(255,255,255,.7); margin-top:2px; }
+
+.settings-card { background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.06); padding:24px; border:2px solid var(--gray-200); }
+.settings-row { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--gray-100); font-size:16px; }
+.settings-row:last-child { border:none; }
+.settings-row .s-lbl { font-weight:600; color:var(--gray-800); }
+.settings-row .s-val { font-weight:700; color:var(--primary); }
+
+.dl-cpn-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.dl-cpn-card {
+  background:white; border-radius:12px; padding:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,.05); border:2px solid var(--gray-200);
+  display:flex; flex-direction:column; gap:10px;
+}
+.dl-cpn-card .dc-brand { font-size:12px; font-weight:700; color:var(--gray-500); text-transform:uppercase; }
+.dl-cpn-card .dc-title { font-size:17px; font-weight:800; color:var(--gray-900); }
+.dl-cpn-card .dc-disc  { font-size:28px; font-weight:900; color:var(--primary); }
+.dl-cpn-card .dc-footer { display:flex; justify-content:space-between; font-size:13px; color:var(--gray-500); padding-top:8px; border-top:1px solid var(--gray-100); }
+.use-btn {
+  display:flex; align-items:center; justify-content:center;
+  height:40px; border-radius:8px; background:var(--primary); color:white;
+  font-size:14px; font-weight:700; cursor:pointer; transition:background .15s;
+}
+.use-btn:hover { background:var(--primary-dk); }
+
+/* ============================================================
+   LOGIN PAGE
+   ============================================================ */
+.login-right h2 { font-size:28px; font-weight:900; color:var(--gray-900); margin-bottom:6px; }
+.login-right .sub-txt { font-size:15px; color:var(--gray-500); margin-bottom:32px; }
+</style>
+</head>
+<body>
+
+<!-- ==================== SPLASH ==================== -->
+<div class="screen active" id="s-splash">
+  <div id="s-splash-inner">
+    <div class="sp-inner">
+      <div class="sp-logo"><span class="sp-logo-txt">CP</span></div>
+      <div class="sp-title">쿠폰 자동추천</div>
+      <div class="sp-sub">필요한 혜택, 알아서 챙겨드려요</div>
+      <div class="sp-spin"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SIGNUP ==================== -->
+<div class="screen" id="s-signup">
+  <div class="ob-page">
+    <div class="su-split">
+      <div class="su-left">
+        <span class="tag">처음 오셨나요</span>
+        <h1>쿠폰 자동추천<br>서비스 시작하기</h1>
+        <p>내가 찾지 않아도, 지금 쓸 수 있는<br>혜택이 자동으로 나타납니다</p>
+        <div class="su-left-benefits">
+          <div class="b-row"><div class="b-dot"></div><span class="b-txt">직접 찾지 않아도 자동으로 수집</span></div>
+          <div class="b-row"><div class="b-dot"></div><span class="b-txt">만료 전에 미리 알림 발송</span></div>
+          <div class="b-row"><div class="b-dot"></div><span class="b-txt">결제 직전, 쓸 수 있는 쿠폰 추천</span></div>
+        </div>
+      </div>
+      <div class="su-right">
+        <h2>회원가입</h2>
+        <div class="sub-txt">아래 방법으로 시작하세요</div>
+        <div class="su-btns">
+          <button class="social-btn btn-main" data-action="go-phone">휴대폰 번호로 시작하기</button>
+          <div class="divider">또는 간편 가입</div>
+          <button class="social-btn btn-kakao" data-action="go-phone">카카오로 시작하기</button>
+          <button class="social-btn btn-naver" data-action="go-phone">네이버로 시작하기</button>
+          <button class="social-btn btn-toss"  data-action="go-phone">토스로 시작하기</button>
+        </div>
+        <div class="su-footer">시작하면 <u>이용약관</u> 및 <u>개인정보처리방침</u>에 동의한 것으로 간주됩니다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHONE VERIFY ==================== -->
+<div class="screen" id="s-phone">
+  <div class="ob-page">
+    <div class="ob-card">
+      <div class="ob-back" data-action="go-back">← 돌아가기</div>
+      <h2 class="ob-h2">휴대폰 번호를 입력해 주세요</h2>
+      <p class="ob-sub">본인 확인 후 가입이 완료됩니다</p>
+      <div class="field-wrap" id="phWrap">
+        <span class="field-prefix">+82</span>
+        <input id="phField" type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13"
+          oninput="fmtPhone(this)">
+      </div>
+      <button class="btn-primary" data-action="send-sms" style="margin-bottom:0">인증번호 받기</button>
+      <div class="otp-panel" id="otpPanel">
+        <div class="otp-lbl" style="margin-top:20px">문자로 받은 인증번호 6자리를 입력하세요</div>
+        <div class="field-wrap">
+          <input id="otpField" type="tel" inputmode="numeric" placeholder="인증번호 6자리 입력" maxlength="6"
+            oninput="checkOTP(this)">
+        </div>
+        <div class="otp-footer"><span id="otpTimer">재발송 가능: 59초 후</span></div>
+        <button class="btn-primary" data-action="go-coupon-intro" style="margin-top:16px">확인</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== COUPON INTRO ==================== -->
+<div class="screen" id="s-coupon-intro">
+  <div class="ob-page">
+    <div class="ob-card wide" style="text-align:center">
+      <span class="ob-skip" data-action="skip-to-login">나중에 하기</span>
+      <div class="ob-prog">
+        <div class="ob-prog-info"><span class="ob-prog-step">1 / 5단계</span><span class="ob-prog-step">쿠폰 연동 안내</span></div>
+        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:20%"></div></div>
+      </div>
+      <h2 class="ob-h2" style="text-align:center">여기저기 흩어진 쿠폰을<br>한 곳에 모아드릴게요</h2>
+      <p class="ob-sub" style="text-align:center">카카오, 통신사, 마트, 배달앱 등 여러 곳에 있는 쿠폰을 자동으로 찾아서 딱 필요한 순간에 알려드립니다</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px">
+        <div style="background:var(--primary-lt);border-radius:12px;padding:24px 16px;text-align:center;border:2px solid var(--primary-lt)">
+          <div style="font-size:16px;font-weight:800;color:var(--primary);margin-bottom:6px">자동 수집</div>
+          <div style="font-size:14px;color:var(--gray-600)">직접 찾지 않아도 자동으로 수집</div>
+        </div>
+        <div style="background:var(--secondary-lt);border-radius:12px;padding:24px 16px;text-align:center;border:2px solid var(--secondary-lt)">
+          <div style="font-size:16px;font-weight:800;color:var(--secondary);margin-bottom:6px">만료 알림</div>
+          <div style="font-size:14px;color:var(--gray-600)">만료 전에 미리 알림 발송</div>
+        </div>
+        <div style="background:#FDFCE6;border-radius:12px;padding:24px 16px;text-align:center;border:2px solid var(--accent)">
+          <div style="font-size:16px;font-weight:800;color:var(--gray-800);margin-bottom:6px">즉시 추천</div>
+          <div style="font-size:14px;color:var(--gray-600)">결제 직전, 쓸 수 있는 쿠폰 추천</div>
+        </div>
+      </div>
+      <div class="ob-btns" style="max-width:420px;margin:0 auto">
+        <button class="btn-primary" data-action="go-loading">빠르게 시작하기</button>
+        <button class="btn-outline" data-action="go-integration">직접 선택하기</button>
+        <button class="btn-ghost"  data-action="skip-to-login">나중에 하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LOADING ==================== -->
+<div class="screen" id="s-loading">
+  <div class="ob-page">
+    <div class="ob-card" style="text-align:center">
+      <div class="ob-prog">
+        <div class="ob-prog-info"><span class="ob-prog-step">2 / 5단계</span><span class="ob-prog-step">쿠폰 자동 수집</span></div>
+        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:40%"></div></div>
+      </div>
+      <div style="font-size:26px;font-weight:900;color:var(--gray-900);margin-bottom:8px">쿠폰을 모으고 있습니다</div>
+      <div style="font-size:16px;color:var(--gray-500);margin-bottom:36px">잠시만 기다려 주세요</div>
+      <div class="ld-steps">
+        <div class="ld-step" id="ldStep1"><div class="step-circ" id="ldCirc1"></div><div><div class="step-txt">연결 중</div><div class="step-sub">통신사, 카드사, 쇼핑앱 연결</div></div></div>
+        <div class="ld-step" id="ldStep2"><div class="step-circ" id="ldCirc2"></div><div><div class="step-txt">수집 중</div><div class="step-sub">보유 쿠폰 정보 가져오는 중</div></div></div>
+        <div class="ld-step" id="ldStep3"><div class="step-circ" id="ldCirc3"></div><div><div class="step-txt">정리 중</div><div class="step-sub">사용 가능 순서로 분류하는 중</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LOADING RESULT ==================== -->
+<div class="screen" id="s-loading-result">
+  <div class="ob-page">
+    <div class="ob-card" style="text-align:center">
+      <div class="ob-prog">
+        <div class="ob-prog-info"><span class="ob-prog-step">2 / 5단계</span><span class="ob-prog-step">수집 완료</span></div>
+        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:40%"></div></div>
+      </div>
+      <div style="width:100px;height:100px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:900;color:white;margin:0 auto 24px;animation:popIn .5s ease">✓</div>
+      <div style="font-size:72px;font-weight:900;color:var(--primary);line-height:1" id="lrCount">0</div>
+      <div style="font-size:24px;font-weight:800;color:var(--gray-900);margin:10px 0 12px">개의 쿠폰을 찾았습니다</div>
+      <div style="font-size:16px;color:var(--gray-500);line-height:1.6;margin-bottom:36px">KT, 이마트, 배달의민족, 스타벅스 등에서<br>사용 가능한 쿠폰이에요</div>
+      <button class="btn-primary" data-action="go-integration" style="max-width:280px;margin:0 auto">계속하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== INTEGRATION ==================== -->
+<div class="screen" id="s-integration">
+  <div class="ob-page">
+    <div class="ob-card xwide">
+      <span class="ob-skip" data-action="go-category">건너뛰기</span>
+      <div class="ob-back" data-action="go-back">← 돌아가기</div>
+      <div class="ob-prog">
+        <div class="ob-prog-info"><span class="ob-prog-step">2 / 5단계</span><span class="ob-prog-step">추가 연동</span></div>
+        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:40%"></div></div>
+      </div>
+      <h2 class="ob-h2">추가 연동할 서비스</h2>
+      <p class="ob-sub">더 많은 혜택을 가져올 수 있어요. 언제든 추가 또는 해제 가능합니다</p>
+      <div class="svc-grid">
+        <div class="svc-card"><div class="svc-info"><div class="svc-name">KT / SKT / LGU+</div><div class="svc-desc">통신사 멤버십 쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">완료</button></div>
+        <div class="svc-card"><div class="svc-info"><div class="svc-name">카카오</div><div class="svc-desc">선물, 교환권, 쿠폰</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
+        <div class="svc-card"><div class="svc-info"><div class="svc-name">이마트</div><div class="svc-desc">e-money, 할인쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">완료</button></div>
+        <div class="svc-card"><div class="svc-info"><div class="svc-name">배달의민족</div><div class="svc-desc">배달 할인쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">완료</button></div>
+        <div class="svc-card"><div class="svc-info"><div class="svc-name">GS25 / CU</div><div class="svc-desc">편의점 쿠폰</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
+        <div class="svc-card"><div class="svc-info"><div class="svc-name">스타벅스</div><div class="svc-desc">리워드, 무료음료</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
+      </div>
+      <button class="btn-primary" data-action="go-category">계속하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CATEGORY ==================== -->
+<div class="screen" id="s-category">
+  <div class="ob-page">
+    <div class="ob-card xwide">
+      <span class="ob-skip" data-action="go-brand">나중에</span>
+      <div class="ob-back" data-action="go-back">← 돌아가기</div>
+      <div class="ob-prog">
+        <div class="ob-prog-info"><span class="ob-prog-step">3 / 5단계</span><span class="ob-prog-step">관심 카테고리</span></div>
+        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:60%"></div></div>
+      </div>
+      <h2 class="ob-h2">관심 카테고리를 선택해 주세요</h2>
+      <p class="ob-sub">복수 선택 가능 · 나중에 언제든 변경 가능</p>
+      <div class="cat-grid" id="catGrid">
+        <div class="cat-chip sel" data-action="toggle-cat">마트</div>
+        <div class="cat-chip sel" data-action="toggle-cat">배달</div>
+        <div class="cat-chip" data-action="toggle-cat">카페</div>
+        <div class="cat-chip" data-action="toggle-cat">쇼핑</div>
+        <div class="cat-chip" data-action="toggle-cat">패션</div>
+        <div class="cat-chip" data-action="toggle-cat">가전</div>
+      </div>
+      <button class="btn-primary" data-action="go-brand">다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BRAND ==================== -->
+<div class="screen" id="s-brand">
+  <div class="ob-page">
+    <div class="ob-card xwide">
+      <span class="ob-skip" data-action="go-discount">나중에</span>
+      <div class="ob-back" data-action="go-back">← 돌아가기</div>
+      <div class="ob-prog">
+        <div class="ob-prog-info"><span class="ob-prog-step">3 / 5단계</span><span class="ob-prog-step">선호 브랜드</span></div>
+        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:60%"></div></div>
+      </div>
+      <h2 class="ob-h2">자주 이용하는 브랜드를 선택하세요</h2>
+      <p class="ob-sub">선택한 브랜드의 쿠폰을 우선적으로 알려드려요</p>
+      <div class="brand-grid" id="brandGrid">
+        <div class="brand-chip sel" data-action="toggle-brand">이마트</div>
+        <div class="brand-chip sel" data-action="toggle-brand">배달의민족</div>
+        <div class="brand-chip" data-action="toggle-brand">스타벅스</div>
+        <div class="brand-chip" data-action="toggle-brand">GS25</div>
+        <div class="brand-chip" data-action="toggle-brand">올리브영</div>
+        <div class="brand-chip" data-action="toggle-brand">쿠팡</div>
+        <div class="brand-chip" data-action="toggle-brand">CGV</div>
+        <div class="brand-chip" data-action="toggle-brand">롯데마트</div>
+      </div>
+      <button class="btn-primary" data-action="go-discount">다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DISCOUNT ==================== -->
+<div class="screen" id="s-discount">
+  <div class="ob-page">
+    <div class="ob-card wide">
+      <span class="ob-skip" data-action="go-notification">나중에</span>
+      <div class="ob-back" data-action="go-back">← 돌아가기</div>
+      <div class="ob-prog">
+        <div class="ob-prog-info"><span class="ob-prog-step">4 / 5단계</span><span class="ob-prog-step">할인율 기준</span></div>
+        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:80%"></div></div>
+      </div>
+      <h2 class="ob-h2">어느 정도 할인이면<br>알림 받을까요?</h2>
+      <p class="ob-sub">이 기준 이상의 쿠폰만 알려드려요</p>
+      <div class="opt-grid" id="discOpts">
+        <div class="opt-card" data-action="sel-discount"><div class="opt-title">10% 이상</div><div class="opt-sub">소소한 혜택도 챙기기</div></div>
+        <div class="opt-card sel" data-action="sel-discount"><div class="opt-title">20% 이상</div><div class="opt-sub">알맞은 할인 (추천)</div></div>
+        <div class="opt-card" data-action="sel-discount"><div class="opt-title">30% 이상</div><div class="opt-sub">확실한 할인만</div></div>
+      </div>
+      <button class="btn-primary" data-action="go-notification">다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== NOTIFICATION ==================== -->
+<div class="screen" id="s-notification">
+  <div class="ob-page">
+    <div class="ob-card wide">
+      <span class="ob-skip" data-action="go-wallet-setup">나중에</span>
+      <div class="ob-back" data-action="go-back">← 돌아가기</div>
+      <div class="ob-prog">
+        <div class="ob-prog-info"><span class="ob-prog-step">4 / 5단계</span><span class="ob-prog-step">알림 채널</span></div>
+        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:80%"></div></div>
+      </div>
+      <h2 class="ob-h2">알림은 어디로<br>받으실 건가요?</h2>
+      <p class="ob-sub">중요한 혜택만 골라서 보내드려요</p>
+      <div class="opt-grid" id="notifOpts">
+        <div class="opt-card" data-action="sel-notif"><div class="opt-title">앱 알림</div><div class="opt-sub">브라우저 알림으로 받기</div></div>
+        <div class="opt-card" data-action="sel-notif"><div class="opt-title">문자(SMS)</div><div class="opt-sub">문자 메시지로 받기</div></div>
+        <div class="opt-card sel" data-action="sel-notif"><div class="opt-title">둘 다</div><div class="opt-sub">놓치지 않게 모두 받기 (추천)</div></div>
+      </div>
+      <button class="btn-primary" data-action="go-wallet-setup">다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== WALLET SETUP ==================== -->
+<div class="screen" id="s-wallet-setup">
+  <div class="ob-page">
+    <div class="ob-card wide" style="text-align:center">
+      <div class="ob-prog">
+        <div class="ob-prog-info"><span class="ob-prog-step">5 / 5단계</span><span class="ob-prog-step">설정 완료</span></div>
+        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:100%"></div></div>
+      </div>
+      <div style="width:96px;height:96px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:900;color:white;margin:20px auto 24px;animation:popIn .5s ease">✓</div>
+      <h2 class="ob-h2" style="text-align:center">설정이 완료되었습니다</h2>
+      <p class="ob-sub" style="text-align:center"><strong style="color:var(--primary)">47개</strong>의 쿠폰이 내 쿠폰함에 준비되어 있어요</p>
+      <div style="background:var(--gray-100);border-radius:14px;overflow:hidden;margin-bottom:36px">
+        <div style="display:flex;border-bottom:2px solid var(--gray-200)">
+          <div style="flex:1;padding:14px 0;font-size:15px;font-weight:800;color:var(--primary);text-align:center;border-bottom:3px solid var(--primary)">만료 임박</div>
+          <div style="flex:1;padding:14px 0;font-size:15px;font-weight:700;color:var(--gray-400);text-align:center">카테고리</div>
+          <div style="flex:1;padding:14px 0;font-size:15px;font-weight:700;color:var(--gray-400);text-align:center">브랜드</div>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:white;border-radius:10px;border-left:4px solid var(--danger)">
+            <div style="flex:1;font-size:15px;font-weight:700;color:var(--gray-900)">이마트 30% 할인</div>
+            <div style="font-size:15px;font-weight:900;color:var(--primary)">30%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:white;border-radius:10px;border-left:4px solid var(--warning)">
+            <div style="flex:1;font-size:15px;font-weight:700;color:var(--gray-900)">배달의민족 3,000원</div>
+            <div style="font-size:15px;font-weight:900;color:var(--primary)">3,000원</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:white;border-radius:10px;border-left:4px solid var(--gray-300)">
+            <div style="flex:1;font-size:15px;font-weight:700;color:var(--gray-900)">스타벅스 음료 1+1</div>
+            <div style="font-size:15px;font-weight:900;color:var(--primary)">1+1</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" data-action="go-login" style="max-width:320px;margin:0 auto">로그인하고 시작하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LOGIN ==================== -->
+<div class="screen" id="s-login">
+  <div class="ob-page">
+    <div class="su-split">
+      <div class="su-left">
+        <span class="tag">다시 오셨군요</span>
+        <h1>로그인하고<br>쿠폰을 확인하세요</h1>
+        <p>47개의 쿠폰이 준비되어 있어요.<br>지금 바로 혜택을 누려보세요.</p>
+        <div style="background:rgba(255,255,255,.15);border-radius:12px;padding:24px;margin-top:16px">
+          <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:6px">이번 달 절약 예상 금액</div>
+          <div style="font-size:36px;font-weight:900;color:white">23,500원</div>
+        </div>
+      </div>
+      <div class="su-right login-right">
+        <h2>로그인</h2>
+        <div class="sub-txt">아이디와 비밀번호를 입력해 주세요</div>
+        <div class="ob-btns">
+          <div>
+            <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">아이디 (휴대폰 번호)</label>
+            <div class="field-wrap" style="margin-bottom:0">
+              <input type="tel" placeholder="010-0000-0000" style="font-size:18px">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">비밀번호</label>
+            <div class="field-wrap" style="margin-bottom:0">
+              <input type="password" placeholder="비밀번호를 입력하세요" style="font-size:18px">
+            </div>
+          </div>
+          <button class="btn-primary" data-action="go-home" style="margin-top:8px">로그인</button>
+          <div style="text-align:center;font-size:14px;color:var(--gray-500);margin-top:4px">
+            <span style="cursor:pointer;text-decoration:underline">비밀번호 찾기</span>
+            &nbsp;|&nbsp;
+            <span style="cursor:pointer;color:var(--primary);font-weight:700" data-action="go-signup">회원가입</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APP SHELL ==================== -->
+<div id="app-shell">
+  <header class="app-header">
+    <div class="hdr-logo">쿠폰 자동추천</div>
+    <div class="hdr-search">
+      <span class="hdr-search-lbl">검색</span>
+      <input type="text" placeholder="브랜드, 카테고리 검색...">
+    </div>
+    <div class="hdr-right">
+      <button class="hdr-bell-btn" data-action="nav-wallet">
+        알림
+        <span class="bell-badge">3</span>
+      </button>
+      <div class="hdr-user">김미경님</div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="sidebar">
+      <div class="sb-section-lbl">메뉴</div>
+      <div class="sb-item on" data-action="nav-home">홈</div>
+      <div class="sb-item" data-action="nav-download">쿠폰 다운로드<span class="sb-badge">12</span></div>
+      <div class="sb-item" data-action="nav-wallet">내 쿠폰함<span class="sb-badge">47</span></div>
+      <div class="sb-section-lbl">계정</div>
+      <div class="sb-item" data-action="nav-mypage">마이페이지</div>
+      <div class="sb-item" data-action="go-login" style="color:var(--gray-400);font-size:14px">로그아웃</div>
+      <div class="sb-sav-card" style="margin-top:24px">
+        <div class="sb-sav-lbl">이번 달 절약</div>
+        <div class="sb-sav-amt">23,500원</div>
+        <div class="sb-sav-sub">지난달보다 +8,200원</div>
+      </div>
+    </nav>
+
+    <main class="main-content">
+
+      <!-- ── HOME ── -->
+      <div id="p-home" class="app-page active">
+        <div class="page-title">오늘의 추천 혜택</div>
+        <div class="page-sub">김미경님을 위해 엄선된 쿠폰이에요</div>
+
+        <!-- CAROUSEL -->
+        <div style="margin-bottom:12px">
+          <div class="sec-lbl">만료 임박 쿠폰 — 지금 바로 사용하세요</div>
+        </div>
+        <div class="carousel-wrap">
+          <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide" data-action="go-detail" data-id="emart">
+              <div class="cs-brand">이마트</div>
+              <div class="cs-title">전 매장 쇼핑 할인 쿠폰</div>
+              <div class="cs-disc">30% 할인</div>
+              <span class="cs-exp-badge">오늘 만료</span>
+            </div>
+            <div class="carousel-slide" data-action="go-detail" data-id="baemin" style="background:var(--secondary)">
+              <div class="cs-brand">배달의민족</div>
+              <div class="cs-title">배달 주문 즉시 할인</div>
+              <div class="cs-disc">3,000원</div>
+              <span class="cs-exp-ok">D-3</span>
+            </div>
+            <div class="carousel-slide" data-action="go-detail" data-id="starbucks" style="background:var(--gray-800)">
+              <div class="cs-brand">스타벅스</div>
+              <div class="cs-title">음료 1+1 무료 증정</div>
+              <div class="cs-disc">1+1</div>
+              <span class="cs-exp-ok">D-7</span>
+            </div>
+            <div class="carousel-slide" style="background:var(--gray-700)">
+              <div class="cs-brand">GS25</div>
+              <div class="cs-title">도시락 할인 쿠폰</div>
+              <div class="cs-disc">20% 할인</div>
+              <span class="cs-exp-ok">D-14</span>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-nav">
+          <button class="c-btn" id="cPrev" onclick="moveCar(-1)">이전</button>
+          <div class="carousel-dots" id="cDots"></div>
+          <button class="c-btn" id="cNext" onclick="moveCar(1)">다음</button>
+        </div>
+
+        <!-- HOME GRID -->
+        <div class="home-layout" style="margin-top:32px">
+          <div>
+            <div class="sec-lbl">전체 쿠폰 목록</div>
+            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+              <div class="filter-btn on" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-home">전체</div>
+              <div class="filter-btn" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-home">마트</div>
+              <div class="filter-btn" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-home">배달</div>
+              <div class="filter-btn" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-home">카페</div>
+              <div class="filter-btn" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-home">편의점</div>
+            </div>
+            <div class="cpn-grid">
+              <div class="cpn-card" data-action="go-detail" data-id="emart">
+                <div class="cpn-brand">이마트</div>
+                <div class="cpn-title">전 매장 쇼핑 30% 할인</div>
+                <div class="cpn-disc">30%</div>
+                <div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-red">오늘 만료</span></div>
+                <button class="dl-btn" data-action="download-cpn">다운로드</button>
+              </div>
+              <div class="cpn-card" data-action="go-detail" data-id="baemin">
+                <div class="cpn-brand">배달의민족</div>
+                <div class="cpn-title">배달 주문 즉시 할인</div>
+                <div class="cpn-disc">3,000원</div>
+                <div class="cpn-footer"><span class="cpn-cond">1.5만원 이상</span><span class="cpn-exp exp-org">D-3</span></div>
+                <button class="dl-btn downloaded">다운로드 완료</button>
+              </div>
+              <div class="cpn-card" data-action="go-detail" data-id="starbucks">
+                <div class="cpn-brand">스타벅스</div>
+                <div class="cpn-title">음료 1+1 무료 증정</div>
+                <div class="cpn-disc">1+1</div>
+                <div class="cpn-footer"><span class="cpn-cond">사이즈 무관</span><span class="cpn-exp exp-gry">D-7</span></div>
+                <button class="dl-btn" data-action="download-cpn">다운로드</button>
+              </div>
+              <div class="cpn-card">
+                <div class="cpn-brand">GS25</div>
+                <div class="cpn-title">도시락 20% 할인</div>
+                <div class="cpn-disc">20%</div>
+                <div class="cpn-footer"><span class="cpn-cond">오전 11시 이후</span><span class="cpn-exp exp-gry">D-14</span></div>
+                <button class="dl-btn" data-action="download-cpn">다운로드</button>
+              </div>
+              <div class="cpn-card">
+                <div class="cpn-brand">쿠팡</div>
+                <div class="cpn-title">전 카테고리 10% 할인</div>
+                <div class="cpn-disc">10%</div>
+                <div class="cpn-footer"><span class="cpn-cond">5만원 이상</span><span class="cpn-exp exp-gry">D-21</span></div>
+                <button class="dl-btn" data-action="download-cpn">다운로드</button>
+              </div>
+              <div class="cpn-card">
+                <div class="cpn-brand">올리브영</div>
+                <div class="cpn-title">전 상품 5,000원 할인</div>
+                <div class="cpn-disc">5,000원</div>
+                <div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-gry">D-30</span></div>
+                <button class="dl-btn" data-action="download-cpn">다운로드</button>
+              </div>
+            </div>
+          </div>
+          <div class="right-panel">
+            <div class="panel-card">
+              <div class="panel-title">이번 달 현황</div>
+              <div class="stat-grid">
+                <div class="stat-box"><div class="stat-lbl">보유 쿠폰</div><div class="stat-val primary">47개</div></div>
+                <div class="stat-box"><div class="stat-lbl">절약 금액</div><div class="stat-val primary">23,500원</div></div>
+                <div class="stat-box"><div class="stat-lbl">사용 완료</div><div class="stat-val">12개</div></div>
+                <div class="stat-box"><div class="stat-lbl">만료 임박</div><div class="stat-val danger">3개</div></div>
+              </div>
+            </div>
+            <div class="panel-card">
+              <div class="panel-title">추천 설정</div>
+              <div style="display:flex;flex-direction:column;gap:0">
+                <div class="settings-row"><span class="s-lbl">할인율 기준</span><span class="s-val">20% 이상</span></div>
+                <div class="settings-row"><span class="s-lbl">알림 방식</span><span class="s-val">앱 + 문자</span></div>
+                <div class="settings-row"><span class="s-lbl">연동 서비스</span><span class="s-val">4개 연동됨</span></div>
+              </div>
+              <button class="btn-outline" style="margin-top:14px;font-size:14px;min-height:44px">설정 변경</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DOWNLOAD PAGE ── -->
+      <div id="p-download" class="app-page">
+        <div class="page-title">쿠폰 다운로드</div>
+        <div class="page-sub">원하는 쿠폰을 선택해 다운로드하세요. 다운로드한 쿠폰은 마이페이지에서 확인할 수 있어요.</div>
+        <div class="dl-hero">
+          <h2>지금 받을 수 있는 쿠폰</h2>
+          <p>총 12개의 쿠폰을 다운로드할 수 있어요</p>
+          <div class="dl-hero-count">12<span>개</span></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+          <div class="filter-btn on" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-dl">전체</div>
+          <div class="filter-btn" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-dl">마트</div>
+          <div class="filter-btn" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-dl">편의점</div>
+          <div class="filter-btn" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-dl">배달</div>
+          <div class="filter-btn" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-dl">카페</div>
+          <div class="filter-btn" style="padding:10px 18px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer" data-action="flt-dl">쇼핑</div>
+        </div>
+        <div class="cpn-grid">
+          <div class="cpn-card"><div class="cpn-brand">이마트</div><div class="cpn-title">전 매장 30% 할인</div><div class="cpn-disc">30%</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-red">오늘 만료</span></div><button class="dl-btn" data-action="download-cpn">다운로드</button></div>
+          <div class="cpn-card"><div class="cpn-brand">롯데마트</div><div class="cpn-title">신선식품 25% 할인</div><div class="cpn-disc">25%</div><div class="cpn-footer"><span class="cpn-cond">2만원 이상</span><span class="cpn-exp exp-org">D-5</span></div><button class="dl-btn" data-action="download-cpn">다운로드</button></div>
+          <div class="cpn-card"><div class="cpn-brand">스타벅스</div><div class="cpn-title">음료 1+1 증정</div><div class="cpn-disc">1+1</div><div class="cpn-footer"><span class="cpn-cond">사이즈 무관</span><span class="cpn-exp exp-gry">D-7</span></div><button class="dl-btn downloaded">다운로드 완료</button></div>
+          <div class="cpn-card"><div class="cpn-brand">GS25</div><div class="cpn-title">도시락 20% 할인</div><div class="cpn-disc">20%</div><div class="cpn-footer"><span class="cpn-cond">오전 11시 이후</span><span class="cpn-exp exp-gry">D-14</span></div><button class="dl-btn" data-action="download-cpn">다운로드</button></div>
+          <div class="cpn-card"><div class="cpn-brand">쿠팡</div><div class="cpn-title">전 카테고리 10% 할인</div><div class="cpn-disc">10%</div><div class="cpn-footer"><span class="cpn-cond">5만원 이상</span><span class="cpn-exp exp-gry">D-21</span></div><button class="dl-btn" data-action="download-cpn">다운로드</button></div>
+          <div class="cpn-card"><div class="cpn-brand">올리브영</div><div class="cpn-title">전 상품 5,000원 할인</div><div class="cpn-disc">5,000원</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-gry">D-30</span></div><button class="dl-btn" data-action="download-cpn">다운로드</button></div>
+        </div>
+      </div>
+
+      <!-- ── WALLET ── -->
+      <div id="p-wallet" class="app-page">
+        <div class="page-title">내 쿠폰함</div>
+        <div class="page-sub">총 47개의 쿠폰이 있어요</div>
+        <div class="wallet-layout">
+          <div class="filter-panel">
+            <div class="filter-title">카테고리 정렬</div>
+            <div class="filter-section">
+              <div class="filter-section-lbl">카테고리</div>
+              <div class="filter-btn on" data-action="wlt-filter" data-val="all">전체 <span class="filter-count">47</span></div>
+              <div class="filter-btn" data-action="wlt-filter" data-val="mart">마트 <span class="filter-count">12</span></div>
+              <div class="filter-btn" data-action="wlt-filter" data-val="convenience">편의점 <span class="filter-count">8</span></div>
+              <div class="filter-btn" data-action="wlt-filter" data-val="delivery">배달 <span class="filter-count">10</span></div>
+              <div class="filter-btn" data-action="wlt-filter" data-val="cafe">카페 <span class="filter-count">6</span></div>
+              <div class="filter-btn" data-action="wlt-filter" data-val="shopping">쇼핑 <span class="filter-count">11</span></div>
+            </div>
+            <div class="filter-divider"></div>
+            <div class="filter-section">
+              <div class="filter-section-lbl">정렬 기준</div>
+              <div class="filter-btn on" data-action="wlt-sort" data-val="expire">유효기간 임박순</div>
+              <div class="filter-btn" data-action="wlt-sort" data-val="discount">할인율 높은 순</div>
+              <div class="filter-btn" data-action="wlt-sort" data-val="downloaded">다운로드한 쿠폰 우선</div>
+              <div class="filter-btn" data-action="wlt-sort" data-val="brand">자주 사용하는 브랜드순</div>
+            </div>
+          </div>
+          <div class="wallet-content">
+            <div class="wallet-tabs">
+              <div class="wlt-tab on" data-action="wlt-tab">전체</div>
+              <div class="wlt-tab" data-action="wlt-tab">사용 가능</div>
+              <div class="wlt-tab" data-action="wlt-tab">다운로드 완료</div>
+              <div class="wlt-tab" data-action="wlt-tab">사용 완료</div>
+            </div>
+            <div id="walletGrid" class="wallet-grid">
+              <div class="cpn-card" data-action="go-detail" data-id="emart" data-cat="mart" data-disc="30" data-exp="0"><div class="cpn-brand">이마트 · 마트</div><div class="cpn-title">전 매장 30% 할인</div><div class="cpn-disc">30%</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-red">오늘 만료</span></div></div>
+              <div class="cpn-card" data-action="go-detail" data-id="baemin" data-cat="delivery" data-disc="10" data-exp="3"><div class="cpn-brand">배달의민족 · 배달</div><div class="cpn-title">배달 주문 3,000원 할인</div><div class="cpn-disc">3,000원</div><div class="cpn-footer"><span class="cpn-cond">1.5만원 이상</span><span class="cpn-exp exp-org">D-3</span></div></div>
+              <div class="cpn-card" data-action="go-detail" data-id="starbucks" data-cat="cafe" data-disc="5" data-exp="7"><div class="cpn-brand">스타벅스 · 카페</div><div class="cpn-title">음료 1+1 무료 증정</div><div class="cpn-disc">1+1</div><div class="cpn-footer"><span class="cpn-cond">사이즈 무관</span><span class="cpn-exp exp-gry">D-7</span></div></div>
+              <div class="cpn-card" data-cat="convenience" data-disc="20" data-exp="14"><div class="cpn-brand">GS25 · 편의점</div><div class="cpn-title">도시락 20% 할인</div><div class="cpn-disc">20%</div><div class="cpn-footer"><span class="cpn-cond">오전 11시 이후</span><span class="cpn-exp exp-gry">D-14</span></div></div>
+              <div class="cpn-card" data-cat="shopping" data-disc="10" data-exp="21"><div class="cpn-brand">쿠팡 · 쇼핑</div><div class="cpn-title">전 카테고리 10% 할인</div><div class="cpn-disc">10%</div><div class="cpn-footer"><span class="cpn-cond">5만원 이상</span><span class="cpn-exp exp-gry">D-21</span></div></div>
+              <div class="cpn-card" data-cat="shopping" data-disc="8" data-exp="30"><div class="cpn-brand">올리브영 · 쇼핑</div><div class="cpn-title">전 상품 5,000원 할인</div><div class="cpn-disc">5,000원</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-gry">D-30</span></div></div>
+              <div class="cpn-card" data-cat="mart" data-disc="25" data-exp="5"><div class="cpn-brand">롯데마트 · 마트</div><div class="cpn-title">신선식품 25% 할인</div><div class="cpn-disc">25%</div><div class="cpn-footer"><span class="cpn-cond">2만원 이상</span><span class="cpn-exp exp-org">D-5</span></div></div>
+              <div class="cpn-card" data-cat="cafe" data-disc="15" data-exp="10"><div class="cpn-brand">투썸플레이스 · 카페</div><div class="cpn-title">케이크 15% 할인</div><div class="cpn-disc">15%</div><div class="cpn-footer"><span class="cpn-cond">조각케이크 제외</span><span class="cpn-exp exp-gry">D-10</span></div></div>
+              <div class="cpn-card" data-cat="delivery" data-disc="12" data-exp="2"><div class="cpn-brand">요기요 · 배달</div><div class="cpn-title">첫 주문 12% 할인</div><div class="cpn-disc">12%</div><div class="cpn-footer"><span class="cpn-cond">1만원 이상</span><span class="cpn-exp exp-org">D-2</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DETAIL ── -->
+      <div id="p-detail" class="app-page">
+        <div class="breadcrumb">
+          <span class="bc-link" data-action="go-home">홈</span>
+          <span class="bc-sep">›</span>
+          <span class="bc-cur">쿠폰 상세</span>
+        </div>
+        <div class="det-layout">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div class="det-hero-card">
+              <div class="det-hero-brand">이마트</div>
+              <div class="det-hero-disc">30%</div>
+              <div class="det-hero-cond">3만원 이상 구매 시 적용</div>
+              <div class="det-hero-badge">오늘 자정 만료</div>
+            </div>
+            <div class="det-info-card">
+              <div class="det-urgency">
+                <div class="det-urg-txt">오늘 자정 만료 — 지금 바로 사용하세요</div>
+              </div>
+              <div class="det-sec">
+                <h3>쿠폰 정보</h3>
+                <div class="det-row"><span class="det-lbl">할인 혜택</span><span class="det-val">30% 할인 (최대 15,000원)</span></div>
+                <div class="det-row"><span class="det-lbl">최소 구매</span><span class="det-val">30,000원 이상</span></div>
+                <div class="det-row"><span class="det-lbl">사용 가능 매장</span><span class="det-val">이마트 전국 매장</span></div>
+                <div class="det-row"><span class="det-lbl">유효기간</span><span class="det-val" style="color:var(--danger)">2026.04.12 (오늘 만료)</span></div>
+                <div class="det-row"><span class="det-lbl">중복 사용</span><span class="det-val">불가</span></div>
+                <div class="det-row"><span class="det-lbl">제공</span><span class="det-val">KT 멤버십 혜택</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="det-action-card">
+            <div class="det-price-box">
+              <div class="det-price-lbl">할인 혜택</div>
+              <div class="det-price-val">최대 15,000원</div>
+            </div>
+            <button class="btn-primary" data-action="go-barcode" style="font-size:18px">바코드로 사용하기</button>
+            <button class="btn-accent" data-action="download-cpn" style="font-size:16px">다운로드하기</button>
+            <button class="btn-ghost">공유하기</button>
+            <div style="background:var(--primary-lt);border-radius:10px;padding:18px;font-size:14px;color:var(--gray-600);line-height:1.7;margin-top:4px">
+              <strong style="color:var(--primary)">추천 이유</strong><br>
+              자주 방문하는 이마트 + 오늘 만료 쿠폰을 놓치지 않도록 알려드렸어요
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── BARCODE ── -->
+      <div id="p-barcode" class="app-page">
+        <div class="breadcrumb">
+          <span class="bc-link" data-action="go-detail-back">쿠폰 상세</span>
+          <span class="bc-sep">›</span>
+          <span class="bc-cur">바코드 사용</span>
+        </div>
+        <div class="brc-center">
+          <div class="brc-card">
+            <h3>이마트 30% 할인</h3>
+            <p>계산대에서 바코드를 직원에게 보여주세요</p>
+            <svg class="brc-svg" id="brcSvg" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div class="brc-num">1234 5678 9012 3456</div>
+          </div>
+          <div class="brc-note">
+            <span>이 창을 닫지 마세요 — 결제가 완료될 때까지 바코드를 유지해 주세요</span>
+          </div>
+          <button class="btn-outline" data-action="go-detail-back">쿠폰 상세로 돌아가기</button>
+        </div>
+      </div>
+
+      <!-- ── MYPAGE ── -->
+      <div id="p-mypage" class="app-page">
+        <div class="page-title">마이페이지</div>
+        <div class="page-sub">김미경님의 계정과 다운로드한 쿠폰을 확인하세요</div>
+        <div class="mypage-layout">
+          <div>
+            <div class="user-card">
+              <div class="user-name">김미경님</div>
+              <div class="user-info">010-1234-5678</div>
+              <div class="user-stats">
+                <div class="u-stat"><div class="u-stat-val">47</div><div class="u-stat-lbl">보유 쿠폰</div></div>
+                <div class="u-stat"><div class="u-stat-val">23,500원</div><div class="u-stat-lbl">이번 달 절약</div></div>
+              </div>
+            </div>
+            <div class="settings-card">
+              <div class="panel-title">계정 설정</div>
+              <div class="settings-row"><span class="s-lbl">할인율 기준</span><span class="s-val">20% 이상</span></div>
+              <div class="settings-row"><span class="s-lbl">알림 방식</span><span class="s-val">앱 + 문자</span></div>
+              <div class="settings-row"><span class="s-lbl">연동 서비스</span><span class="s-val">4개</span></div>
+              <div class="settings-row"><span class="s-lbl">선호 카테고리</span><span class="s-val">마트, 배달</span></div>
+              <button class="btn-primary" style="margin-top:16px;font-size:15px">설정 변경</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:20px;font-weight:900;color:var(--gray-900);margin-bottom:6px">다운로드한 쿠폰</div>
+            <div style="font-size:15px;color:var(--gray-500);margin-bottom:20px">총 3개의 쿠폰을 다운로드했어요</div>
+            <div class="dl-cpn-grid">
+              <div class="dl-cpn-card">
+                <div class="dc-brand">배달의민족 · 배달</div>
+                <div class="dc-title">배달 주문 3,000원 할인</div>
+                <div class="dc-disc">3,000원</div>
+                <div class="dc-footer"><span>1.5만원 이상</span><span class="exp-org" style="font-weight:800">D-3</span></div>
+                <div class="use-btn" data-action="go-barcode">바코드로 사용</div>
+              </div>
+              <div class="dl-cpn-card">
+                <div class="dc-brand">스타벅스 · 카페</div>
+                <div class="dc-title">음료 1+1 무료 증정</div>
+                <div class="dc-disc">1+1</div>
+                <div class="dc-footer"><span>사이즈 무관</span><span class="exp-gry" style="font-weight:700">D-7</span></div>
+                <div class="use-btn" data-action="go-barcode">바코드로 사용</div>
+              </div>
+              <div class="dl-cpn-card">
+                <div class="dc-brand">이마트 · 마트</div>
+                <div class="dc-title">전 매장 30% 할인</div>
+                <div class="dc-disc">30%</div>
+                <div class="dc-footer"><span>3만원 이상</span><span class="exp-red" style="font-weight:800">오늘 만료</span></div>
+                <div class="use-btn" data-action="go-barcode">바코드로 사용</div>
+              </div>
+              <div class="dl-cpn-card" style="border:2px dashed var(--gray-300);background:var(--gray-100);align-items:center;justify-content:center;min-height:180px;cursor:pointer" data-action="nav-download">
+                <div style="font-size:16px;font-weight:700;color:var(--gray-500);text-align:center">+ 더 많은 쿠폰<br>다운로드하기</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+/* ============================================================ STATE ============================================================ */
+const S = { cur:'splash', hist:[], appPage:'home', carIdx:0 };
+const downloaded = new Set(['baemin','starbucks']);
+
+/* ============================================================ NAVIGATION ============================================================ */
+function go(id, back) {
+  const appPages = {home:1,download:1,wallet:1,detail:1,barcode:1,mypage:1};
+  if (appPages[id]) {
+    document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+    const shell = document.getElementById('app-shell');
+    shell.classList.add('active'); shell.style.display='flex';
+    showAppPage(id); updateSidebar(id); return;
+  }
+  if (!back) S.hist.push(S.cur);
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+  const next = document.getElementById('s-'+id);
+  if (next) { next.style.display='block'; next.classList.add('active'); }
+  S.cur = id;
+  if (id==='loading') startLoading();
+  if (id==='loading-result') countUp();
+}
+function goBack() { if (S.hist.length) go(S.hist.pop(), true); }
+function showAppPage(id) {
+  S.appPage = id;
+  document.querySelectorAll('.app-page').forEach(p=>p.style.display='none');
+  const page = document.getElementById('p-'+id);
+  if (page) { page.style.display='block'; page.classList.add('fade-in'); }
+  if (id==='barcode') drawBRC();
+  if (id==='home') initCarousel();
+}
+function updateSidebar(id) {
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));
+  const map={home:0,download:1,wallet:2,mypage:3};
+  const items=document.querySelectorAll('.sb-item');
+  if (map[id]!==undefined&&items[map[id]]) items[map[id]].classList.add('on');
+}
+
+/* ============================================================ LOADING ============================================================ */
+function startLoading() {
+  const steps=[{el:'ldStep1',c:'ldCirc1'},{el:'ldStep2',c:'ldCirc2'},{el:'ldStep3',c:'ldCirc3'}];
+  steps.forEach(s=>{ const el=document.getElementById(s.el),c=document.getElementById(s.c); el.classList.remove('on','done'); c.className='step-circ'; c.textContent=''; });
+  [[100,1200],[1400,2600],[2800,3900]].forEach(([on,done],i)=>{
+    setTimeout(()=>{ document.getElementById(steps[i].el).classList.add('on'); document.getElementById(steps[i].c).className='step-circ spinning'; },on);
+    setTimeout(()=>{ document.getElementById(steps[i].el).classList.add('done'); const c=document.getElementById(steps[i].c); c.className='step-circ done-circ'; c.textContent='✓'; },done);
+  });
+  setTimeout(()=>go('loading-result'),4500);
+}
+function countUp() {
+  const el=document.getElementById('lrCount'); if(!el)return;
+  let n=0; const t=setInterval(()=>{ el.textContent=++n; if(n>=47)clearInterval(t); },22);
+}
+
+/* ============================================================ CAROUSEL ============================================================ */
+function initCarousel() {
+  const track=document.getElementById('carouselTrack'); if(!track)return;
+  const slides=track.querySelectorAll('.carousel-slide');
+  const dotsEl=document.getElementById('cDots'); if(!dotsEl)return;
+  dotsEl.innerHTML='';
+  slides.forEach((_,i)=>{
+    const d=document.createElement('div'); d.className='c-dot'+(i===0?' on':'');
+    d.onclick=()=>goCar(i); dotsEl.appendChild(d);
+  });
+  goCar(0);
+}
+function goCar(i) {
+  const track=document.getElementById('carouselTrack'); if(!track)return;
+  const slides=track.querySelectorAll('.carousel-slide');
+  const visCount=3; const max=Math.max(0,slides.length-visCount);
+  S.carIdx=Math.min(Math.max(i,0),max);
+  const slideW=track.querySelector('.carousel-slide')?.offsetWidth||0;
+  const gap=20;
+  track.style.transform=`translateX(-${S.carIdx*(slideW+gap)}px)`;
+  document.querySelectorAll('.c-dot').forEach((d,j)=>d.classList.toggle('on',j===S.carIdx));
+  document.getElementById('cPrev').disabled=S.carIdx===0;
+  document.getElementById('cNext').disabled=S.carIdx>=max;
+}
+function moveCar(dir) { goCar(S.carIdx+dir); }
+
+/* ============================================================ WALLET FILTER ============================================================ */
+function applyWalletFilter(cat, sort) {
+  const grid=document.getElementById('walletGrid'); if(!grid)return;
+  const cards=[...grid.querySelectorAll('.cpn-card')];
+  cards.forEach(c=>{
+    const show=cat==='all'||c.dataset.cat===cat;
+    c.style.display=show?'':'none';
+  });
+  const visible=cards.filter(c=>c.style.display!=='none');
+  if (sort==='discount') visible.sort((a,b)=>parseInt(b.dataset.disc||0)-parseInt(a.dataset.disc||0));
+  else if (sort==='expire') visible.sort((a,b)=>parseInt(a.dataset.exp||999)-parseInt(b.dataset.exp||999));
+  else if (sort==='downloaded') visible.sort((a,b)=>(downloaded.has(b.dataset.id)?1:0)-(downloaded.has(a.dataset.id)?1:0));
+  visible.forEach(c=>grid.appendChild(c));
+}
+
+let wCat='all', wSort='expire';
+
+/* ============================================================ OTP ============================================================ */
+let timerID=null;
+function startOTPTimer() {
+  let s=59; const el=document.getElementById('otpTimer'); clearInterval(timerID);
+  timerID=setInterval(()=>{
+    s--; if(el) el.textContent=`재발송 가능: ${s}초 후`;
+    if(s<=0){ clearInterval(timerID); if(el){el.innerHTML=''; const b=document.createElement('span'); b.className='otp-resend'; b.textContent='인증번호 재발송'; b.onclick=startOTPTimer; el.appendChild(b);} }
+  },1000);
+}
+function checkOTP(inp) {
+  if(inp.value.length===6) setTimeout(()=>{ /* OTP auto-check */ },500);
+}
+function fmtPhone(inp) {
+  let v=inp.value.replace(/\D/g,'').slice(0,11);
+  if(v.length>7) v=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);
+  else if(v.length>3) v=v.slice(0,3)+'-'+v.slice(3);
+  inp.value=v;
+}
+
+/* ============================================================ BARCODE ============================================================ */
+function drawBRC() {
+  const svg=document.getElementById('brcSvg'); if(!svg)return; svg.innerHTML='';
+  const pat=[1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,1,0,0];
+  const bw=300/pat.length;
+  pat.forEach((on,i)=>{ if(!on)return; const r=document.createElementNS('http://www.w3.org/2000/svg','rect'); r.setAttribute('x',i*bw);r.setAttribute('y',0);r.setAttribute('width',bw*.7);r.setAttribute('height',100);r.setAttribute('fill','#111111'); svg.appendChild(r); });
+}
+
+/* ============================================================ DOWNLOAD BTN ============================================================ */
+function handleDownload(btn) {
+  btn.textContent='다운로드 완료'; btn.classList.add('downloaded'); btn.removeAttribute('data-action');
+}
+
+/* ============================================================ EVENT DELEGATION ============================================================ */
+const ACT = {
+  'go-phone':        ()=>go('phone'),
+  'go-signup':       ()=>go('signup'),
+  'send-sms':        ()=>{ document.getElementById('otpPanel').classList.add('vis'); document.getElementById('otpField').focus(); startOTPTimer(); },
+  'go-coupon-intro': ()=>go('coupon-intro'),
+  'go-loading':      ()=>go('loading'),
+  'go-integration':  ()=>go('integration'),
+  'go-category':     ()=>go('category'),
+  'go-brand':        ()=>go('brand'),
+  'go-discount':     ()=>go('discount'),
+  'go-notification': ()=>go('notification'),
+  'go-wallet-setup': ()=>go('wallet-setup'),
+  'go-login':        ()=>go('login'),
+  'go-home':         ()=>go('home'),
+  'go-detail':       ()=>go('detail'),
+  'go-barcode':      ()=>go('barcode'),
+  'go-detail-back':  ()=>showAppPage('detail'),
+  'go-back':         ()=>goBack(),
+  'skip-to-login':   ()=>go('login'),
+  'nav-home':        ()=>{ showAppPage('home'); updateSidebar('home'); },
+  'nav-download':    ()=>{ showAppPage('download'); updateSidebar('download'); },
+  'nav-wallet':      ()=>{ showAppPage('wallet'); updateSidebar('wallet'); applyWalletFilter(wCat,wSort); },
+  'nav-mypage':      ()=>{ showAppPage('mypage'); updateSidebar('mypage'); },
+  'toggle-cat':      (e)=>e.target.closest('.cat-chip').classList.toggle('sel'),
+  'toggle-brand':    (e)=>e.target.closest('.brand-chip').classList.toggle('sel'),
+  'toggle-svc':      (e)=>{ const btn=e.target.closest('.conn-btn'); btn.classList.toggle('done'); btn.textContent=btn.classList.contains('done')?'완료':'연동하기'; },
+  'sel-discount':    (e)=>{ document.getElementById('discOpts').querySelectorAll('.opt-card').forEach(c=>c.classList.remove('sel')); e.target.closest('.opt-card').classList.add('sel'); },
+  'sel-notif':       (e)=>{ document.getElementById('notifOpts').querySelectorAll('.opt-card').forEach(c=>c.classList.remove('sel')); e.target.closest('.opt-card').classList.add('sel'); },
+  'download-cpn':    (e)=>handleDownload(e.target.closest('[data-action]')),
+  'flt-home':        (e)=>{ document.querySelectorAll('[data-action="flt-home"]').forEach(b=>b.classList.remove('on')); e.target.closest('[data-action]').classList.add('on'); },
+  'flt-dl':          (e)=>{ document.querySelectorAll('[data-action="flt-dl"]').forEach(b=>b.classList.remove('on')); e.target.closest('[data-action]').classList.add('on'); },
+  'wlt-filter':      (e)=>{ document.querySelectorAll('[data-action="wlt-filter"]').forEach(b=>b.classList.remove('on')); const el=e.target.closest('[data-action]'); el.classList.add('on'); wCat=el.dataset.val; applyWalletFilter(wCat,wSort); },
+  'wlt-sort':        (e)=>{ document.querySelectorAll('[data-action="wlt-sort"]').forEach(b=>b.classList.remove('on')); const el=e.target.closest('[data-action]'); el.classList.add('on'); wSort=el.dataset.val; applyWalletFilter(wCat,wSort); },
+  'wlt-tab':         (e)=>{ document.querySelectorAll('.wlt-tab').forEach(t=>t.classList.remove('on')); e.target.closest('.wlt-tab').classList.add('on'); },
+};
+
+document.addEventListener('click', e=>{
+  const el=e.target.closest('[data-action]'); if(!el)return;
+  const a=el.dataset.action; if(ACT[a]) ACT[a](e);
+});
+
+/* ============================================================ INIT ============================================================ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const splash=document.getElementById('s-splash');
+  Object.assign(splash.style,{minHeight:'100vh',background:'var(--primary)',display:'flex',alignItems:'center',justifyContent:'center'});
+  setTimeout(()=>go('signup'),2500);
+  initCarousel();
+});
+window.addEventListener('resize',()=>{ if(S.appPage==='home') goCar(S.carIdx); });
+</script>
+</body>
+</html>

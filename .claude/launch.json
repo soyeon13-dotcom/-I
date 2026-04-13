@@ -1,0 +1,13 @@
+{
+  "servers": [
+    {
+      "name": "Static File Server",
+      "type": "static",
+      "command": "npx serve .",
+      "cwd": "C:\\Users\\SAMSUNG\\OneDrive\\ドキュメント\\淑明\\3-1\\사용자경험디자인I\\클로드",
+      "port": 3000,
+      "url": "http://localhost:3000",
+      "description": "Serves index.html via npx serve (no install required)"
+    }
+  ]
+}
