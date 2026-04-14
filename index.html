@@ -543,6 +543,84 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .brc-note span { font-size:15px; color:var(--secondary); font-weight:700; }
 
 /* ============================================================
+   POINTS HUB
+   ============================================================ */
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.skeleton { background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:10px; }
+
+.pts-layout { display:grid; grid-template-columns:300px 1fr; gap:28px; align-items:start; }
+
+/* 총 포인트 요약 */
+.pts-hero { background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%); border-radius:16px; padding:28px; color:white; margin-bottom:16px; }
+.pts-hero-lbl { font-size:14px; font-weight:700; opacity:.8; margin-bottom:8px; }
+.pts-total-row { display:flex; align-items:baseline; gap:4px; }
+.pts-total { font-size:38px; font-weight:900; line-height:1; transition:filter .3s; }
+.pts-unit  { font-size:18px; font-weight:700; opacity:.85; }
+.pts-sub   { font-size:13px; opacity:.7; margin-top:8px; }
+
+/* 대표 바코드 */
+.pts-brc-card { background:white; border-radius:14px; border:2px solid var(--gray-200); padding:24px; text-align:center; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.pts-brc-lbl  { font-size:13px; font-weight:700; color:var(--gray-500); margin-bottom:12px; text-transform:uppercase; letter-spacing:.05em; }
+.pts-brc-brand { font-size:16px; font-weight:800; color:var(--primary); margin-bottom:4px; }
+.pts-rep-num  { font-family:'Courier New',monospace; font-size:14px; letter-spacing:3px; color:var(--gray-700); margin-top:10px; }
+
+/* 카테고리 탭 */
+.cat-tabs   { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.cat-tab    { padding:10px 20px; border-radius:50px; border:2px solid var(--gray-200); font-size:15px; font-weight:700; cursor:pointer; color:var(--gray-700); background:white; transition:all .15s; }
+.cat-tab:hover { border-color:var(--primary); color:var(--primary); }
+.cat-tab.on { background:var(--primary); color:white; border-color:var(--primary); }
+
+/* 서비스 카드 그리드 */
+.pts-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.pts-svc-card {
+  display:flex; flex-direction:column; background:white;
+  border-radius:14px; border:2px solid var(--gray-200); padding:20px;
+  cursor:pointer; transition:all .18s;
+}
+.pts-svc-card:hover { border-color:var(--primary); box-shadow:0 4px 18px rgba(15,65,166,.13); transform:translateY(-2px); }
+.pts-card-top   { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; }
+.pts-brand      { font-size:20px; font-weight:900; color:var(--gray-900); }
+.pts-exp-badge  { font-size:12px; font-weight:800; padding:3px 8px; border-radius:50px; }
+.exp-urgent { background:#FDECEA; color:#C0392B; }
+.exp-warn   { background:#FEF3E2; color:#B8690A; }
+.exp-ok     { background:#E6F9EE; color:#1A7A45; }
+.pts-bal    { font-size:30px; font-weight:900; color:var(--primary); }
+.pts-bal-unit { font-size:15px; }
+.pts-desc   { font-size:13px; color:var(--gray-500); margin-top:4px; }
+.pts-status { display:inline-flex; align-items:center; padding:5px 12px; border-radius:50px; font-size:12px; font-weight:800; margin-top:10px; align-self:flex-start; }
+.sts-usable      { background:#E6F9EE; color:#1A7A45; }
+.sts-conditional { background:#FEF3E2; color:#B8690A; }
+.sts-unavailable { background:#FDECEA; color:#C0392B; }
+.sts-connect     { background:var(--gray-100); color:var(--gray-500); }
+
+/* 스켈레톤 카드 */
+.skel-card { height:140px; border-radius:14px; }
+.pts-grid-skel { display:none; grid-template-columns:1fr 1fr; gap:14px; }
+
+/* 서비스 상세 */
+.pts-det-layout { display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start; }
+.pts-det-hero { background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%); border-radius:16px; padding:32px; color:white; margin-bottom:20px; }
+.pts-det-brand { font-size:16px; font-weight:700; opacity:.8; margin-bottom:6px; }
+.pts-det-bal   { font-size:52px; font-weight:900; line-height:1.1; }
+.pts-det-unit  { font-size:22px; font-weight:700; opacity:.85; }
+.pts-det-info  { display:flex; gap:12px; margin-top:12px; }
+.pts-det-exp   { font-size:14px; padding:4px 12px; border-radius:50px; background:rgba(255,255,255,.2); font-weight:700; }
+.pts-det-sts   { font-size:14px; padding:4px 12px; border-radius:50px; background:rgba(255,255,255,.2); font-weight:700; }
+.pts-brc-zone  { background:white; border-radius:16px; border:2px solid var(--gray-200); padding:32px; text-align:center; box-shadow:0 2px 12px rgba(0,0,0,.05); }
+.pts-brc-zone-lbl { font-size:14px; font-weight:700; color:var(--gray-500); margin-bottom:16px; }
+.pts-det-guide { background:var(--primary-lt); border-radius:10px; padding:16px; font-size:14px; color:var(--primary); font-weight:600; margin-top:16px; line-height:1.5; }
+.btn-app { display:flex; align-items:center; justify-content:center; height:56px; border-radius:12px; background:var(--secondary); color:white; font-size:17px; font-weight:800; cursor:pointer; margin:16px 0; border:none; width:100%; transition:background .15s; }
+.btn-app:hover { background:var(--primary); }
+.pts-det-cta { display:flex; flex-direction:column; gap:10px; margin-top:20px; }
+.pts-det-cta2 { display:flex; align-items:center; justify-content:center; height:48px; border-radius:10px; background:white; border:2px solid var(--gray-300); color:var(--gray-700); font-size:15px; font-weight:700; cursor:pointer; transition:all .15s; }
+.pts-det-cta2:hover { border-color:var(--primary); color:var(--primary); }
+
+/* QR 목 디자인 */
+.qr-mock { width:160px; height:160px; margin:0 auto; background:#111; border-radius:8px; display:grid; grid-template-columns:repeat(9,1fr); gap:2px; padding:14px; }
+.qr-c    { border-radius:1px; background:white; }
+.qr-b    { background:transparent; }
+
+/* ============================================================
    MYPAGE
    ============================================================ */
 /* MYPAGE NEW LAYOUT */
@@ -1118,6 +1196,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
       <div class="sb-item on" data-action="nav-home">홈</div>
       <div class="sb-item" data-action="nav-download">쿠폰 다운로드<span class="sb-badge">12</span></div>
       <div class="sb-item" data-action="nav-wallet">내 쿠폰함<span class="sb-badge">47</span></div>
+      <div class="sb-item" data-action="nav-points">바코드 · 포인트<span class="sb-badge">6</span></div>
       <div class="sb-section-lbl">계정</div>
       <div class="sb-item" data-action="nav-mypage">마이페이지</div>
       <div class="sb-item" data-action="go-login" style="color:var(--gray-400);font-size:14px">로그아웃</div>
@@ -1561,6 +1640,189 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
         </div>
       </div>
 
+      <!-- ── POINTS HUB ── -->
+      <div id="p-points-hub" class="app-page">
+        <div class="page-title">바코드 · 포인트</div>
+        <div class="page-sub">여러 서비스의 포인트를 한눈에 확인하고 바로 사용하세요</div>
+        <div class="pts-layout">
+
+          <!-- 좌컬럼: 총 포인트 + 대표 바코드 -->
+          <div>
+            <div class="pts-hero" id="ptsHero">
+              <div class="pts-hero-lbl">총 보유 포인트</div>
+              <div class="pts-total-row">
+                <div class="pts-total" id="ptsTotalNum">0</div>
+                <div class="pts-unit">원</div>
+              </div>
+              <div class="pts-sub">6개 서비스 통합 · 즉시 사용 가능</div>
+            </div>
+            <div class="pts-brc-card">
+              <div class="pts-brc-lbl">대표 바코드</div>
+              <div class="pts-brc-brand">GS25 멤버십</div>
+              <svg id="ptsRepBrc" viewBox="0 0 260 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:260px;height:80px"></svg>
+              <div class="pts-rep-num">9876 5432 1098 7654</div>
+            </div>
+            <div class="panel-card" style="font-size:14px;color:var(--gray-600)">
+              <div class="panel-title">포인트 현황 요약</div>
+              <div class="settings-row"><span class="s-lbl">문화생활</span><span class="s-val">20,500원</span></div>
+              <div class="settings-row"><span class="s-lbl">식품</span><span class="s-val">4,700원</span></div>
+              <div class="settings-row"><span class="s-lbl">패션</span><span class="s-val">5,000원</span></div>
+              <div class="settings-row"><span class="s-lbl">가전</span><span class="s-val">7,800원</span></div>
+            </div>
+          </div>
+
+          <!-- 우컬럼: 카테고리 탭 + 서비스 카드 -->
+          <div>
+            <div class="cat-tabs">
+              <div class="cat-tab on" data-action="pts-cat" data-cat="all">전체</div>
+              <div class="cat-tab" data-action="pts-cat" data-cat="문화생활">문화생활</div>
+              <div class="cat-tab" data-action="pts-cat" data-cat="식품">식품</div>
+              <div class="cat-tab" data-action="pts-cat" data-cat="패션">패션</div>
+              <div class="cat-tab" data-action="pts-cat" data-cat="가전">가전</div>
+            </div>
+
+            <!-- 스켈레톤 로딩 -->
+            <div class="pts-grid" id="ptsSkeletonGrid">
+              <div class="skel-card skeleton"></div>
+              <div class="skel-card skeleton"></div>
+              <div class="skel-card skeleton"></div>
+              <div class="skel-card skeleton"></div>
+              <div class="skel-card skeleton"></div>
+              <div class="skel-card skeleton"></div>
+            </div>
+
+            <!-- 서비스 카드 그리드 (로딩 후 표시) -->
+            <div class="pts-grid" id="ptsSvcGrid" style="display:none">
+
+              <!-- CGV -->
+              <div class="pts-svc-card" data-action="pts-svc" data-svc="cgv" data-cat="문화생활">
+                <div class="pts-card-top">
+                  <div class="pts-brand">CGV</div>
+                  <div class="pts-exp-badge exp-urgent">D-3</div>
+                </div>
+                <div><span class="pts-bal">12,000</span><span class="pts-bal-unit">원</span></div>
+                <div class="pts-desc">영화 예매 시 포인트 차감</div>
+                <div class="pts-status sts-usable">즉시 사용 가능</div>
+              </div>
+
+              <!-- 메가박스 -->
+              <div class="pts-svc-card" data-action="pts-svc" data-svc="megabox" data-cat="문화생활">
+                <div class="pts-card-top">
+                  <div class="pts-brand">메가박스</div>
+                  <div class="pts-exp-badge exp-ok">D-15</div>
+                </div>
+                <div><span class="pts-bal">8,500</span><span class="pts-bal-unit">원</span></div>
+                <div class="pts-desc">영화 예매 시 포인트 차감</div>
+                <div class="pts-status sts-usable">즉시 사용 가능</div>
+              </div>
+
+              <!-- GS25 -->
+              <div class="pts-svc-card" data-action="pts-svc" data-svc="gs25" data-cat="식품">
+                <div class="pts-card-top">
+                  <div class="pts-brand">GS25</div>
+                  <div class="pts-exp-badge exp-ok">D-30</div>
+                </div>
+                <div><span class="pts-bal">3,200</span><span class="pts-bal-unit">원</span></div>
+                <div class="pts-desc">결제 시 바로 차감</div>
+                <div class="pts-status sts-usable">즉시 사용 가능</div>
+              </div>
+
+              <!-- CU -->
+              <div class="pts-svc-card" data-action="pts-svc" data-svc="cu" data-cat="식품">
+                <div class="pts-card-top">
+                  <div class="pts-brand">CU</div>
+                  <div class="pts-exp-badge exp-warn">D-7</div>
+                </div>
+                <div><span class="pts-bal">1,500</span><span class="pts-bal-unit">원</span></div>
+                <div class="pts-desc">5,000원 이상 구매 시 사용</div>
+                <div class="pts-status sts-conditional">조건부 사용</div>
+              </div>
+
+              <!-- 에이블리 -->
+              <div class="pts-svc-card" data-action="pts-svc" data-svc="ably" data-cat="패션">
+                <div class="pts-card-top">
+                  <div class="pts-brand">에이블리</div>
+                  <div class="pts-exp-badge exp-ok">D-20</div>
+                </div>
+                <div><span class="pts-bal">5,000</span><span class="pts-bal-unit">원</span></div>
+                <div class="pts-desc">에이블리 앱에서 사용 가능</div>
+                <div class="pts-status sts-usable">즉시 사용 가능</div>
+              </div>
+
+              <!-- 쿠팡 -->
+              <div class="pts-svc-card" data-action="pts-svc" data-svc="coupang" data-cat="가전">
+                <div class="pts-card-top">
+                  <div class="pts-brand">쿠팡</div>
+                  <div class="pts-exp-badge exp-ok">D-45</div>
+                </div>
+                <div><span class="pts-bal">7,800</span><span class="pts-bal-unit">원</span></div>
+                <div class="pts-desc">쿠팡 앱에서 사용 가능</div>
+                <div class="pts-status sts-usable">즉시 사용 가능</div>
+              </div>
+
+            </div><!-- /ptsSvcGrid -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ── POINTS SERVICE DETAIL ── -->
+      <div id="p-points-service" class="app-page">
+        <div class="breadcrumb">
+          <span class="bc-link" data-action="pts-back">바코드 · 포인트</span>
+          <span class="bc-sep">›</span>
+          <span class="bc-cur" id="ptsDet_brand_bc">서비스 상세</span>
+        </div>
+        <div class="pts-det-layout">
+          <!-- 좌: 포인트 정보 -->
+          <div>
+            <div class="pts-det-hero">
+              <div class="pts-det-brand" id="ptsDet_brand">CGV</div>
+              <div style="display:flex;align-items:baseline;gap:4px">
+                <div class="pts-det-bal" id="ptsDet_bal">12,000</div>
+                <div class="pts-det-unit">원</div>
+              </div>
+              <div class="pts-det-info">
+                <div class="pts-det-exp" id="ptsDet_exp">D-3</div>
+                <div class="pts-det-sts" id="ptsDet_sts">즉시 사용 가능</div>
+              </div>
+            </div>
+            <div class="pts-det-guide" id="ptsDet_guide">영화 예매 시 포인트 차감</div>
+            <div class="pts-det-cta" id="ptsDet_cta">
+              <button class="btn-primary" style="font-size:17px">결제 시 사용하기</button>
+              <button class="pts-det-cta2">직원에게 보여주기</button>
+            </div>
+          </div>
+
+          <!-- 우: 바코드 / 앱 이동 -->
+          <div>
+            <div class="pts-brc-zone">
+              <div class="pts-brc-zone-lbl" id="ptsDet_brcLbl">바코드 스캔</div>
+
+              <!-- 바코드형 (static) -->
+              <div id="ptsDet_brcStatic">
+                <svg id="ptsDetBrcSvg" viewBox="0 0 260 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:300px;height:90px"></svg>
+                <div class="pts-rep-num" id="ptsDet_num">9876 5432 1098</div>
+              </div>
+
+              <!-- QR형 (qr) -->
+              <div id="ptsDet_brcQr" style="display:none">
+                <div class="qr-mock" id="ptsQrGrid"></div>
+                <div style="font-size:13px;color:var(--gray-400);margin-top:8px">QR 코드를 스캔해주세요</div>
+              </div>
+
+              <!-- 앱 이동형 (none) -->
+              <div id="ptsDet_brcNone" style="display:none">
+                <div style="font-size:40px;margin:16px 0">📲</div>
+                <div style="font-size:16px;font-weight:700;color:var(--gray-700);margin-bottom:4px">앱에서만 사용 가능해요</div>
+                <div style="font-size:14px;color:var(--gray-400)">공식 앱을 통해 포인트를 사용하세요</div>
+                <button class="btn-app" id="ptsDet_appBtn">앱에서 사용하기</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ── CONNECT: 방식 선택 ── -->
       <div id="p-connect" class="app-page">
         <div class="connect-body">
@@ -1744,11 +2006,20 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 <script>
 /* ============================================================ STATE ============================================================ */
 const S = { cur:'splash', hist:[], appPage:'home', carIdx:0, connectMethod:'phone', connectFrom:'easy', authTimer:null };
+
+const POINTS_DATA = [
+  { id:'cgv',     name:'CGV',    cat:'문화생활', bal:12000, status:'usable',      exp:'D-3',  brc:'qr',     desc:'영화 예매 시 포인트 차감', num:'1234 5678 0001' },
+  { id:'megabox', name:'메가박스', cat:'문화생활', bal:8500, status:'usable',      exp:'D-15', brc:'qr',     desc:'영화 예매 시 포인트 차감', num:'2345 6789 0002' },
+  { id:'gs25',    name:'GS25',   cat:'식품',    bal:3200,  status:'usable',      exp:'D-30', brc:'static', desc:'결제 시 바로 차감',        num:'9876 5432 1098' },
+  { id:'cu',      name:'CU',     cat:'식품',    bal:1500,  status:'conditional', exp:'D-7',  brc:'static', desc:'5,000원 이상 구매 시 사용', num:'3456 7890 0003' },
+  { id:'ably',    name:'에이블리', cat:'패션',    bal:5000,  status:'usable',      exp:'D-20', brc:'none',   desc:'에이블리 앱에서 사용 가능', num:'' },
+  { id:'coupang', name:'쿠팡',    cat:'가전',    bal:7800,  status:'usable',      exp:'D-45', brc:'none',   desc:'쿠팡 앱에서 사용 가능',    num:'' },
+];
 const downloaded = new Set(['baemin','starbucks']);
 
 /* ============================================================ NAVIGATION ============================================================ */
 function go(id, back) {
-  const appPages = {home:1,download:1,wallet:1,detail:1,barcode:1,mypage:1,'connect':1,'connect-easy':1,'connect-manual':1,'connect-manual-form':1,'connect-auth':1,'connect-success':1,'connect-fail':1};
+  const appPages = {home:1,download:1,wallet:1,detail:1,barcode:1,mypage:1,'points-hub':1,'points-service':1,'connect':1,'connect-easy':1,'connect-manual':1,'connect-manual-form':1,'connect-auth':1,'connect-success':1,'connect-fail':1};
   if (appPages[id]) {
     document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
     const shell = document.getElementById('app-shell');
@@ -1771,10 +2042,11 @@ function showAppPage(id) {
   if (page) { page.style.display='block'; page.classList.add('fade-in'); }
   if (id==='barcode') drawBRC();
   if (id==='home') initCarousel();
+  if (id==='points-hub') { initPointsHub(); drawRepBRC(); }
 }
 function updateSidebar(id) {
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));
-  const map={home:0,download:1,wallet:2,mypage:3};
+  const map={home:0,download:1,wallet:2,'points-hub':3,mypage:4};
   const items=document.querySelectorAll('.sb-item');
   if (map[id]!==undefined&&items[map[id]]) items[map[id]].classList.add('on');
 }
@@ -1897,6 +2169,10 @@ const ACT = {
   'nav-mypage-info':     ()=>{ showMypageSub('info'); highlightMypageMenu('nav-mypage-info'); },
   'save-noti':           ()=>showToast('설정이 안전하게 변경되었습니다'),
   'save-info':           ()=>showToast('설정이 안전하게 변경되었습니다'),
+  'nav-points':          ()=>{ showAppPage('points-hub'); updateSidebar('points-hub'); initPointsHub(); },
+  'pts-cat':             (e)=>{ const el=e.target.closest('[data-cat]'); if(!el)return; document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('on')); el.classList.add('on'); filterPtsServices(el.dataset.cat); },
+  'pts-svc':             (e)=>{ const id=e.target.closest('[data-svc]')?.dataset.svc; if(id) showServiceDetail(id); },
+  'pts-back':            ()=>{ showAppPage('points-hub'); updateSidebar('points-hub'); },
   'nav-connect':         ()=>{ showAppPage('connect'); updateSidebar(''); },
   'nav-connect-easy':    ()=>showAppPage('connect-easy'),
   'nav-connect-manual':  ()=>showAppPage('connect-manual'),
@@ -1930,6 +2206,139 @@ document.addEventListener('DOMContentLoaded', ()=>{
   initCarousel();
 });
 window.addEventListener('resize',()=>{ if(S.appPage==='home') goCar(S.carIdx); });
+
+/* ============================================================ POINTS HUB ============================================================ */
+function initPointsHub() {
+  // 스켈레톤 표시
+  const skGrid = document.getElementById('ptsSkeletonGrid');
+  const svGrid = document.getElementById('ptsSvcGrid');
+  const totalEl = document.getElementById('ptsTotalNum');
+  if (!skGrid) return;
+  skGrid.style.display = 'grid';
+  svGrid.style.display = 'none';
+  if (totalEl) totalEl.style.filter = 'blur(6px)';
+  // 1.5초 후 실제 데이터 표시
+  setTimeout(() => {
+    skGrid.style.display = 'none';
+    svGrid.style.display = 'grid';
+    if (totalEl) { totalEl.style.filter = ''; countUpPts(); }
+  }, 1500);
+  // 카테고리 탭 초기화
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('on'));
+  const allTab = document.querySelector('[data-action="pts-cat"][data-cat="all"]');
+  if (allTab) allTab.classList.add('on');
+  document.querySelectorAll('.pts-svc-card').forEach(c=>c.style.display='flex');
+}
+
+function countUpPts() {
+  const el = document.getElementById('ptsTotalNum'); if (!el) return;
+  let n = 0;
+  const t = setInterval(() => {
+    n += 1400;
+    el.textContent = n.toLocaleString();
+    if (n >= 38000) { el.textContent = '38,000'; clearInterval(t); }
+  }, 28);
+}
+
+function filterPtsServices(cat) {
+  document.querySelectorAll('.pts-svc-card').forEach(c => {
+    c.style.display = (cat === 'all' || c.dataset.cat === cat) ? 'flex' : 'none';
+  });
+}
+
+function drawRepBRC() {
+  const svg = document.getElementById('ptsRepBrc'); if (!svg) return;
+  svg.innerHTML = '';
+  const pat = [1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1];
+  const bw = 260 / pat.length;
+  pat.forEach((on, i) => {
+    if (!on) return;
+    const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('x', i * bw); r.setAttribute('y', 0);
+    r.setAttribute('width', bw * .72); r.setAttribute('height', 80);
+    r.setAttribute('fill', '#111111');
+    svg.appendChild(r);
+  });
+}
+
+function showServiceDetail(id) {
+  const svc = POINTS_DATA.find(s => s.id === id); if (!svc) return;
+  // 텍스트 채우기
+  const set = (el, val) => { const e=document.getElementById(el); if(e) e.textContent=val; };
+  set('ptsDet_brand', svc.name);
+  set('ptsDet_brand_bc', svc.name);
+  set('ptsDet_bal', svc.bal.toLocaleString());
+  set('ptsDet_exp', svc.exp);
+  set('ptsDet_guide', svc.desc);
+  const stsMap = {usable:'즉시 사용 가능', conditional:'조건부 사용', unavailable:'사용 불가'};
+  set('ptsDet_sts', stsMap[svc.status] || '');
+  set('ptsDet_num', svc.num);
+  if (svc.num) set('ptsDet_num', svc.num);
+
+  // 바코드 영역 분기
+  const brcS = document.getElementById('ptsDet_brcStatic');
+  const brcQ = document.getElementById('ptsDet_brcQr');
+  const brcN = document.getElementById('ptsDet_brcNone');
+  const brcLbl = document.getElementById('ptsDet_brcLbl');
+  const cta = document.getElementById('ptsDet_cta');
+  [brcS, brcQ, brcN].forEach(el => { if(el) el.style.display='none'; });
+  if (svc.brc === 'static') {
+    if (brcS) brcS.style.display = 'block';
+    if (brcLbl) brcLbl.textContent = '바코드 스캔';
+    if (cta) cta.style.display = 'flex';
+    drawDetBRC();
+  } else if (svc.brc === 'qr') {
+    if (brcQ) brcQ.style.display = 'block';
+    if (brcLbl) brcLbl.textContent = 'QR 코드 스캔';
+    if (cta) cta.style.display = 'flex';
+    drawQR();
+  } else {
+    if (brcN) brcN.style.display = 'block';
+    if (brcLbl) brcLbl.textContent = '앱 이동';
+    if (cta) cta.style.display = 'none';
+    const appBtn = document.getElementById('ptsDet_appBtn');
+    if (appBtn) appBtn.textContent = svc.name + ' 앱에서 사용하기';
+  }
+  showAppPage('points-service');
+}
+
+function drawDetBRC() {
+  const svg = document.getElementById('ptsDetBrcSvg'); if (!svg) return;
+  svg.innerHTML = '';
+  const pat = [1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,0,1,1,0,1,0,1,0,0,1,1,0,1];
+  const bw = 260 / pat.length;
+  pat.forEach((on, i) => {
+    if (!on) return;
+    const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('x', i * bw); r.setAttribute('y', 0);
+    r.setAttribute('width', bw * .7); r.setAttribute('height', 90);
+    r.setAttribute('fill', '#111111');
+    svg.appendChild(r);
+  });
+}
+
+function drawQR() {
+  const grid = document.getElementById('ptsQrGrid'); if (!grid) return;
+  // 9×9 패턴으로 QR 목 디자인
+  const pat = [
+    1,1,1,0,1,0,1,1,1,
+    1,0,1,0,0,0,1,0,1,
+    1,0,1,0,1,0,1,0,1,
+    1,1,1,0,0,0,1,1,1,
+    0,0,0,0,1,0,0,0,0,
+    1,1,1,0,0,0,1,1,1,
+    1,0,1,0,1,0,1,0,1,
+    1,0,1,0,0,0,1,0,1,
+    1,1,1,0,1,0,1,1,1,
+  ];
+  grid.innerHTML = '';
+  grid.style.gridTemplateColumns = 'repeat(9,1fr)';
+  pat.forEach(cell => {
+    const d = document.createElement('div');
+    d.className = cell ? 'qr-c' : 'qr-b';
+    grid.appendChild(d);
+  });
+}
 
 /* ============================================================ CONNECT ============================================================ */
 function runAuthAnimation() {
