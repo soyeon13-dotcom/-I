@@ -694,6 +694,45 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .btn-save { display:flex; align-items:center; justify-content:center; height:56px; border-radius:12px; background:var(--primary); color:white; font-size:18px; font-weight:800; cursor:pointer; border:none; width:100%; margin-top:24px; transition:background .15s; }
 .btn-save:hover { background:var(--primary-dk); }
 
+/* ── 알림 설정 마스터 Yes/No 카드 ── */
+.noti-master-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:4px; }
+.noti-master-card {
+  padding:24px 20px; border-radius:14px; border:2px solid var(--gray-200);
+  background:white; cursor:pointer; text-align:center; transition:all .18s;
+}
+.noti-master-card:hover { border-color:var(--primary); }
+.noti-master-card.sel.noti-yes  { border-color:var(--primary); background:var(--primary-lt); }
+.noti-master-card.sel.noti-no   { border-color:var(--gray-500); background:var(--gray-100); }
+.nm-badge { display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; border-radius:50%; font-size:13px; font-weight:900;
+  margin:0 auto 10px; }
+.noti-yes .nm-badge { background:var(--primary-lt); color:var(--primary); border:2px solid var(--primary); }
+.noti-yes.sel .nm-badge { background:var(--primary); color:white; }
+.noti-no .nm-badge  { background:var(--gray-200); color:var(--gray-500); border:2px solid var(--gray-300); }
+.noti-no.sel .nm-badge { background:var(--gray-500); color:white; }
+.nm-title { font-size:18px; font-weight:900; color:var(--gray-900); margin-bottom:4px; }
+.nm-desc  { font-size:13px; color:var(--gray-500); line-height:1.5; }
+
+/* ── 알림 설정 상세 영역 ── */
+.noti-settings { overflow:hidden; transition:max-height .4s ease, opacity .3s ease; max-height:2000px; opacity:1; }
+.noti-settings.hidden { max-height:0; opacity:0; pointer-events:none; }
+.noti-off-msg { background:var(--gray-100); border-radius:12px; padding:20px; text-align:center; font-size:16px; font-weight:700; color:var(--gray-500); margin-bottom:8px; }
+
+/* ── 할인율 개별 토글 ── */
+.disc-rate-list { display:flex; flex-direction:column; gap:0; }
+.disc-rate-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 18px; border-radius:10px; margin-bottom:8px;
+  background:var(--gray-100); border:2px solid var(--gray-200);
+  transition:all .18s;
+}
+.disc-rate-row.on { background:var(--primary-lt); border-color:var(--primary); }
+.disc-rate-info   { display:flex; flex-direction:column; gap:2px; }
+.disc-rate-label  { font-size:17px; font-weight:800; color:var(--gray-800); }
+.disc-rate-row.on .disc-rate-label { color:var(--primary); }
+.disc-rate-status { font-size:12px; font-weight:700; color:var(--gray-400); }
+.disc-rate-row.on .disc-rate-status { color:var(--primary); }
+
 /* 토스트 */
 .toast { position:fixed; bottom:48px; left:50%; transform:translateX(-50%); background:var(--gray-900); color:white; padding:16px 32px; border-radius:32px; font-size:16px; font-weight:700; opacity:0; pointer-events:none; transition:opacity .3s; z-index:9999; white-space:nowrap; }
 .toast.show { opacity:1; }
@@ -1532,63 +1571,142 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
               <div class="mps-empty">왼쪽 메뉴를 선택하세요</div>
             </div>
 
-            <!-- 서브페이지 A: 알림 설정 -->
+            <!-- 서브페이지 A: 알림 설정 (새 유저플로우) -->
             <div id="mps-noti" class="mps">
               <div class="mps-card">
                 <div class="mps-title">알림 설정</div>
 
-                <!-- 알림 채널 -->
+                <!-- Step 1: 알림 설정 여부 -->
                 <div class="mps-section">
-                  <div class="mps-section-lbl">알림 채널</div>
-                  <div class="toggle-row">
-                    <div>
-                      <div class="toggle-lbl">앱 푸시 알림</div>
-                      <div class="toggle-sub">쿠폰 만료 전 알림을 앱으로 받아요</div>
+                  <div class="mps-section-lbl">알림 설정 여부</div>
+                  <div class="noti-master-grid">
+                    <div class="noti-master-card noti-yes sel" data-action="noti-master" data-val="yes">
+                      <div class="nm-badge">ON</div>
+                      <div class="nm-title">알림 받기</div>
+                      <div class="nm-desc">선택한 조건에 맞는<br>혜택 알림을 받아요</div>
                     </div>
-                    <label class="toggle-wrap">
-                      <input type="checkbox" checked>
-                      <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                    </label>
-                  </div>
-                  <div class="toggle-row">
-                    <div>
-                      <div class="toggle-lbl">문자 알림</div>
-                      <div class="toggle-sub">중요 혜택을 문자로 받아요</div>
+                    <div class="noti-master-card noti-no" data-action="noti-master" data-val="no">
+                      <div class="nm-badge">OFF</div>
+                      <div class="nm-title">알림 안 받기</div>
+                      <div class="nm-desc">모든 혜택 알림을<br>받지 않아요</div>
                     </div>
-                    <label class="toggle-wrap">
-                      <input type="checkbox" checked>
-                      <div class="toggle-track"><div class="toggle-thumb"></div></div>
-                    </label>
                   </div>
                 </div>
 
-                <!-- 할인율 기준 -->
-                <div class="mps-section">
-                  <div class="mps-section-lbl">할인율 기준</div>
-                  <div class="radio-group">
-                    <label class="radio-opt">
-                      <input type="radio" name="disc-rate" value="20"> 20% 이상
-                    </label>
-                    <label class="radio-opt">
-                      <input type="radio" name="disc-rate" value="30" checked> 30% 이상
-                    </label>
-                    <label class="radio-opt">
-                      <input type="radio" name="disc-rate" value="50"> 50% 이상
-                    </label>
-                  </div>
+                <!-- 알림 OFF 메시지 -->
+                <div class="noti-off-msg" id="notiOffMsg" style="display:none">
+                  알림이 꺼져 있습니다. 혜택 알림을 받으려면 위에서 "알림 받기"를 선택하세요.
                 </div>
 
-                <!-- 관심 카테고리 -->
-                <div class="mps-section">
-                  <div class="mps-section-lbl">관심 카테고리</div>
-                  <div class="check-group">
-                    <label class="check-opt"><input type="checkbox" checked> 마트</label>
-                    <label class="check-opt"><input type="checkbox" checked> 배달</label>
-                    <label class="check-opt"><input type="checkbox"> 편의점</label>
-                    <label class="check-opt"><input type="checkbox"> 카페</label>
-                    <label class="check-opt"><input type="checkbox"> 패션</label>
+                <!-- Step 2~5: 상세 설정 (알림 ON일 때만 표시) -->
+                <div id="notiSettings" class="noti-settings">
+
+                  <!-- Step 2: 카테고리 선택 -->
+                  <div class="mps-section">
+                    <div class="mps-section-lbl">알림 받을 카테고리</div>
+                    <div class="check-group">
+                      <label class="check-opt"><input type="checkbox" checked> 의류</label>
+                      <label class="check-opt"><input type="checkbox" checked> F&amp;B</label>
+                      <label class="check-opt"><input type="checkbox"> 뷰티</label>
+                      <label class="check-opt"><input type="checkbox"> 교육</label>
+                      <label class="check-opt"><input type="checkbox"> 여행</label>
+                    </div>
                   </div>
-                </div>
+
+                  <!-- Step 3: 할인율 기준 (개별 Yes/No 토글) -->
+                  <div class="mps-section">
+                    <div class="mps-section-lbl">할인율 기준 설정</div>
+                    <div class="disc-rate-list">
+                      <div class="disc-rate-row" data-action="disc-rate-toggle">
+                        <div class="disc-rate-info">
+                          <div class="disc-rate-label">10% 이상</div>
+                          <div class="disc-rate-status">알림 비활성화</div>
+                        </div>
+                        <label class="toggle-wrap">
+                          <input type="checkbox" onchange="updateDiscRateRow(this)">
+                          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                        </label>
+                      </div>
+                      <div class="disc-rate-row" data-action="disc-rate-toggle">
+                        <div class="disc-rate-info">
+                          <div class="disc-rate-label">20% 이상</div>
+                          <div class="disc-rate-status">알림 비활성화</div>
+                        </div>
+                        <label class="toggle-wrap">
+                          <input type="checkbox" onchange="updateDiscRateRow(this)">
+                          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                        </label>
+                      </div>
+                      <div class="disc-rate-row on" data-action="disc-rate-toggle">
+                        <div class="disc-rate-info">
+                          <div class="disc-rate-label">30% 이상</div>
+                          <div class="disc-rate-status">알림 활성화</div>
+                        </div>
+                        <label class="toggle-wrap">
+                          <input type="checkbox" checked onchange="updateDiscRateRow(this)">
+                          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                        </label>
+                      </div>
+                      <div class="disc-rate-row" data-action="disc-rate-toggle">
+                        <div class="disc-rate-info">
+                          <div class="disc-rate-label">40% 이상</div>
+                          <div class="disc-rate-status">알림 비활성화</div>
+                        </div>
+                        <label class="toggle-wrap">
+                          <input type="checkbox" onchange="updateDiscRateRow(this)">
+                          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                        </label>
+                      </div>
+                      <div class="disc-rate-row" data-action="disc-rate-toggle">
+                        <div class="disc-rate-info">
+                          <div class="disc-rate-label">50% 이상</div>
+                          <div class="disc-rate-status">알림 비활성화</div>
+                        </div>
+                        <label class="toggle-wrap">
+                          <input type="checkbox" onchange="updateDiscRateRow(this)">
+                          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Step 4: 위치 기반 설정 -->
+                  <div class="mps-section">
+                    <div class="mps-section-lbl">위치 기반 알림</div>
+                    <div class="toggle-row" style="border-bottom:none">
+                      <div>
+                        <div class="toggle-lbl">GPS 위치 서비스 허용</div>
+                        <div class="toggle-sub">
+                          YES → 위치 알림 서비스 활성화<br>
+                          NO → 위치 알림 서비스 비활성화
+                        </div>
+                      </div>
+                      <label class="toggle-wrap">
+                        <input type="checkbox">
+                        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Step 5: 유사 카테고리 추천 -->
+                  <div class="mps-section">
+                    <div class="mps-section-lbl">유사 카테고리 추천</div>
+                    <div class="toggle-row" style="border-bottom:none">
+                      <div>
+                        <div class="toggle-lbl">유사 카테고리 알림 서비스</div>
+                        <div class="toggle-sub">
+                          YES → 유사 카테고리 알림 활성화<br>
+                          NO → 유사 카테고리 알림 비활성화
+                        </div>
+                      </div>
+                      <label class="toggle-wrap">
+                        <input type="checkbox" checked>
+                        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                      </label>
+                    </div>
+                  </div>
+
+                </div><!-- /notiSettings -->
 
                 <button class="btn-save" data-action="save-noti">저장하기</button>
               </div>
@@ -2168,6 +2286,7 @@ const ACT = {
   'nav-mypage-noti':     ()=>{ showMypageSub('noti'); highlightMypageMenu('nav-mypage-noti'); },
   'nav-mypage-info':     ()=>{ showMypageSub('info'); highlightMypageMenu('nav-mypage-info'); },
   'save-noti':           ()=>showToast('설정이 안전하게 변경되었습니다'),
+  'noti-master':         (e)=>toggleNotiMaster(e.target.closest('[data-val]').dataset.val),
   'save-info':           ()=>showToast('설정이 안전하게 변경되었습니다'),
   'nav-points':          ()=>{ showAppPage('points-hub'); updateSidebar('points-hub'); initPointsHub(); },
   'pts-cat':             (e)=>{ const el=e.target.closest('[data-cat]'); if(!el)return; document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('on')); el.classList.add('on'); filterPtsServices(el.dataset.cat); },
@@ -2384,6 +2503,35 @@ function updateConnectForm() {
   });
   const sub = document.getElementById('connectFormSub');
   if (sub) sub.textContent = labels[S.connectMethod] || '';
+}
+
+function toggleNotiMaster(val) {
+  // 카드 선택 상태 업데이트
+  document.querySelectorAll('.noti-master-card').forEach(c => {
+    c.classList.toggle('sel', c.dataset.val === val);
+  });
+  const settings = document.getElementById('notiSettings');
+  const offMsg   = document.getElementById('notiOffMsg');
+  if (val === 'yes') {
+    if (settings) settings.classList.remove('hidden');
+    if (offMsg)   offMsg.style.display = 'none';
+  } else {
+    if (settings) settings.classList.add('hidden');
+    if (offMsg)   offMsg.style.display = 'block';
+  }
+}
+
+function updateDiscRateRow(checkbox) {
+  const row = checkbox.closest('.disc-rate-row');
+  if (!row) return;
+  const statusEl = row.querySelector('.disc-rate-status');
+  if (checkbox.checked) {
+    row.classList.add('on');
+    if (statusEl) statusEl.textContent = '알림 활성화';
+  } else {
+    row.classList.remove('on');
+    if (statusEl) statusEl.textContent = '알림 비활성화';
+  }
 }
 
 function showMypageSub(id) {
