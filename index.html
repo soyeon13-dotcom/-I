@@ -332,6 +332,13 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
   border:2px solid white;
 }
 .hdr-user { font-size:15px; font-weight:700; color:var(--gray-700); }
+.hdr-mypage-btn {
+  height:44px; padding:0 18px; border-radius:8px;
+  background:var(--primary-lt); color:var(--primary);
+  font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;
+  border:2px solid var(--primary-lt); display:flex; align-items:center; gap:6px;
+}
+.hdr-mypage-btn:hover { background:var(--primary); color:white; }
 
 /* SIDEBAR */
 .app-body { display:flex; padding-top:var(--header-h); min-height:100vh; }
@@ -538,15 +545,82 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 /* ============================================================
    MYPAGE
    ============================================================ */
+/* MYPAGE NEW LAYOUT */
 .mypage-layout { display:grid; grid-template-columns:300px 1fr; gap:28px; align-items:start; }
-.user-card { background:var(--primary); border-radius:16px; padding:32px; color:white; margin-bottom:20px; }
-.user-name { font-size:24px; font-weight:900; margin-bottom:4px; }
-.user-info { font-size:15px; color:rgba(255,255,255,.75); }
-.user-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px; }
-.u-stat { background:rgba(255,255,255,.15); border-radius:10px; padding:14px; text-align:center; }
-.u-stat-val { font-size:24px; font-weight:900; }
-.u-stat-lbl { font-size:12px; color:rgba(255,255,255,.7); margin-top:2px; }
 
+/* 프로필 카드 */
+.user-card { background:var(--primary); border-radius:16px; padding:32px; color:white; margin-bottom:16px; }
+.user-avatar { width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:900; color:white; margin-bottom:14px; }
+.user-greeting { font-size:20px; font-weight:900; margin-bottom:2px; }
+.user-info { font-size:14px; color:rgba(255,255,255,.7); }
+
+/* 자산 요약 바 */
+.asset-bar { display:flex; background:white; border-radius:14px; border:2px solid var(--gray-200); overflow:hidden; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.asset-item { flex:1; padding:18px 16px; text-align:center; }
+.asset-item + .asset-item { border-left:2px solid var(--gray-200); }
+.asset-val { font-size:22px; font-weight:900; color:var(--primary); }
+.asset-lbl { font-size:13px; color:var(--gray-500); font-weight:600; margin-top:3px; }
+
+/* 마이페이지 메뉴 */
+.mypage-menu { background:white; border-radius:14px; border:2px solid var(--gray-200); overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.mypage-menu-item { display:flex; align-items:center; justify-content:space-between; padding:20px 22px; font-size:17px; font-weight:700; color:var(--gray-800); cursor:pointer; border-bottom:1px solid var(--gray-100); transition:background .15s; }
+.mypage-menu-item:last-child { border:none; }
+.mypage-menu-item:hover { background:var(--primary-lt); color:var(--primary); }
+.mypage-menu-item.on { background:var(--primary-lt); color:var(--primary); }
+.mypage-menu-arrow { font-size:18px; color:var(--gray-400); }
+
+/* 서브페이지 공통 */
+.mps { display:none; }
+.mps-card { background:white; border-radius:14px; border:2px solid var(--gray-200); padding:28px; box-shadow:0 2px 12px rgba(0,0,0,.06); margin-bottom:20px; }
+.mps-title { font-size:22px; font-weight:900; color:var(--gray-900); margin-bottom:24px; }
+.mps-section { margin-bottom:28px; }
+.mps-section-lbl { font-size:14px; font-weight:800; color:var(--gray-500); letter-spacing:.06em; text-transform:uppercase; margin-bottom:14px; padding-bottom:8px; border-bottom:2px solid var(--gray-100); }
+.mps-empty { display:flex; align-items:center; justify-content:center; height:300px; font-size:18px; color:var(--gray-400); font-weight:600; }
+
+/* 토글 스위치 (큰 설계 — Fat Finger 방지) */
+.toggle-row { display:flex; align-items:center; justify-content:space-between; padding:18px 0; border-bottom:1px solid var(--gray-100); }
+.toggle-row:last-child { border:none; }
+.toggle-lbl { font-size:17px; font-weight:700; color:var(--gray-800); }
+.toggle-sub { font-size:13px; color:var(--gray-500); margin-top:2px; }
+.toggle-wrap { position:relative; width:64px; height:36px; flex-shrink:0; }
+.toggle-wrap input { opacity:0; width:0; height:0; position:absolute; }
+.toggle-track { position:absolute; inset:0; border-radius:18px; background:var(--gray-300); cursor:pointer; transition:background .25s; }
+.toggle-thumb { position:absolute; top:4px; left:4px; width:28px; height:28px; border-radius:50%; background:white; box-shadow:0 2px 6px rgba(0,0,0,.2); transition:transform .25s; }
+.toggle-wrap input:checked ~ .toggle-track { background:var(--primary); }
+.toggle-wrap input:checked ~ .toggle-track .toggle-thumb { transform:translateX(28px); }
+
+/* 라디오 버튼 */
+.radio-group { display:flex; flex-direction:column; gap:10px; }
+.radio-opt { display:flex; align-items:center; gap:14px; padding:16px 18px; border-radius:10px; border:2px solid var(--gray-200); cursor:pointer; font-size:16px; font-weight:700; color:var(--gray-800); transition:all .15s; }
+.radio-opt:has(input:checked) { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+.radio-opt input { accent-color:var(--primary); width:20px; height:20px; }
+
+/* 체크박스 그룹 */
+.check-group { display:flex; flex-wrap:wrap; gap:10px; }
+.check-opt { display:flex; align-items:center; gap:8px; padding:12px 18px; border-radius:50px; border:2px solid var(--gray-200); cursor:pointer; font-size:15px; font-weight:700; color:var(--gray-700); transition:all .15s; }
+.check-opt:has(input:checked) { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+.check-opt input { accent-color:var(--primary); width:18px; height:18px; }
+
+/* 기본 정보 */
+.safe-banner { background:#E6F9EE; border:2px solid #1A7A45; border-radius:10px; padding:14px 18px; font-size:15px; font-weight:700; color:#1A7A45; margin-bottom:20px; }
+.info-row { display:flex; align-items:center; justify-content:space-between; padding:18px 0; border-bottom:1px solid var(--gray-100); font-size:16px; }
+.info-row:last-child { border:none; }
+.info-lbl { font-weight:600; color:var(--gray-700); }
+.info-val { font-weight:700; color:var(--gray-900); }
+.conn-badge { display:inline-flex; align-items:center; padding:4px 10px; border-radius:50px; background:var(--primary-lt); color:var(--primary); font-size:12px; font-weight:800; }
+.svc-list { display:flex; flex-wrap:wrap; gap:8px; }
+.btn-danger { display:flex; align-items:center; justify-content:center; height:52px; border-radius:10px; background:white; border:2px solid var(--danger); color:var(--danger); font-size:16px; font-weight:800; cursor:pointer; margin-top:8px; transition:all .15s; width:100%; }
+.btn-danger:hover { background:var(--danger); color:white; }
+
+/* 설정 저장 버튼 */
+.btn-save { display:flex; align-items:center; justify-content:center; height:56px; border-radius:12px; background:var(--primary); color:white; font-size:18px; font-weight:800; cursor:pointer; border:none; width:100%; margin-top:24px; transition:background .15s; }
+.btn-save:hover { background:var(--primary-dk); }
+
+/* 토스트 */
+.toast { position:fixed; bottom:48px; left:50%; transform:translateX(-50%); background:var(--gray-900); color:white; padding:16px 32px; border-radius:32px; font-size:16px; font-weight:700; opacity:0; pointer-events:none; transition:opacity .3s; z-index:9999; white-space:nowrap; }
+.toast.show { opacity:1; }
+
+/* (기존) settings-card */
 .settings-card { background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.06); padding:24px; border:2px solid var(--gray-200); }
 .settings-row { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--gray-100); font-size:16px; }
 .settings-row:last-child { border:none; }
@@ -929,6 +1003,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
         알림
         <span class="bell-badge">3</span>
       </button>
+      <button class="hdr-mypage-btn" data-action="nav-mypage">내 정보</button>
       <div class="hdr-user">김미경님</div>
     </div>
   </header>
@@ -1217,56 +1292,156 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
       <!-- ── MYPAGE ── -->
       <div id="p-mypage" class="app-page">
         <div class="page-title">마이페이지</div>
-        <div class="page-sub">김미경님의 계정과 다운로드한 쿠폰을 확인하세요</div>
+        <div class="page-sub">내 프로필과 설정을 관리하세요</div>
         <div class="mypage-layout">
+
+          <!-- 좌컬럼: 프로필 + 자산 바 + 메뉴 -->
           <div>
+            <!-- 프로필 카드 -->
             <div class="user-card">
-              <div class="user-name">김미경님</div>
-              <div class="user-info">010-1234-5678</div>
-              <div class="user-stats">
-                <div class="u-stat"><div class="u-stat-val">47</div><div class="u-stat-lbl">보유 쿠폰</div></div>
-                <div class="u-stat"><div class="u-stat-val">23,500원</div><div class="u-stat-lbl">이번 달 절약</div></div>
+              <div class="user-avatar">미</div>
+              <div class="user-greeting">안녕하세요, 미경 님!</div>
+              <div class="user-info">010-****-5678</div>
+            </div>
+
+            <!-- 자산 요약 바 -->
+            <div class="asset-bar">
+              <div class="asset-item">
+                <div class="asset-val">12,500P</div>
+                <div class="asset-lbl">보유 포인트</div>
+              </div>
+              <div class="asset-item">
+                <div class="asset-val">8장</div>
+                <div class="asset-lbl">보유 쿠폰</div>
               </div>
             </div>
-            <div class="settings-card">
-              <div class="panel-title">계정 설정</div>
-              <div class="settings-row"><span class="s-lbl">할인율 기준</span><span class="s-val">20% 이상</span></div>
-              <div class="settings-row"><span class="s-lbl">알림 방식</span><span class="s-val">앱 + 문자</span></div>
-              <div class="settings-row"><span class="s-lbl">연동 서비스</span><span class="s-val">4개</span></div>
-              <div class="settings-row"><span class="s-lbl">선호 카테고리</span><span class="s-val">마트, 배달</span></div>
-              <button class="btn-primary" style="margin-top:16px;font-size:15px">설정 변경</button>
-            </div>
-          </div>
-          <div>
-            <div style="font-size:20px;font-weight:900;color:var(--gray-900);margin-bottom:6px">다운로드한 쿠폰</div>
-            <div style="font-size:15px;color:var(--gray-500);margin-bottom:20px">총 3개의 쿠폰을 다운로드했어요</div>
-            <div class="dl-cpn-grid">
-              <div class="dl-cpn-card">
-                <div class="dc-brand">배달의민족 · 배달</div>
-                <div class="dc-title">배달 주문 3,000원 할인</div>
-                <div class="dc-disc">3,000원</div>
-                <div class="dc-footer"><span>1.5만원 이상</span><span class="exp-org" style="font-weight:800">D-3</span></div>
-                <div class="use-btn" data-action="go-barcode">바코드로 사용</div>
+
+            <!-- 메뉴 리스트 -->
+            <div class="mypage-menu">
+              <div class="mypage-menu-item" data-action="nav-mypage-noti">
+                알림 설정
+                <span class="mypage-menu-arrow">›</span>
               </div>
-              <div class="dl-cpn-card">
-                <div class="dc-brand">스타벅스 · 카페</div>
-                <div class="dc-title">음료 1+1 무료 증정</div>
-                <div class="dc-disc">1+1</div>
-                <div class="dc-footer"><span>사이즈 무관</span><span class="exp-gry" style="font-weight:700">D-7</span></div>
-                <div class="use-btn" data-action="go-barcode">바코드로 사용</div>
-              </div>
-              <div class="dl-cpn-card">
-                <div class="dc-brand">이마트 · 마트</div>
-                <div class="dc-title">전 매장 30% 할인</div>
-                <div class="dc-disc">30%</div>
-                <div class="dc-footer"><span>3만원 이상</span><span class="exp-red" style="font-weight:800">오늘 만료</span></div>
-                <div class="use-btn" data-action="go-barcode">바코드로 사용</div>
-              </div>
-              <div class="dl-cpn-card" style="border:2px dashed var(--gray-300);background:var(--gray-100);align-items:center;justify-content:center;min-height:180px;cursor:pointer" data-action="nav-download">
-                <div style="font-size:16px;font-weight:700;color:var(--gray-500);text-align:center">+ 더 많은 쿠폰<br>다운로드하기</div>
+              <div class="mypage-menu-item" data-action="nav-mypage-info">
+                기본 정보 관리
+                <span class="mypage-menu-arrow">›</span>
               </div>
             </div>
           </div>
+
+          <!-- 우컬럼: 서브페이지 영역 -->
+          <div id="mypage-sub">
+
+            <!-- 기본 안내 -->
+            <div id="mps-default" class="mps" style="display:block">
+              <div class="mps-empty">왼쪽 메뉴를 선택하세요</div>
+            </div>
+
+            <!-- 서브페이지 A: 알림 설정 -->
+            <div id="mps-noti" class="mps">
+              <div class="mps-card">
+                <div class="mps-title">알림 설정</div>
+
+                <!-- 알림 채널 -->
+                <div class="mps-section">
+                  <div class="mps-section-lbl">알림 채널</div>
+                  <div class="toggle-row">
+                    <div>
+                      <div class="toggle-lbl">앱 푸시 알림</div>
+                      <div class="toggle-sub">쿠폰 만료 전 알림을 앱으로 받아요</div>
+                    </div>
+                    <label class="toggle-wrap">
+                      <input type="checkbox" checked>
+                      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                    </label>
+                  </div>
+                  <div class="toggle-row">
+                    <div>
+                      <div class="toggle-lbl">문자 알림</div>
+                      <div class="toggle-sub">중요 혜택을 문자로 받아요</div>
+                    </div>
+                    <label class="toggle-wrap">
+                      <input type="checkbox" checked>
+                      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 할인율 기준 -->
+                <div class="mps-section">
+                  <div class="mps-section-lbl">할인율 기준</div>
+                  <div class="radio-group">
+                    <label class="radio-opt">
+                      <input type="radio" name="disc-rate" value="20"> 20% 이상
+                    </label>
+                    <label class="radio-opt">
+                      <input type="radio" name="disc-rate" value="30" checked> 30% 이상
+                    </label>
+                    <label class="radio-opt">
+                      <input type="radio" name="disc-rate" value="50"> 50% 이상
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 관심 카테고리 -->
+                <div class="mps-section">
+                  <div class="mps-section-lbl">관심 카테고리</div>
+                  <div class="check-group">
+                    <label class="check-opt"><input type="checkbox" checked> 마트</label>
+                    <label class="check-opt"><input type="checkbox" checked> 배달</label>
+                    <label class="check-opt"><input type="checkbox"> 편의점</label>
+                    <label class="check-opt"><input type="checkbox"> 카페</label>
+                    <label class="check-opt"><input type="checkbox"> 패션</label>
+                  </div>
+                </div>
+
+                <button class="btn-save" data-action="save-noti">저장하기</button>
+              </div>
+            </div>
+
+            <!-- 서브페이지 B: 기본 정보 관리 -->
+            <div id="mps-info" class="mps">
+              <div class="mps-card">
+                <div class="mps-title">기본 정보 관리</div>
+                <div class="safe-banner">정보가 안전하게 보호되고 있습니다</div>
+
+                <div class="mps-section">
+                  <div class="mps-section-lbl">계정 정보</div>
+                  <div class="info-row">
+                    <span class="info-lbl">휴대폰 번호</span>
+                    <span class="info-val">010-****-5678</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-lbl">가입일</span>
+                    <span class="info-val">2025년 1월 15일</span>
+                  </div>
+                </div>
+
+                <div class="mps-section">
+                  <div class="mps-section-lbl">연동 서비스</div>
+                  <div class="info-row">
+                    <span class="info-lbl">카카오</span>
+                    <span class="conn-badge">연결됨</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-lbl">이마트</span>
+                    <span class="conn-badge">연결됨</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-lbl">배달의민족</span>
+                    <span class="conn-badge">연결됨</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-lbl">쿠팡</span>
+                    <span class="conn-badge">연결됨</span>
+                  </div>
+                </div>
+
+                <button class="btn-danger" data-action="go-login">로그아웃</button>
+              </div>
+            </div>
+
+          </div><!-- /mypage-sub -->
         </div>
       </div>
 
@@ -1426,6 +1601,10 @@ const ACT = {
   'nav-download':    ()=>{ showAppPage('download'); updateSidebar('download'); },
   'nav-wallet':      ()=>{ showAppPage('wallet'); updateSidebar('wallet'); applyWalletFilter(wCat,wSort); },
   'nav-mypage':      ()=>{ showAppPage('mypage'); updateSidebar('mypage'); },
+  'nav-mypage-noti': ()=>{ showMypageSub('noti'); highlightMypageMenu('nav-mypage-noti'); },
+  'nav-mypage-info': ()=>{ showMypageSub('info'); highlightMypageMenu('nav-mypage-info'); },
+  'save-noti':       ()=>showToast('설정이 안전하게 변경되었습니다'),
+  'save-info':       ()=>showToast('설정이 안전하게 변경되었습니다'),
   'toggle-cat':      (e)=>e.target.closest('.cat-chip').classList.toggle('sel'),
   'toggle-brand':    (e)=>e.target.closest('.brand-chip').classList.toggle('sel'),
   'toggle-svc':      (e)=>{ const btn=e.target.closest('.conn-btn'); btn.classList.toggle('done'); btn.textContent=btn.classList.contains('done')?'완료':'연동하기'; },
@@ -1452,6 +1631,24 @@ document.addEventListener('DOMContentLoaded', ()=>{
   initCarousel();
 });
 window.addEventListener('resize',()=>{ if(S.appPage==='home') goCar(S.carIdx); });
+
+function showMypageSub(id) {
+  document.querySelectorAll('.mps').forEach(el => el.style.display = 'none');
+  const el = document.getElementById('mps-' + id);
+  if (el) el.style.display = 'block';
+}
+function highlightMypageMenu(action) {
+  document.querySelectorAll('.mypage-menu-item').forEach(el =>
+    el.classList.toggle('on', el.dataset.action === action)
+  );
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
 </script>
+<div class="toast" id="toast"></div>
 </body>
 </html>
