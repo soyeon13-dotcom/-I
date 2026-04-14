@@ -215,11 +215,14 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .svc-desc { font-size:13px; color:var(--gray-500); margin-top:2px; }
 .conn-btn {
   padding:10px 18px; border-radius:8px; font-size:14px; font-weight:700;
-  background:var(--primary-lt); color:var(--primary);
-  cursor:pointer; transition:all .2s; white-space:nowrap; border:2px solid var(--primary-lt);
+  background:var(--gray-200); color:var(--gray-600);
+  cursor:pointer; transition:all .2s; white-space:nowrap; border:2px solid var(--gray-300);
 }
-.conn-btn:hover { background:var(--primary); color:white; }
-.conn-btn.done { background:#D4F0E1; color:var(--success); border-color:#D4F0E1; }
+.conn-btn:hover { background:var(--primary); color:white; border-color:var(--primary); }
+.conn-btn.done { background:var(--accent-dk); color:#5a4a00; border-color:var(--accent-dk); font-weight:800; }
+/* 연동 카드 전체 상태 표시 */
+.svc-card { background:var(--gray-100); border:2px solid var(--gray-200); transition:all .2s; }
+.svc-card.connected { background:var(--accent); border-color:var(--accent-dk); }
 
 /* Loading steps */
 .ld-steps { display:flex; flex-direction:column; gap:12px; width:100%; max-width:440px; margin:0 auto; }
@@ -465,27 +468,44 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .dl-hero-count span { font-size:18px; font-weight:600; margin-left:6px; }
 
 /* ============================================================
-   WALLET: FILTER + GRID
+   WALLET: 가로형 필터 + 드롭다운 정렬
    ============================================================ */
-.wallet-layout { display:grid; grid-template-columns:260px 1fr; gap:24px; }
-.filter-panel {
-  background:white; border-radius:14px; padding:24px;
-  box-shadow:0 2px 12px rgba(0,0,0,.06); border:2px solid var(--gray-200);
-  position:sticky; top:calc(var(--header-h) + 36px); align-self:start;
+.wallet-layout { display:flex; flex-direction:column; gap:0; }
+/* 필터 바 */
+.wlt-filter-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:12px; flex-wrap:wrap; }
+.wlt-cat-tabs  { display:flex; gap:8px; flex-wrap:wrap; }
+.wlt-cat-btn {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:10px 16px; border-radius:12px; border:2px solid var(--gray-200);
+  background:white; cursor:pointer; transition:all .15s; min-width:60px;
 }
-.filter-title { font-size:16px; font-weight:800; color:var(--gray-900); margin-bottom:16px; }
-.filter-section { margin-bottom:20px; }
-.filter-section-lbl { font-size:12px; font-weight:800; color:var(--gray-500); letter-spacing:.5px; margin-bottom:8px; }
+.wlt-cat-btn:hover { border-color:var(--primary); }
+.wlt-cat-btn.on { background:var(--primary-lt); border-color:var(--primary); }
+.wlt-cat-icon { font-size:22px; line-height:1; }
+.wlt-cat-lbl  { font-size:13px; font-weight:700; color:var(--gray-700); }
+.wlt-cat-btn.on .wlt-cat-lbl { color:var(--primary); }
+.wlt-cat-count { font-size:11px; color:var(--gray-400); font-weight:600; }
+.wlt-cat-btn.on .wlt-cat-count { color:var(--primary); opacity:.8; }
+/* 드롭다운 정렬 */
+.wlt-sort-wrap { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.wlt-sort-lbl  { font-size:14px; font-weight:700; color:var(--gray-600); white-space:nowrap; }
+.wlt-sort-select {
+  height:42px; padding:0 14px; border-radius:8px; border:2px solid var(--gray-200);
+  font-size:15px; font-weight:700; color:var(--gray-800); cursor:pointer;
+  background:white; outline:none; transition:border-color .15s;
+}
+.wlt-sort-select:hover, .wlt-sort-select:focus { border-color:var(--primary); }
+
+/* 기존 호환용 (filter-btn은 다른 곳에서도 쓰임) */
 .filter-btn {
   display:flex; align-items:center; justify-content:space-between;
-  width:100%; padding:12px 14px; border-radius:8px;
-  font-size:16px; font-weight:600; color:var(--gray-700); cursor:pointer;
-  transition:all .15s; border:2px solid transparent; margin-bottom:4px;
+  padding:10px 14px; border-radius:8px;
+  font-size:15px; font-weight:600; color:var(--gray-700); cursor:pointer;
+  transition:all .15s; border:2px solid transparent;
 }
 .filter-btn:hover { background:var(--gray-100); }
 .filter-btn.on { background:var(--primary-lt); color:var(--primary); border-color:var(--primary-lt); font-weight:800; }
 .filter-count { font-size:13px; font-weight:700; color:var(--gray-400); }
-.filter-btn.on .filter-count { color:var(--primary); opacity:.7; }
 .filter-divider { height:1px; background:var(--gray-200); margin:16px 0; }
 
 .wallet-content { display:flex; flex-direction:column; gap:16px; }
@@ -497,6 +517,51 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .wlt-tab:hover { color:var(--gray-900); }
 .wlt-tab.on { color:var(--primary); border-bottom-color:var(--primary); }
 .wallet-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+
+/* ============================================================
+   DETAIL PAGE — 주변 사용처 섹션
+   ============================================================ */
+.nearby-section { margin-top:24px; }
+.nearby-search-row { display:flex; gap:10px; margin-bottom:16px; }
+.nearby-search-input { flex:1; height:46px; border-radius:10px; border:2px solid var(--gray-200); padding:0 16px; font-size:15px; font-weight:600; outline:none; transition:border-color .15s; }
+.nearby-search-input:focus { border-color:var(--primary); }
+.nearby-search-btn { height:46px; padding:0 18px; border-radius:10px; background:var(--primary); color:white; font-size:15px; font-weight:700; border:none; cursor:pointer; white-space:nowrap; }
+.nearby-list { display:flex; flex-direction:column; gap:10px; max-height:260px; overflow-y:auto; }
+.nearby-item { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-radius:10px; background:white; border:2px solid var(--gray-200); }
+.nearby-info { display:flex; flex-direction:column; gap:2px; }
+.nearby-name { font-size:16px; font-weight:800; color:var(--gray-900); }
+.nearby-addr { font-size:13px; color:var(--gray-500); }
+.nearby-dist { font-size:14px; font-weight:800; color:var(--primary); white-space:nowrap; }
+.nearby-gps-tag { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:700; color:var(--success); background:#E6F9EE; border-radius:50px; padding:3px 10px; margin-bottom:12px; }
+
+/* ============================================================
+   DISCOUNT SLIDER (온보딩)
+   ============================================================ */
+.disc-slider-wrap { padding:16px 0 28px; }
+.disc-slider-val  { font-size:52px; font-weight:900; color:var(--primary); text-align:center; line-height:1; margin-bottom:4px; }
+.disc-slider-val span { font-size:24px; }
+.disc-slider-hint { font-size:14px; color:var(--gray-500); text-align:center; margin-bottom:24px; }
+input[type=range].disc-range {
+  width:100%; height:8px; border-radius:4px; outline:none; cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+  background: linear-gradient(to right, var(--primary) 0%, var(--primary) 30%, var(--gray-200) 30%, var(--gray-200) 100%);
+}
+input[type=range].disc-range::-webkit-slider-thumb {
+  -webkit-appearance:none; width:28px; height:28px; border-radius:50%;
+  background:var(--primary); box-shadow:0 2px 8px rgba(15,65,166,.3); cursor:pointer;
+}
+input[type=range].disc-range::-moz-range-thumb {
+  width:28px; height:28px; border-radius:50%; border:none;
+  background:var(--primary); cursor:pointer;
+}
+.disc-range-labels { display:flex; justify-content:space-between; font-size:13px; color:var(--gray-400); font-weight:600; margin-top:6px; }
+
+/* ============================================================
+   SEARCH RESULTS PAGE
+   ============================================================ */
+.search-result-bar { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+.search-kw-badge { display:inline-flex; align-items:center; padding:8px 16px; border-radius:50px; background:var(--primary-lt); color:var(--primary); font-size:16px; font-weight:800; }
+.search-count { font-size:15px; color:var(--gray-500); font-weight:600; }
 
 /* ============================================================
    DETAIL PAGE
@@ -1025,10 +1090,10 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
       <h2 class="ob-h2">추가 연동할 서비스</h2>
       <p class="ob-sub">더 많은 혜택을 가져올 수 있어요. 언제든 추가 또는 해제 가능합니다</p>
       <div class="svc-grid">
-        <div class="svc-card"><div class="svc-info"><div class="svc-name">KT / SKT / LGU+</div><div class="svc-desc">통신사 멤버십 쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">완료</button></div>
+        <div class="svc-card connected"><div class="svc-info"><div class="svc-name">KT / SKT / LGU+</div><div class="svc-desc">통신사 멤버십 쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">✓ 연동 완료</button></div>
         <div class="svc-card"><div class="svc-info"><div class="svc-name">카카오</div><div class="svc-desc">선물, 교환권, 쿠폰</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
-        <div class="svc-card"><div class="svc-info"><div class="svc-name">이마트</div><div class="svc-desc">e-money, 할인쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">완료</button></div>
-        <div class="svc-card"><div class="svc-info"><div class="svc-name">배달의민족</div><div class="svc-desc">배달 할인쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">완료</button></div>
+        <div class="svc-card connected"><div class="svc-info"><div class="svc-name">이마트</div><div class="svc-desc">e-money, 할인쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">✓ 연동 완료</button></div>
+        <div class="svc-card connected"><div class="svc-info"><div class="svc-name">배달의민족</div><div class="svc-desc">배달 할인쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">✓ 연동 완료</button></div>
         <div class="svc-card"><div class="svc-info"><div class="svc-name">GS25 / CU</div><div class="svc-desc">편의점 쿠폰</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
         <div class="svc-card"><div class="svc-info"><div class="svc-name">스타벅스</div><div class="svc-desc">리워드, 무료음료</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
       </div>
@@ -1074,6 +1139,10 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
       </div>
       <h2 class="ob-h2">자주 이용하는 브랜드를 선택하세요</h2>
       <p class="ob-sub">선택한 브랜드의 쿠폰을 우선적으로 알려드려요</p>
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button class="btn-outline" style="font-size:15px;min-height:44px;flex:1" data-action="brand-all">전체 선택</button>
+        <button class="btn-ghost" style="font-size:15px;min-height:44px;flex:1" data-action="brand-none">전체 해제</button>
+      </div>
       <div class="brand-grid" id="brandGrid">
         <div class="brand-chip sel" data-action="toggle-brand">이마트</div>
         <div class="brand-chip sel" data-action="toggle-brand">배달의민족</div>
@@ -1101,10 +1170,15 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
       </div>
       <h2 class="ob-h2">어느 정도 할인이면<br>알림 받을까요?</h2>
       <p class="ob-sub">이 기준 이상의 쿠폰만 알려드려요</p>
-      <div class="opt-grid" id="discOpts">
-        <div class="opt-card" data-action="sel-discount"><div class="opt-title">10% 이상</div><div class="opt-sub">소소한 혜택도 챙기기</div></div>
-        <div class="opt-card sel" data-action="sel-discount"><div class="opt-title">20% 이상</div><div class="opt-sub">알맞은 할인 (추천)</div></div>
-        <div class="opt-card" data-action="sel-discount"><div class="opt-title">30% 이상</div><div class="opt-sub">확실한 할인만</div></div>
+      <div class="disc-slider-wrap" style="padding:28px 0 8px">
+        <div class="disc-slider-val"><span id="discVal">30</span>%</div>
+        <div class="disc-slider-hint" style="text-align:center;font-size:15px;color:var(--gray-500);margin-bottom:24px">이 기준 이상의 쿠폰만 알려드려요</div>
+        <input type="range" class="disc-range" id="discRange" min="0" max="100" value="30"
+          oninput="document.getElementById('discVal').textContent=this.value; updateDiscSlider(this)"
+          style="width:100%;margin-bottom:12px">
+        <div class="disc-range-labels" style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray-400);font-weight:600">
+          <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+        </div>
       </div>
       <button class="btn-primary" data-action="go-notification">다음</button>
     </div>
@@ -1190,7 +1264,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
           <div>
             <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">아이디 (휴대폰 번호)</label>
             <div class="field-wrap" style="margin-bottom:0">
-              <input type="tel" placeholder="010-0000-0000" style="font-size:18px">
+              <input type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13" style="font-size:18px" oninput="fmtPhone(this)">
             </div>
           </div>
           <div>
@@ -1217,7 +1291,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
     <div class="hdr-logo">쿠폰 자동추천</div>
     <div class="hdr-search">
       <span class="hdr-search-lbl">검색</span>
-      <input type="text" placeholder="브랜드, 카테고리 검색...">
+      <input id="searchInput" type="text" placeholder="브랜드, 카테고리 검색..." onkeydown="if(event.key==='Enter') doSearch(this.value)">
     </div>
     <div class="hdr-right">
       <button class="hdr-bell-btn" data-action="nav-wallet">
@@ -1233,12 +1307,8 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
     <nav class="sidebar">
       <div class="sb-section-lbl">메뉴</div>
       <div class="sb-item on" data-action="nav-home">홈</div>
-      <div class="sb-item" data-action="nav-download">쿠폰 다운로드<span class="sb-badge">12</span></div>
       <div class="sb-item" data-action="nav-wallet">내 쿠폰함<span class="sb-badge">47</span></div>
       <div class="sb-item" data-action="nav-points">바코드 · 포인트<span class="sb-badge">6</span></div>
-      <div class="sb-section-lbl">계정</div>
-      <div class="sb-item" data-action="nav-mypage">마이페이지</div>
-      <div class="sb-item" data-action="go-login" style="color:var(--gray-400);font-size:14px">로그아웃</div>
       <div class="sb-sav-card" style="margin-top:24px">
         <div class="sb-sav-lbl">이번 달 절약</div>
         <div class="sb-sav-amt">23,500원</div>
@@ -1407,48 +1477,47 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 
       <!-- ── WALLET ── -->
       <div id="p-wallet" class="app-page">
-        <div class="page-title">내 쿠폰함</div>
-        <div class="page-sub">총 47개의 쿠폰이 있어요</div>
-        <div class="wallet-layout">
-          <div class="filter-panel">
-            <div class="filter-title">카테고리 정렬</div>
-            <div class="filter-section">
-              <div class="filter-section-lbl">카테고리</div>
-              <div class="filter-btn on" data-action="wlt-filter" data-val="all">전체 <span class="filter-count">47</span></div>
-              <div class="filter-btn" data-action="wlt-filter" data-val="mart">마트 <span class="filter-count">12</span></div>
-              <div class="filter-btn" data-action="wlt-filter" data-val="convenience">편의점 <span class="filter-count">8</span></div>
-              <div class="filter-btn" data-action="wlt-filter" data-val="delivery">배달 <span class="filter-count">10</span></div>
-              <div class="filter-btn" data-action="wlt-filter" data-val="cafe">카페 <span class="filter-count">6</span></div>
-              <div class="filter-btn" data-action="wlt-filter" data-val="shopping">쇼핑 <span class="filter-count">11</span></div>
-            </div>
-            <div class="filter-divider"></div>
-            <div class="filter-section">
-              <div class="filter-section-lbl">정렬 기준</div>
-              <div class="filter-btn on" data-action="wlt-sort" data-val="expire">유효기간 임박순</div>
-              <div class="filter-btn" data-action="wlt-sort" data-val="discount">할인율 높은 순</div>
-              <div class="filter-btn" data-action="wlt-sort" data-val="downloaded">다운로드한 쿠폰 우선</div>
-              <div class="filter-btn" data-action="wlt-sort" data-val="brand">자주 사용하는 브랜드순</div>
-            </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <div class="page-title" style="margin-bottom:0">내 쿠폰함</div>
+            <div class="page-sub" style="margin-bottom:0">총 47개의 쿠폰이 있어요</div>
           </div>
-          <div class="wallet-content">
-            <div class="wallet-tabs">
-              <div class="wlt-tab on" data-action="wlt-tab">전체</div>
-              <div class="wlt-tab" data-action="wlt-tab">사용 가능</div>
-              <div class="wlt-tab" data-action="wlt-tab">다운로드 완료</div>
-              <div class="wlt-tab" data-action="wlt-tab">사용 완료</div>
-            </div>
-            <div id="walletGrid" class="wallet-grid">
-              <div class="cpn-card" data-action="go-detail" data-id="emart" data-cat="mart" data-disc="30" data-exp="0"><div class="cpn-brand">이마트 · 마트</div><div class="cpn-title">전 매장 30% 할인</div><div class="cpn-disc">30%</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-red">오늘 만료</span></div></div>
-              <div class="cpn-card" data-action="go-detail" data-id="baemin" data-cat="delivery" data-disc="10" data-exp="3"><div class="cpn-brand">배달의민족 · 배달</div><div class="cpn-title">배달 주문 3,000원 할인</div><div class="cpn-disc">3,000원</div><div class="cpn-footer"><span class="cpn-cond">1.5만원 이상</span><span class="cpn-exp exp-org">D-3</span></div></div>
-              <div class="cpn-card" data-action="go-detail" data-id="starbucks" data-cat="cafe" data-disc="5" data-exp="7"><div class="cpn-brand">스타벅스 · 카페</div><div class="cpn-title">음료 1+1 무료 증정</div><div class="cpn-disc">1+1</div><div class="cpn-footer"><span class="cpn-cond">사이즈 무관</span><span class="cpn-exp exp-gry">D-7</span></div></div>
-              <div class="cpn-card" data-cat="convenience" data-disc="20" data-exp="14"><div class="cpn-brand">GS25 · 편의점</div><div class="cpn-title">도시락 20% 할인</div><div class="cpn-disc">20%</div><div class="cpn-footer"><span class="cpn-cond">오전 11시 이후</span><span class="cpn-exp exp-gry">D-14</span></div></div>
-              <div class="cpn-card" data-cat="shopping" data-disc="10" data-exp="21"><div class="cpn-brand">쿠팡 · 쇼핑</div><div class="cpn-title">전 카테고리 10% 할인</div><div class="cpn-disc">10%</div><div class="cpn-footer"><span class="cpn-cond">5만원 이상</span><span class="cpn-exp exp-gry">D-21</span></div></div>
-              <div class="cpn-card" data-cat="shopping" data-disc="8" data-exp="30"><div class="cpn-brand">올리브영 · 쇼핑</div><div class="cpn-title">전 상품 5,000원 할인</div><div class="cpn-disc">5,000원</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-gry">D-30</span></div></div>
-              <div class="cpn-card" data-cat="mart" data-disc="25" data-exp="5"><div class="cpn-brand">롯데마트 · 마트</div><div class="cpn-title">신선식품 25% 할인</div><div class="cpn-disc">25%</div><div class="cpn-footer"><span class="cpn-cond">2만원 이상</span><span class="cpn-exp exp-org">D-5</span></div></div>
-              <div class="cpn-card" data-cat="cafe" data-disc="15" data-exp="10"><div class="cpn-brand">투썸플레이스 · 카페</div><div class="cpn-title">케이크 15% 할인</div><div class="cpn-disc">15%</div><div class="cpn-footer"><span class="cpn-cond">조각케이크 제외</span><span class="cpn-exp exp-gry">D-10</span></div></div>
-              <div class="cpn-card" data-cat="delivery" data-disc="12" data-exp="2"><div class="cpn-brand">요기요 · 배달</div><div class="cpn-title">첫 주문 12% 할인</div><div class="cpn-disc">12%</div><div class="cpn-footer"><span class="cpn-cond">1만원 이상</span><span class="cpn-exp exp-org">D-2</span></div></div>
-            </div>
+          <div class="wlt-sort-wrap" style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:14px;color:var(--gray-500);font-weight:600">정렬</span>
+            <select class="wlt-sort-select" id="wltSortSel" onchange="wSort=this.value; applyWalletFilter(wCat,wSort)">
+              <option value="expire">유효기간 임박순</option>
+              <option value="discount">할인율 높은 순</option>
+              <option value="downloaded">다운로드한 쿠폰 우선</option>
+              <option value="brand">자주 쓰는 브랜드순</option>
+            </select>
           </div>
+        </div>
+        <div class="wlt-filter-bar" style="overflow-x:auto;padding-bottom:4px;margin-bottom:20px">
+          <div class="wlt-cat-tabs" style="display:flex;gap:8px;min-width:max-content">
+            <div class="wlt-cat-btn on" data-action="wlt-filter" data-val="all"><div class="wlt-cat-icon">전체</div><div class="wlt-cat-count">47</div></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="mart"><div class="wlt-cat-icon">마트</div><div class="wlt-cat-count">12</div></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="convenience"><div class="wlt-cat-icon">편의점</div><div class="wlt-cat-count">8</div></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="delivery"><div class="wlt-cat-icon">배달</div><div class="wlt-cat-count">10</div></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="cafe"><div class="wlt-cat-icon">카페</div><div class="wlt-cat-count">6</div></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="shopping"><div class="wlt-cat-icon">쇼핑</div><div class="wlt-cat-count">11</div></div>
+          </div>
+        </div>
+        <div class="wallet-tabs">
+          <div class="wlt-tab on" data-action="wlt-tab">전체</div>
+          <div class="wlt-tab" data-action="wlt-tab">사용 가능</div>
+          <div class="wlt-tab" data-action="wlt-tab">다운로드 완료</div>
+          <div class="wlt-tab" data-action="wlt-tab">사용 완료</div>
+        </div>
+        <div id="walletGrid" class="wallet-grid">
+          <div class="cpn-card" data-action="go-detail" data-id="emart" data-cat="mart" data-disc="30" data-exp="0"><div class="cpn-brand">이마트 · 마트</div><div class="cpn-title">전 매장 30% 할인</div><div class="cpn-disc">30%</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-red">오늘 만료</span></div></div>
+          <div class="cpn-card" data-action="go-detail" data-id="baemin" data-cat="delivery" data-disc="10" data-exp="3"><div class="cpn-brand">배달의민족 · 배달</div><div class="cpn-title">배달 주문 3,000원 할인</div><div class="cpn-disc">3,000원</div><div class="cpn-footer"><span class="cpn-cond">1.5만원 이상</span><span class="cpn-exp exp-org">D-3</span></div></div>
+          <div class="cpn-card" data-action="go-detail" data-id="starbucks" data-cat="cafe" data-disc="5" data-exp="7"><div class="cpn-brand">스타벅스 · 카페</div><div class="cpn-title">음료 1+1 무료 증정</div><div class="cpn-disc">1+1</div><div class="cpn-footer"><span class="cpn-cond">사이즈 무관</span><span class="cpn-exp exp-gry">D-7</span></div></div>
+          <div class="cpn-card" data-cat="convenience" data-disc="20" data-exp="14"><div class="cpn-brand">GS25 · 편의점</div><div class="cpn-title">도시락 20% 할인</div><div class="cpn-disc">20%</div><div class="cpn-footer"><span class="cpn-cond">오전 11시 이후</span><span class="cpn-exp exp-gry">D-14</span></div></div>
+          <div class="cpn-card" data-cat="shopping" data-disc="10" data-exp="21"><div class="cpn-brand">쿠팡 · 쇼핑</div><div class="cpn-title">전 카테고리 10% 할인</div><div class="cpn-disc">10%</div><div class="cpn-footer"><span class="cpn-cond">5만원 이상</span><span class="cpn-exp exp-gry">D-21</span></div></div>
+          <div class="cpn-card" data-cat="shopping" data-disc="8" data-exp="30"><div class="cpn-brand">올리브영 · 쇼핑</div><div class="cpn-title">전 상품 5,000원 할인</div><div class="cpn-disc">5,000원</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-gry">D-30</span></div></div>
+          <div class="cpn-card" data-cat="mart" data-disc="25" data-exp="5"><div class="cpn-brand">롯데마트 · 마트</div><div class="cpn-title">신선식품 25% 할인</div><div class="cpn-disc">25%</div><div class="cpn-footer"><span class="cpn-cond">2만원 이상</span><span class="cpn-exp exp-org">D-5</span></div></div>
+          <div class="cpn-card" data-cat="cafe" data-disc="15" data-exp="10"><div class="cpn-brand">투썸플레이스 · 카페</div><div class="cpn-title">케이크 15% 할인</div><div class="cpn-disc">15%</div><div class="cpn-footer"><span class="cpn-cond">조각케이크 제외</span><span class="cpn-exp exp-gry">D-10</span></div></div>
+          <div class="cpn-card" data-cat="delivery" data-disc="12" data-exp="2"><div class="cpn-brand">요기요 · 배달</div><div class="cpn-title">첫 주문 12% 할인</div><div class="cpn-disc">12%</div><div class="cpn-footer"><span class="cpn-cond">1만원 이상</span><span class="cpn-exp exp-org">D-2</span></div></div>
         </div>
       </div>
 
@@ -1479,6 +1548,22 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
                 <div class="det-row"><span class="det-lbl">유효기간</span><span class="det-val" style="color:var(--danger)">2026.04.12 (오늘 만료)</span></div>
                 <div class="det-row"><span class="det-lbl">중복 사용</span><span class="det-val">불가</span></div>
                 <div class="det-row"><span class="det-lbl">제공</span><span class="det-val">KT 멤버십 혜택</span></div>
+              </div>
+            </div>
+            <div class="nearby-section">
+              <div class="panel-title" style="font-size:18px;font-weight:800;margin-bottom:8px">주변 사용처</div>
+              <div class="nearby-gps-tag" style="font-size:13px;color:var(--gray-500);margin-bottom:14px">📍 GPS 기반 · 가까운 순 정렬</div>
+              <div class="nearby-search-row" style="display:flex;gap:8px;margin-bottom:16px">
+                <input class="nearby-search-input" type="text" placeholder="지점명 또는 주소 검색..." id="nearbySearch"
+                  style="flex:1;padding:10px 14px;border:2px solid var(--gray-200);border-radius:8px;font-size:15px;font-family:var(--font)">
+                <button class="btn-outline" style="padding:10px 18px;font-size:15px" onclick="filterNearby()">검색</button>
+              </div>
+              <div class="nearby-list" id="nearbyList">
+                <div class="nearby-item" style="background:var(--gray-100);margin-bottom:8px;border-radius:10px"><div class="nearby-info" style="flex:1"><div class="nearby-name" style="font-weight:700;font-size:15px">이마트 영등포점</div><div class="nearby-addr" style="font-size:13px;color:var(--gray-500)">서울 영등포구 영중로 15</div></div><div class="nearby-dist" style="font-size:13px;font-weight:700;color:var(--primary)">0.3km</div></div>
+                <div class="nearby-item" style="background:var(--gray-100);margin-bottom:8px;border-radius:10px"><div class="nearby-info" style="flex:1"><div class="nearby-name" style="font-weight:700;font-size:15px">이마트 목동점</div><div class="nearby-addr" style="font-size:13px;color:var(--gray-500)">서울 양천구 목동동로 257</div></div><div class="nearby-dist" style="font-size:13px;font-weight:700;color:var(--primary)">1.1km</div></div>
+                <div class="nearby-item" style="background:var(--gray-100);margin-bottom:8px;border-radius:10px"><div class="nearby-info" style="flex:1"><div class="nearby-name" style="font-weight:700;font-size:15px">이마트 은평점</div><div class="nearby-addr" style="font-size:13px;color:var(--gray-500)">서울 은평구 연서로 365</div></div><div class="nearby-dist" style="font-size:13px;font-weight:700;color:var(--primary)">2.4km</div></div>
+                <div class="nearby-item" style="background:var(--gray-100);margin-bottom:8px;border-radius:10px"><div class="nearby-info" style="flex:1"><div class="nearby-name" style="font-weight:700;font-size:15px">이마트 마포점</div><div class="nearby-addr" style="font-size:13px;color:var(--gray-500)">서울 마포구 월드컵북로 400</div></div><div class="nearby-dist" style="font-size:13px;font-weight:700;color:var(--primary)">3.0km</div></div>
+                <div class="nearby-item" style="background:var(--gray-100);margin-bottom:8px;border-radius:10px"><div class="nearby-info" style="flex:1"><div class="nearby-name" style="font-weight:700;font-size:15px">이마트 상암점</div><div class="nearby-addr" style="font-size:13px;color:var(--gray-500)">서울 마포구 성암로 301</div></div><div class="nearby-dist" style="font-size:13px;font-weight:700;color:var(--primary)">3.8km</div></div>
               </div>
             </div>
           </div>
@@ -2117,13 +2202,24 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
         </div>
       </div>
 
+      <!-- ── SEARCH RESULTS ── -->
+      <div id="p-search" class="app-page">
+        <div class="page-title">검색 결과</div>
+        <div class="search-result-bar">
+          <span class="search-kw-badge" id="searchKwBadge"></span>
+          <span class="search-count" id="searchCount" style="font-size:15px;color:var(--gray-500)"></span>
+          <button class="btn-ghost" style="margin-left:auto;font-size:15px" data-action="nav-home">← 홈으로</button>
+        </div>
+        <div class="cpn-grid" id="searchResultList"></div>
+      </div>
+
     </main>
   </div>
 </div>
 
 <script>
 /* ============================================================ STATE ============================================================ */
-const S = { cur:'splash', hist:[], appPage:'home', carIdx:0, connectMethod:'phone', connectFrom:'easy', authTimer:null };
+const S = { cur:'splash', hist:[], appPage:'home', carIdx:0, connectMethod:'phone', connectFrom:'easy', authTimer:null, carTimer:null, searchKw:'' };
 
 const POINTS_DATA = [
   { id:'cgv',     name:'CGV',    cat:'문화생활', bal:12000, status:'usable',      exp:'D-3',  brc:'qr',     desc:'영화 예매 시 포인트 차감', num:'1234 5678 0001' },
@@ -2137,7 +2233,7 @@ const downloaded = new Set(['baemin','starbucks']);
 
 /* ============================================================ NAVIGATION ============================================================ */
 function go(id, back) {
-  const appPages = {home:1,download:1,wallet:1,detail:1,barcode:1,mypage:1,'points-hub':1,'points-service':1,'connect':1,'connect-easy':1,'connect-manual':1,'connect-manual-form':1,'connect-auth':1,'connect-success':1,'connect-fail':1};
+  const appPages = {home:1,download:1,wallet:1,detail:1,barcode:1,mypage:1,'points-hub':1,'points-service':1,'connect':1,'connect-easy':1,'connect-manual':1,'connect-manual-form':1,'connect-auth':1,'connect-success':1,'connect-fail':1,search:1};
   if (appPages[id]) {
     document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
     const shell = document.getElementById('app-shell');
@@ -2164,7 +2260,7 @@ function showAppPage(id) {
 }
 function updateSidebar(id) {
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));
-  const map={home:0,download:1,wallet:2,'points-hub':3,mypage:4};
+  const map={home:0,wallet:1,'points-hub':2};
   const items=document.querySelectorAll('.sb-item');
   if (map[id]!==undefined&&items[map[id]]) items[map[id]].classList.add('on');
 }
@@ -2184,6 +2280,44 @@ function countUp() {
   let n=0; const t=setInterval(()=>{ el.textContent=++n; if(n>=47)clearInterval(t); },22);
 }
 
+/* ============================================================ KEYWORD SEARCH ============================================================ */
+function doSearch(kw) {
+  if (!kw.trim()) return;
+  S.searchKw = kw.trim();
+  showAppPage('search'); updateSidebar('');
+  const badge = document.getElementById('searchKwBadge');
+  const list  = document.getElementById('searchResultList');
+  const cnt   = document.getElementById('searchCount');
+  if (badge) badge.textContent = '"' + S.searchKw + '"';
+  const allCards = [...document.querySelectorAll('#walletGrid .cpn-card, #p-download .cpn-card')];
+  const results  = allCards.filter(c => c.textContent.toLowerCase().includes(S.searchKw.toLowerCase()));
+  if (list) {
+    list.innerHTML = '';
+    if (results.length === 0) {
+      list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--gray-400);font-size:18px">검색 결과가 없습니다</div>';
+    } else {
+      results.forEach(c => list.appendChild(c.cloneNode(true)));
+    }
+  }
+  if (cnt) cnt.textContent = results.length + '개 결과';
+}
+
+/* ============================================================ NEARBY SEARCH ============================================================ */
+function filterNearby() {
+  const kw = document.getElementById('nearbySearch').value.toLowerCase().trim();
+  document.querySelectorAll('#nearbyList .nearby-item').forEach(item => {
+    const name = item.querySelector('.nearby-name').textContent.toLowerCase();
+    const addr = item.querySelector('.nearby-addr').textContent.toLowerCase();
+    item.style.display = (!kw || name.includes(kw) || addr.includes(kw)) ? '' : 'none';
+  });
+}
+
+/* ============================================================ DISCOUNT SLIDER ============================================================ */
+function updateDiscSlider(input) {
+  const pct = input.value;
+  input.style.background = `linear-gradient(to right, var(--primary) 0%, var(--primary) ${pct}%, var(--gray-200) ${pct}%, var(--gray-200) 100%)`;
+}
+
 /* ============================================================ CAROUSEL ============================================================ */
 function initCarousel() {
   const track=document.getElementById('carouselTrack'); if(!track)return;
@@ -2195,6 +2329,14 @@ function initCarousel() {
     d.onclick=()=>goCar(i); dotsEl.appendChild(d);
   });
   goCar(0);
+  if (S.carTimer) clearInterval(S.carTimer);
+  S.carTimer = setInterval(() => {
+    const track = document.getElementById('carouselTrack');
+    if (!track) return;
+    const slides = track.querySelectorAll('.carousel-slide');
+    const max = Math.max(0, slides.length - 3);
+    goCar(S.carIdx >= max ? 0 : S.carIdx + 1);
+  }, 3500);
 }
 function goCar(i) {
   const track=document.getElementById('carouselTrack'); if(!track)return;
@@ -2301,7 +2443,9 @@ const ACT = {
   'connect-fail-demo':   ()=>{ if(S.authTimer){clearTimeout(S.authTimer);S.authTimer=null;} showAppPage('connect-fail'); },
   'toggle-cat':      (e)=>e.target.closest('.cat-chip').classList.toggle('sel'),
   'toggle-brand':    (e)=>e.target.closest('.brand-chip').classList.toggle('sel'),
-  'toggle-svc':      (e)=>{ const btn=e.target.closest('.conn-btn'); btn.classList.toggle('done'); btn.textContent=btn.classList.contains('done')?'완료':'연동하기'; },
+  'brand-all':       ()=>document.querySelectorAll('#brandGrid .brand-chip').forEach(c=>c.classList.add('sel')),
+  'brand-none':      ()=>document.querySelectorAll('#brandGrid .brand-chip').forEach(c=>c.classList.remove('sel')),
+  'toggle-svc':      (e)=>{ const btn=e.target.closest('.conn-btn'); const card=btn.closest('.svc-card'); btn.classList.toggle('done'); const isDone=btn.classList.contains('done'); btn.textContent=isDone?'✓ 연동 완료':'연동하기'; if(card) card.classList.toggle('connected',isDone); },
   'sel-discount':    (e)=>{ document.getElementById('discOpts').querySelectorAll('.opt-card').forEach(c=>c.classList.remove('sel')); e.target.closest('.opt-card').classList.add('sel'); },
   'sel-notif':       (e)=>{ document.getElementById('notifOpts').querySelectorAll('.opt-card').forEach(c=>c.classList.remove('sel')); e.target.closest('.opt-card').classList.add('sel'); },
   'download-cpn':    (e)=>handleDownload(e.target.closest('[data-action]')),
