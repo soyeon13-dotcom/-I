@@ -1,13 +1,17 @@
 {
-  "servers": [
+  "version": "0.0.1",
+  "configurations": [
     {
-      "name": "Static File Server",
-      "type": "static",
-      "command": "npx serve .",
-      "cwd": "C:\\Users\\SAMSUNG\\OneDrive\\ドキュメント\\淑明\\3-1\\사용자경험디자인I\\클로드",
-      "port": 3000,
-      "url": "http://localhost:3000",
-      "description": "Serves index.html via npx serve (no install required)"
+      "name": "npx serve (port 3000)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", ".", "--listen", "3000", "--no-clipboard"],
+      "port": 3000
+    },
+    {
+      "name": "Python HTTP Server (port 8080)",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8080"],
+      "port": 8080
     }
   ]
 }
