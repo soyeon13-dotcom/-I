@@ -935,6 +935,11 @@ input[type=range].disc-range::-moz-range-thumb {
    ============================================================ */
 .login-right h2 { font-size:28px; font-weight:900; color:var(--gray-900); margin-bottom:6px; }
 .login-right .sub-txt { font-size:15px; color:var(--gray-500); margin-bottom:32px; }
+
+/* ── 브랜드 아이콘 바 ── */
+.wlt-brand-icon { padding:8px 18px; border-radius:50px; border:2px solid var(--gray-200); font-size:14px; font-weight:700; cursor:pointer; background:white; color:var(--gray-700); white-space:nowrap; transition:all .15s; }
+.wlt-brand-icon:hover { border-color:var(--primary); color:var(--primary); }
+.wlt-brand-icon.on { background:var(--primary-lt); border-color:var(--primary); color:var(--primary); }
 </style>
 </head>
 <body>
@@ -969,7 +974,7 @@ input[type=range].disc-range::-moz-range-thumb {
         <h2>회원가입</h2>
         <div class="sub-txt">아래 방법으로 시작하세요</div>
         <div class="su-btns">
-          <button class="social-btn btn-main" data-action="go-phone">휴대폰 번호로 시작하기</button>
+          <button class="social-btn btn-main" data-action="go-terms">휴대폰 번호로 시작하기</button>
           <div class="divider">또는 간편 가입</div>
           <button class="social-btn btn-kakao" data-action="go-phone">카카오로 시작하기</button>
           <button class="social-btn btn-naver" data-action="go-phone">네이버로 시작하기</button>
@@ -1072,7 +1077,7 @@ input[type=range].disc-range::-moz-range-thumb {
       <div style="font-size:72px;font-weight:900;color:var(--primary);line-height:1" id="lrCount">0</div>
       <div style="font-size:24px;font-weight:800;color:var(--gray-900);margin:10px 0 12px">개의 쿠폰을 찾았습니다</div>
       <div style="font-size:16px;color:var(--gray-500);line-height:1.6;margin-bottom:36px">KT, 이마트, 배달의민족, 스타벅스 등에서<br>사용 가능한 쿠폰이에요</div>
-      <button class="btn-primary" data-action="go-integration" style="max-width:280px;margin:0 auto">계속하기</button>
+      <button class="btn-primary" data-action="go-more-connect" style="max-width:280px;margin:0 auto">계속하기</button>
     </div>
   </div>
 </div>
@@ -1097,7 +1102,7 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="svc-card"><div class="svc-info"><div class="svc-name">GS25 / CU</div><div class="svc-desc">편의점 쿠폰</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
         <div class="svc-card"><div class="svc-info"><div class="svc-name">스타벅스</div><div class="svc-desc">리워드, 무료음료</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
       </div>
-      <button class="btn-primary" data-action="go-category">계속하기</button>
+      <button class="btn-primary" data-action="go-signup-complete">연결 완료하기</button>
     </div>
   </div>
 </div>
@@ -1244,6 +1249,169 @@ input[type=range].disc-range::-moz-range-thumb {
   </div>
 </div>
 
+<!-- ==================== TERMS ==================== -->
+<div class="screen" id="s-terms">
+  <div class="ob-page">
+    <div class="ob-card">
+      <div class="ob-back" data-action="go-back">← 돌아가기</div>
+      <h2 class="ob-h2">서비스 이용에 필요한<br>동의를 진행합니다</h2>
+      <p class="ob-sub">아래 항목에 동의해 주세요</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px">
+        <label style="display:flex;align-items:center;gap:12px;padding:16px 18px;border-radius:10px;border:2px solid var(--primary);background:var(--primary-lt);cursor:pointer">
+          <input type="checkbox" id="agreeAll" style="accent-color:var(--primary);width:20px;height:20px" onchange="document.querySelectorAll('.agree-chk').forEach(c=>c.checked=this.checked)">
+          <span style="font-size:17px;font-weight:900;color:var(--primary)">전체 동의</span>
+        </label>
+        <div style="height:1px;background:var(--gray-200);margin:4px 0"></div>
+        <label style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:10px;border:2px solid var(--gray-200);cursor:pointer">
+          <input type="checkbox" class="agree-chk" style="accent-color:var(--primary);width:18px;height:18px">
+          <span style="font-size:15px;font-weight:700;color:var(--gray-800)">[필수] 이용약관 동의</span>
+          <span style="margin-left:auto;font-size:13px;color:var(--primary);text-decoration:underline;cursor:pointer">보기</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:10px;border:2px solid var(--gray-200);cursor:pointer">
+          <input type="checkbox" class="agree-chk" style="accent-color:var(--primary);width:18px;height:18px">
+          <span style="font-size:15px;font-weight:700;color:var(--gray-800)">[필수] 개인정보 처리방침 동의</span>
+          <span style="margin-left:auto;font-size:13px;color:var(--primary);text-decoration:underline;cursor:pointer">보기</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:10px;border:2px solid var(--gray-200);cursor:pointer">
+          <input type="checkbox" class="agree-chk" style="accent-color:var(--primary);width:18px;height:18px">
+          <span style="font-size:15px;font-weight:700;color:var(--gray-800)">[선택] 마케팅 정보 수신 동의</span>
+          <span style="margin-left:auto;font-size:13px;color:var(--primary);text-decoration:underline;cursor:pointer">보기</span>
+        </label>
+      </div>
+      <button class="btn-primary" data-action="go-signup-info">다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SIGNUP INFO ==================== -->
+<div class="screen" id="s-signup-info">
+  <div class="ob-page">
+    <div class="ob-card">
+      <div class="ob-back" data-action="go-back">← 돌아가기</div>
+      <h2 class="ob-h2">기본 정보를 입력해 주세요</h2>
+      <p class="ob-sub">정확한 서비스 이용을 위해 필요해요</p>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">
+        <div>
+          <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">이름</label>
+          <div class="field-wrap" style="margin-bottom:0"><input type="text" placeholder="이름을 입력하세요" style="font-size:16px"></div>
+        </div>
+        <div>
+          <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">성별</label>
+          <div style="display:flex;gap:10px">
+            <label style="flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:10px;border:2px solid var(--gray-200);cursor:pointer;font-size:15px;font-weight:700"><input type="radio" name="gender" style="accent-color:var(--primary);width:18px;height:18px"> 남성</label>
+            <label style="flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:10px;border:2px solid var(--gray-200);cursor:pointer;font-size:15px;font-weight:700"><input type="radio" name="gender" style="accent-color:var(--primary);width:18px;height:18px"> 여성</label>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">생년월일</label>
+          <div class="field-wrap" style="margin-bottom:0"><input type="text" placeholder="YYYY.MM.DD" style="font-size:16px"></div>
+        </div>
+        <div>
+          <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">휴대폰 번호</label>
+          <div class="field-wrap" style="margin-bottom:0"><input type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13" style="font-size:16px" oninput="fmtPhone(this)"></div>
+        </div>
+        <div>
+          <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">이메일</label>
+          <div class="field-wrap" style="margin-bottom:0"><input type="email" placeholder="example@email.com" style="font-size:16px"></div>
+        </div>
+      </div>
+      <button class="btn-primary" data-action="go-signup-id">다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SIGNUP ID/PW ==================== -->
+<div class="screen" id="s-signup-id">
+  <div class="ob-page">
+    <div class="ob-card">
+      <div class="ob-back" data-action="go-back">← 돌아가기</div>
+      <h2 class="ob-h2">아이디와 비밀번호를<br>만들어 주세요</h2>
+      <p class="ob-sub">로그인할 때 사용할 정보예요</p>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">
+        <div>
+          <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">아이디</label>
+          <div class="field-wrap" style="margin-bottom:0"><input type="text" placeholder="영문, 숫자 6~20자" style="font-size:16px"></div>
+        </div>
+        <div>
+          <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">비밀번호</label>
+          <div class="field-wrap" style="margin-bottom:0"><input type="password" placeholder="영문+숫자+특수문자 8자 이상" style="font-size:16px"></div>
+        </div>
+        <div>
+          <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">비밀번호 확인</label>
+          <div class="field-wrap" style="margin-bottom:0"><input type="password" placeholder="비밀번호를 다시 입력하세요" style="font-size:16px"></div>
+        </div>
+      </div>
+      <button class="btn-primary" data-action="go-phone">인증번호 받기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MORE CONNECT ==================== -->
+<div class="screen" id="s-more-connect">
+  <div class="ob-page">
+    <div class="ob-card wide" style="text-align:center">
+      <div style="width:80px;height:80px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 20px">🔗</div>
+      <h2 class="ob-h2" style="text-align:center">추가로 직접 연결할<br>서비스가 있으신가요?</h2>
+      <p class="ob-sub" style="text-align:center">자동으로 연동된 서비스 외에<br>더 연결하면 더 많은 혜택을 받을 수 있어요</p>
+      <div style="background:var(--gray-100);border-radius:14px;padding:18px;margin-bottom:28px;text-align:left">
+        <div style="font-size:14px;color:var(--gray-500);margin-bottom:8px">자동 연동 완료</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="padding:6px 14px;background:var(--accent);border-radius:50px;font-size:13px;font-weight:800;color:#5a4a00">KT/SKT/LGU+ ✓</span>
+          <span style="padding:6px 14px;background:var(--accent);border-radius:50px;font-size:13px;font-weight:800;color:#5a4a00">이마트 ✓</span>
+          <span style="padding:6px 14px;background:var(--accent);border-radius:50px;font-size:13px;font-weight:800;color:#5a4a00">배달의민족 ✓</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto">
+        <button class="btn-primary" data-action="go-integration" style="font-size:18px">직접 선택하기</button>
+        <button class="btn-outline" data-action="go-signup-complete" style="font-size:18px">아니요, 완료하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SIGNUP COMPLETE ==================== -->
+<div class="screen" id="s-signup-complete">
+  <div class="ob-page">
+    <div class="ob-card" style="text-align:center">
+      <div style="width:96px;height:96px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:900;color:white;margin:0 auto 24px;animation:popIn .5s ease">✓</div>
+      <h2 class="ob-h2" style="text-align:center">계정 생성이<br>완료되었습니다!</h2>
+      <p class="ob-sub" style="text-align:center">이제 로그인 후 서비스를 이용하실 수 있어요</p>
+      <div style="background:var(--primary-lt);border-radius:14px;padding:24px;margin-bottom:28px">
+        <div style="font-size:14px;color:var(--gray-600);margin-bottom:10px;font-weight:700">연동된 서비스</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+          <span style="padding:6px 14px;background:white;border-radius:50px;font-size:14px;font-weight:700;color:var(--primary);border:2px solid var(--primary-lt)">KT/SKT/LGU+</span>
+          <span style="padding:6px 14px;background:white;border-radius:50px;font-size:14px;font-weight:700;color:var(--primary);border:2px solid var(--primary-lt)">이마트</span>
+          <span style="padding:6px 14px;background:white;border-radius:50px;font-size:14px;font-weight:700;color:var(--primary);border:2px solid var(--primary-lt)">배달의민족</span>
+        </div>
+      </div>
+      <button class="btn-primary" data-action="go-login" style="max-width:320px;margin:0 auto">로그인하러 가기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== NOTI CONSENT ==================== -->
+<div class="screen" id="s-noti-consent">
+  <div class="ob-page">
+    <div class="ob-card wide" style="text-align:center">
+      <div style="width:80px;height:80px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 20px">🔔</div>
+      <h2 class="ob-h2" style="text-align:center">맞춤 혜택 알림을<br>받아보시겠어요?</h2>
+      <p class="ob-sub" style="text-align:center">딱 필요한 쿠폰 혜택만 골라서 알려드릴게요<br>1분이면 충분해요!</p>
+      <div style="background:var(--gray-100);border-radius:14px;padding:20px;margin-bottom:28px;text-align:left">
+        <div style="font-size:15px;font-weight:800;color:var(--gray-900);margin-bottom:12px">알림 설정 시 혜택</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)"><span style="color:var(--primary);font-weight:900;font-size:18px">✓</span> 내 주변 할인 소식 우선 알림</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)"><span style="color:var(--primary);font-weight:900;font-size:18px">✓</span> 쿠폰 만료 전 미리 알림</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)"><span style="color:var(--primary);font-weight:900;font-size:18px">✓</span> 자주 가는 브랜드 신규 혜택</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto">
+        <button class="btn-primary" data-action="go-category" style="font-size:18px">알림 설정하기</button>
+        <button class="btn-ghost" data-action="go-home" style="font-size:16px">나중에 하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== LOGIN ==================== -->
 <div class="screen" id="s-login">
   <div class="ob-page">
@@ -1273,7 +1441,7 @@ input[type=range].disc-range::-moz-range-thumb {
               <input type="password" placeholder="비밀번호를 입력하세요" style="font-size:18px">
             </div>
           </div>
-          <button class="btn-primary" data-action="go-home" style="margin-top:8px">로그인</button>
+          <button class="btn-primary" data-action="go-noti-consent" style="margin-top:8px">로그인</button>
           <div style="text-align:center;font-size:14px;color:var(--gray-500);margin-top:4px">
             <span style="cursor:pointer;text-decoration:underline">비밀번호 찾기</span>
             &nbsp;|&nbsp;
@@ -1485,21 +1653,30 @@ input[type=range].disc-range::-moz-range-thumb {
           <div class="wlt-sort-wrap" style="display:flex;align-items:center;gap:8px">
             <span style="font-size:14px;color:var(--gray-500);font-weight:600">정렬</span>
             <select class="wlt-sort-select" id="wltSortSel" onchange="wSort=this.value; applyWalletFilter(wCat,wSort)">
-              <option value="expire">유효기간 임박순</option>
-              <option value="discount">할인율 높은 순</option>
-              <option value="downloaded">다운로드한 쿠폰 우선</option>
-              <option value="brand">자주 쓰는 브랜드순</option>
+              <option value="expire">마감임박순</option>
+              <option value="discount">최대할인순</option>
+              <option value="distance">거리순</option>
+              <option value="popular">인기순</option>
             </select>
           </div>
         </div>
-        <div class="wlt-filter-bar" style="overflow-x:auto;padding-bottom:4px;margin-bottom:20px">
+        <div class="wlt-filter-bar" style="overflow-x:auto;padding-bottom:4px;margin-bottom:12px">
           <div class="wlt-cat-tabs" style="display:flex;gap:8px;min-width:max-content">
             <div class="wlt-cat-btn on" data-action="wlt-filter" data-val="all"><div class="wlt-cat-icon">전체</div><div class="wlt-cat-count">47</div></div>
-            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="mart"><div class="wlt-cat-icon">마트</div><div class="wlt-cat-count">12</div></div>
-            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="convenience"><div class="wlt-cat-icon">편의점</div><div class="wlt-cat-count">8</div></div>
-            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="delivery"><div class="wlt-cat-icon">배달</div><div class="wlt-cat-count">10</div></div>
-            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="cafe"><div class="wlt-cat-icon">카페</div><div class="wlt-cat-count">6</div></div>
-            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="shopping"><div class="wlt-cat-icon">쇼핑</div><div class="wlt-cat-count">11</div></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="food"><div class="wlt-cat-icon">식품</div><div class="wlt-cat-count">21</div></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="fashion"><div class="wlt-cat-icon">패션</div><div class="wlt-cat-count">8</div></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="appliance"><div class="wlt-cat-icon">가전</div><div class="wlt-cat-count">7</div></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="culture"><div class="wlt-cat-icon">문화생활</div><div class="wlt-cat-count">11</div></div>
+          </div>
+        </div>
+        <div id="wltBrandBar" style="display:none;overflow-x:auto;margin-bottom:16px">
+          <div style="display:flex;gap:8px;min-width:max-content">
+            <div class="wlt-brand-icon on" data-action="wlt-brand" data-brand="all">전체</div>
+            <div class="wlt-brand-icon" data-action="wlt-brand" data-brand="이마트">이마트</div>
+            <div class="wlt-brand-icon" data-action="wlt-brand" data-brand="배달의민족">배달의민족</div>
+            <div class="wlt-brand-icon" data-action="wlt-brand" data-brand="GS25">GS25</div>
+            <div class="wlt-brand-icon" data-action="wlt-brand" data-brand="롯데마트">롯데마트</div>
+            <div class="wlt-brand-icon" data-action="wlt-brand" data-brand="요기요">요기요</div>
           </div>
         </div>
         <div class="wallet-tabs">
@@ -1509,15 +1686,15 @@ input[type=range].disc-range::-moz-range-thumb {
           <div class="wlt-tab" data-action="wlt-tab">사용 완료</div>
         </div>
         <div id="walletGrid" class="wallet-grid">
-          <div class="cpn-card" data-action="go-detail" data-id="emart" data-cat="mart" data-disc="30" data-exp="0"><div class="cpn-brand">이마트 · 마트</div><div class="cpn-title">전 매장 30% 할인</div><div class="cpn-disc">30%</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-red">오늘 만료</span></div></div>
-          <div class="cpn-card" data-action="go-detail" data-id="baemin" data-cat="delivery" data-disc="10" data-exp="3"><div class="cpn-brand">배달의민족 · 배달</div><div class="cpn-title">배달 주문 3,000원 할인</div><div class="cpn-disc">3,000원</div><div class="cpn-footer"><span class="cpn-cond">1.5만원 이상</span><span class="cpn-exp exp-org">D-3</span></div></div>
-          <div class="cpn-card" data-action="go-detail" data-id="starbucks" data-cat="cafe" data-disc="5" data-exp="7"><div class="cpn-brand">스타벅스 · 카페</div><div class="cpn-title">음료 1+1 무료 증정</div><div class="cpn-disc">1+1</div><div class="cpn-footer"><span class="cpn-cond">사이즈 무관</span><span class="cpn-exp exp-gry">D-7</span></div></div>
-          <div class="cpn-card" data-cat="convenience" data-disc="20" data-exp="14"><div class="cpn-brand">GS25 · 편의점</div><div class="cpn-title">도시락 20% 할인</div><div class="cpn-disc">20%</div><div class="cpn-footer"><span class="cpn-cond">오전 11시 이후</span><span class="cpn-exp exp-gry">D-14</span></div></div>
-          <div class="cpn-card" data-cat="shopping" data-disc="10" data-exp="21"><div class="cpn-brand">쿠팡 · 쇼핑</div><div class="cpn-title">전 카테고리 10% 할인</div><div class="cpn-disc">10%</div><div class="cpn-footer"><span class="cpn-cond">5만원 이상</span><span class="cpn-exp exp-gry">D-21</span></div></div>
-          <div class="cpn-card" data-cat="shopping" data-disc="8" data-exp="30"><div class="cpn-brand">올리브영 · 쇼핑</div><div class="cpn-title">전 상품 5,000원 할인</div><div class="cpn-disc">5,000원</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-gry">D-30</span></div></div>
-          <div class="cpn-card" data-cat="mart" data-disc="25" data-exp="5"><div class="cpn-brand">롯데마트 · 마트</div><div class="cpn-title">신선식품 25% 할인</div><div class="cpn-disc">25%</div><div class="cpn-footer"><span class="cpn-cond">2만원 이상</span><span class="cpn-exp exp-org">D-5</span></div></div>
-          <div class="cpn-card" data-cat="cafe" data-disc="15" data-exp="10"><div class="cpn-brand">투썸플레이스 · 카페</div><div class="cpn-title">케이크 15% 할인</div><div class="cpn-disc">15%</div><div class="cpn-footer"><span class="cpn-cond">조각케이크 제외</span><span class="cpn-exp exp-gry">D-10</span></div></div>
-          <div class="cpn-card" data-cat="delivery" data-disc="12" data-exp="2"><div class="cpn-brand">요기요 · 배달</div><div class="cpn-title">첫 주문 12% 할인</div><div class="cpn-disc">12%</div><div class="cpn-footer"><span class="cpn-cond">1만원 이상</span><span class="cpn-exp exp-org">D-2</span></div></div>
+          <div class="cpn-card" data-action="go-detail" data-id="emart" data-cat="food" data-disc="30" data-exp="0"><div class="cpn-brand">이마트 · 식품</div><div class="cpn-title">전 매장 30% 할인</div><div class="cpn-disc">30%</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-red">오늘 만료</span></div></div>
+          <div class="cpn-card" data-action="go-detail" data-id="baemin" data-cat="food" data-disc="10" data-exp="3"><div class="cpn-brand">배달의민족 · 식품</div><div class="cpn-title">배달 주문 3,000원 할인</div><div class="cpn-disc">3,000원</div><div class="cpn-footer"><span class="cpn-cond">1.5만원 이상</span><span class="cpn-exp exp-org">D-3</span></div></div>
+          <div class="cpn-card" data-action="go-detail" data-id="starbucks" data-cat="culture" data-disc="5" data-exp="7"><div class="cpn-brand">스타벅스 · 문화생활</div><div class="cpn-title">음료 1+1 무료 증정</div><div class="cpn-disc">1+1</div><div class="cpn-footer"><span class="cpn-cond">사이즈 무관</span><span class="cpn-exp exp-gry">D-7</span></div></div>
+          <div class="cpn-card" data-cat="food" data-disc="20" data-exp="14"><div class="cpn-brand">GS25 · 식품</div><div class="cpn-title">도시락 20% 할인</div><div class="cpn-disc">20%</div><div class="cpn-footer"><span class="cpn-cond">오전 11시 이후</span><span class="cpn-exp exp-gry">D-14</span></div></div>
+          <div class="cpn-card" data-cat="fashion" data-disc="10" data-exp="21"><div class="cpn-brand">쿠팡 · 패션</div><div class="cpn-title">전 카테고리 10% 할인</div><div class="cpn-disc">10%</div><div class="cpn-footer"><span class="cpn-cond">5만원 이상</span><span class="cpn-exp exp-gry">D-21</span></div></div>
+          <div class="cpn-card" data-cat="fashion" data-disc="8" data-exp="30"><div class="cpn-brand">올리브영 · 패션</div><div class="cpn-title">전 상품 5,000원 할인</div><div class="cpn-disc">5,000원</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-gry">D-30</span></div></div>
+          <div class="cpn-card" data-cat="food" data-disc="25" data-exp="5"><div class="cpn-brand">롯데마트 · 식품</div><div class="cpn-title">신선식품 25% 할인</div><div class="cpn-disc">25%</div><div class="cpn-footer"><span class="cpn-cond">2만원 이상</span><span class="cpn-exp exp-org">D-5</span></div></div>
+          <div class="cpn-card" data-cat="culture" data-disc="15" data-exp="10"><div class="cpn-brand">투썸플레이스 · 문화생활</div><div class="cpn-title">케이크 15% 할인</div><div class="cpn-disc">15%</div><div class="cpn-footer"><span class="cpn-cond">조각케이크 제외</span><span class="cpn-exp exp-gry">D-10</span></div></div>
+          <div class="cpn-card" data-cat="food" data-disc="12" data-exp="2"><div class="cpn-brand">요기요 · 식품</div><div class="cpn-title">첫 주문 12% 할인</div><div class="cpn-disc">12%</div><div class="cpn-footer"><span class="cpn-cond">1만원 이상</span><span class="cpn-exp exp-org">D-2</span></div></div>
         </div>
       </div>
 
@@ -1941,14 +2118,14 @@ input[type=range].disc-range::-moz-range-thumb {
                 <div class="pts-status sts-conditional">조건부 사용</div>
               </div>
 
-              <!-- 에이블리 -->
-              <div class="pts-svc-card" data-action="pts-svc" data-svc="ably" data-cat="패션">
+              <!-- 롯데홈쇼핑 -->
+              <div class="pts-svc-card" data-action="pts-svc" data-svc="lotte" data-cat="쇼핑">
                 <div class="pts-card-top">
-                  <div class="pts-brand">에이블리</div>
-                  <div class="pts-exp-badge exp-ok">D-20</div>
+                  <div class="pts-brand">롯데홈쇼핑</div>
+                  <div class="pts-exp-badge exp-ok">D-25</div>
                 </div>
-                <div><span class="pts-bal">5,000</span><span class="pts-bal-unit">원</span></div>
-                <div class="pts-desc">에이블리 앱에서 사용 가능</div>
+                <div><span class="pts-bal">6,500</span><span class="pts-bal-unit">원</span></div>
+                <div class="pts-desc">롯데홈쇼핑 앱에서 사용 가능</div>
                 <div class="pts-status sts-usable">즉시 사용 가능</div>
               </div>
 
@@ -2226,7 +2403,7 @@ const POINTS_DATA = [
   { id:'megabox', name:'메가박스', cat:'문화생활', bal:8500, status:'usable',      exp:'D-15', brc:'qr',     desc:'영화 예매 시 포인트 차감', num:'2345 6789 0002' },
   { id:'gs25',    name:'GS25',   cat:'식품',    bal:3200,  status:'usable',      exp:'D-30', brc:'static', desc:'결제 시 바로 차감',        num:'9876 5432 1098' },
   { id:'cu',      name:'CU',     cat:'식품',    bal:1500,  status:'conditional', exp:'D-7',  brc:'static', desc:'5,000원 이상 구매 시 사용', num:'3456 7890 0003' },
-  { id:'ably',    name:'에이블리', cat:'패션',    bal:5000,  status:'usable',      exp:'D-20', brc:'none',   desc:'에이블리 앱에서 사용 가능', num:'' },
+  { id:'lotte',   name:'롯데홈쇼핑', cat:'쇼핑',  bal:6500,  status:'usable',      exp:'D-25', brc:'none',   desc:'롯데홈쇼핑 앱에서 사용 가능', num:'' },
   { id:'coupang', name:'쿠팡',    cat:'가전',    bal:7800,  status:'usable',      exp:'D-45', brc:'none',   desc:'쿠팡 앱에서 사용 가능',    num:'' },
 ];
 const downloaded = new Set(['baemin','starbucks']);
@@ -2364,6 +2541,8 @@ function applyWalletFilter(cat, sort) {
   if (sort==='discount') visible.sort((a,b)=>parseInt(b.dataset.disc||0)-parseInt(a.dataset.disc||0));
   else if (sort==='expire') visible.sort((a,b)=>parseInt(a.dataset.exp||999)-parseInt(b.dataset.exp||999));
   else if (sort==='downloaded') visible.sort((a,b)=>(downloaded.has(b.dataset.id)?1:0)-(downloaded.has(a.dataset.id)?1:0));
+  else if (sort==='distance') { /* GPS 기반 — mock: 랜덤 순서 */ }
+  else if (sort==='popular') visible.sort((a,b)=>parseInt(b.dataset.disc||0)-parseInt(a.dataset.disc||0));
   visible.forEach(c=>grid.appendChild(c));
 }
 
@@ -2415,6 +2594,12 @@ const ACT = {
   'go-notification': ()=>go('notification'),
   'go-wallet-setup': ()=>go('wallet-setup'),
   'go-login':        ()=>go('login'),
+  'go-terms':        ()=>go('terms'),
+  'go-signup-info':  ()=>go('signup-info'),
+  'go-signup-id':    ()=>go('signup-id'),
+  'go-more-connect': ()=>go('more-connect'),
+  'go-signup-complete': ()=>go('signup-complete'),
+  'go-noti-consent': ()=>go('noti-consent'),
   'go-home':         ()=>go('home'),
   'go-detail':       ()=>go('detail'),
   'go-barcode':      ()=>go('barcode'),
@@ -2451,7 +2636,8 @@ const ACT = {
   'download-cpn':    (e)=>handleDownload(e.target.closest('[data-action]')),
   'flt-home':        (e)=>{ document.querySelectorAll('[data-action="flt-home"]').forEach(b=>b.classList.remove('on')); e.target.closest('[data-action]').classList.add('on'); },
   'flt-dl':          (e)=>{ document.querySelectorAll('[data-action="flt-dl"]').forEach(b=>b.classList.remove('on')); e.target.closest('[data-action]').classList.add('on'); },
-  'wlt-filter':      (e)=>{ document.querySelectorAll('[data-action="wlt-filter"]').forEach(b=>b.classList.remove('on')); const el=e.target.closest('[data-action]'); el.classList.add('on'); wCat=el.dataset.val; applyWalletFilter(wCat,wSort); },
+  'wlt-filter':      (e)=>{ document.querySelectorAll('[data-action="wlt-filter"]').forEach(b=>b.classList.remove('on')); const el=e.target.closest('[data-action]'); el.classList.add('on'); wCat=el.dataset.val; applyWalletFilter(wCat,wSort); const bar=document.getElementById('wltBrandBar'); if(bar) bar.style.display=(wCat==='food')?'block':'none'; if(wCat==='food'){ document.querySelectorAll('[data-action="wlt-brand"]').forEach(b=>b.classList.remove('on')); const ab=document.querySelector('[data-action="wlt-brand"][data-brand="all"]'); if(ab) ab.classList.add('on'); } },
+  'wlt-brand':       (e)=>{ document.querySelectorAll('[data-action="wlt-brand"]').forEach(b=>b.classList.remove('on')); const el=e.target.closest('[data-action]'); el.classList.add('on'); const brand=el.dataset.brand; document.querySelectorAll('#walletGrid .cpn-card').forEach(c=>{ const txt=c.querySelector('.cpn-brand')?.textContent||''; c.style.display=(brand==='all'||txt.includes(brand))?'':'none'; }); },
   'wlt-sort':        (e)=>{ document.querySelectorAll('[data-action="wlt-sort"]').forEach(b=>b.classList.remove('on')); const el=e.target.closest('[data-action]'); el.classList.add('on'); wSort=el.dataset.val; applyWalletFilter(wCat,wSort); },
   'wlt-tab':         (e)=>{ document.querySelectorAll('.wlt-tab').forEach(t=>t.classList.remove('on')); e.target.closest('.wlt-tab').classList.add('on'); },
 };
@@ -2465,7 +2651,16 @@ document.addEventListener('click', e=>{
 document.addEventListener('DOMContentLoaded', ()=>{
   const splash=document.getElementById('s-splash');
   Object.assign(splash.style,{minHeight:'100vh',background:'var(--primary)',display:'flex',alignItems:'center',justifyContent:'center'});
-  setTimeout(()=>go('signup'),2500);
+  setTimeout(()=>{
+    const btn=document.createElement('button');
+    btn.textContent='지금 시작하기';
+    btn.style.cssText='margin-top:32px;padding:18px 52px;background:white;color:var(--primary);border:none;border-radius:50px;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 4px 24px rgba(0,0,0,.25);font-family:var(--font);transition:transform .15s';
+    btn.onmouseover=()=>btn.style.transform='scale(1.04)';
+    btn.onmouseout=()=>btn.style.transform='';
+    btn.onclick=()=>go('signup');
+    const inner=document.querySelector('.sp-inner');
+    if(inner) inner.appendChild(btn);
+  },1500);
   initCarousel();
 });
 window.addEventListener('resize',()=>{ if(S.appPage==='home') goCar(S.carIdx); });
