@@ -936,6 +936,41 @@ input[type=range].disc-range::-moz-range-thumb {
 .login-right h2 { font-size:28px; font-weight:900; color:var(--gray-900); margin-bottom:6px; }
 .login-right .sub-txt { font-size:15px; color:var(--gray-500); margin-bottom:32px; }
 
+/* ── GPS 알림 배너 ── */
+.gps-noti-bar {
+  display:flex; align-items:center; gap:14px; padding:16px 20px;
+  background:linear-gradient(90deg,var(--primary) 0%,var(--secondary) 100%);
+  border-radius:14px; color:white; cursor:pointer; margin-bottom:20px;
+  box-shadow:0 4px 16px rgba(15,65,166,.25); transition:transform .15s;
+}
+.gps-noti-bar:hover { transform:translateY(-2px); }
+.gps-noti-dot { width:12px; height:12px; background:var(--accent); border-radius:50%; flex-shrink:0; animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.7} }
+.gps-noti-content { flex:1; }
+.gps-noti-title { font-size:15px; font-weight:900; margin-bottom:2px; }
+.gps-noti-sub { font-size:13px; opacity:.85; }
+.gps-noti-arrow { font-size:20px; opacity:.8; }
+
+/* ── 추천 쿠폰 알림 페이지 ── */
+.noti-cpn-card {
+  background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%);
+  border-radius:20px; padding:36px; color:white; text-align:center; margin-bottom:24px;
+}
+.noti-cpn-badge { display:inline-flex; padding:6px 16px; background:rgba(255,255,255,.2); border-radius:50px; font-size:13px; font-weight:700; margin-bottom:16px; }
+.noti-cpn-brand { font-size:20px; font-weight:700; opacity:.9; margin-bottom:6px; }
+.noti-cpn-disc { font-size:64px; font-weight:900; line-height:1; margin-bottom:8px; }
+.noti-cpn-cond { font-size:15px; opacity:.8; margin-bottom:6px; }
+.noti-cpn-exp { font-size:14px; padding:4px 14px; background:rgba(255,255,255,.2); border-radius:50px; display:inline-block; }
+.noti-use-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+.noti-use-card {
+  background:white; border-radius:14px; border:2px solid var(--gray-200); padding:24px 16px; text-align:center;
+  cursor:pointer; transition:all .18s;
+}
+.noti-use-card:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(15,65,166,.15); transform:translateY(-2px); }
+.noti-use-icon { font-size:32px; margin-bottom:10px; }
+.noti-use-title { font-size:16px; font-weight:900; color:var(--gray-900); margin-bottom:4px; }
+.noti-use-desc { font-size:13px; color:var(--gray-500); }
+
 /* ── 브랜드 아이콘 바 ── */
 .wlt-brand-icon { padding:8px 18px; border-radius:50px; border:2px solid var(--gray-200); font-size:14px; font-weight:700; cursor:pointer; background:white; color:var(--gray-700); white-space:nowrap; transition:all .15s; }
 .wlt-brand-icon:hover { border-color:var(--primary); color:var(--primary); }
@@ -1604,6 +1639,15 @@ input[type=range].disc-range::-moz-range-thumb {
               </div>
               <button class="btn-outline" style="margin-top:14px;font-size:14px;min-height:44px">설정 변경</button>
             </div>
+            <!-- GPS 알림 시뮬레이션 배너 -->
+            <div class="gps-noti-bar" data-action="nav-noti-alert">
+              <div class="gps-noti-dot"></div>
+              <div class="gps-noti-content">
+                <div class="gps-noti-title">📍 이마트 영등포점 근처입니다</div>
+                <div class="gps-noti-sub">30% 할인 쿠폰이 있어요 — 지금 사용 가능!</div>
+              </div>
+              <div class="gps-noti-arrow">›</div>
+            </div>
             <div class="panel-card">
               <div class="panel-title">서비스 연동</div>
               <div style="font-size:14px;color:var(--gray-500);margin-bottom:4px">현재 4개 서비스 연결됨</div>
@@ -1863,13 +1907,14 @@ input[type=range].disc-range::-moz-range-thumb {
                 <!-- Step 2~5: 상세 설정 (알림 ON일 때만 표시) -->
                 <div id="notiSettings" class="noti-settings">
 
-                  <!-- Step 2: 카테고리 선택 -->
+                  <!-- Step 2: 카테고리 선택 (의료/F&B/마트/교육/여행) -->
                   <div class="mps-section">
-                    <div class="mps-section-lbl">알림 받을 카테고리</div>
+                    <div class="mps-section-lbl">선호 카테고리 알림</div>
+                    <div style="font-size:13px;color:var(--gray-500);margin-bottom:12px">선택한 카테고리 알림 활성화 · 선택 안 한 카테고리 알림 비활성화</div>
                     <div class="check-group">
-                      <label class="check-opt"><input type="checkbox" checked> 의류</label>
+                      <label class="check-opt"><input type="checkbox" checked> 의료</label>
                       <label class="check-opt"><input type="checkbox" checked> F&amp;B</label>
-                      <label class="check-opt"><input type="checkbox"> 뷰티</label>
+                      <label class="check-opt"><input type="checkbox" checked> 마트</label>
                       <label class="check-opt"><input type="checkbox"> 교육</label>
                       <label class="check-opt"><input type="checkbox"> 여행</label>
                     </div>
@@ -1877,7 +1922,17 @@ input[type=range].disc-range::-moz-range-thumb {
 
                   <!-- Step 3: 할인율 기준 (개별 Yes/No 토글) -->
                   <div class="mps-section">
-                    <div class="mps-section-lbl">할인율 기준 설정</div>
+                    <div class="mps-section-lbl">알림 받을 할인율 기준</div>
+                    <div style="display:flex;gap:10px;margin-bottom:16px">
+                      <button onclick="document.querySelectorAll('.disc-chk').forEach(c=>{c.checked=true;updateDiscRateRow(c)})"
+                        style="flex:1;height:44px;border-radius:8px;border:2px solid var(--primary);background:var(--primary-lt);color:var(--primary);font-size:14px;font-weight:800;cursor:pointer">
+                        할인 알림 전부 활성화
+                      </button>
+                      <button onclick="document.querySelectorAll('.disc-chk').forEach(c=>{c.checked=false;updateDiscRateRow(c)})"
+                        style="flex:1;height:44px;border-radius:8px;border:2px solid var(--gray-300);background:white;color:var(--gray-600);font-size:14px;font-weight:800;cursor:pointer">
+                        할인 알림 전체 비활성화
+                      </button>
+                    </div>
                     <div class="disc-rate-list">
                       <div class="disc-rate-row" data-action="disc-rate-toggle">
                         <div class="disc-rate-info">
@@ -1885,7 +1940,7 @@ input[type=range].disc-range::-moz-range-thumb {
                           <div class="disc-rate-status">알림 비활성화</div>
                         </div>
                         <label class="toggle-wrap">
-                          <input type="checkbox" onchange="updateDiscRateRow(this)">
+                          <input type="checkbox" class="disc-chk" onchange="updateDiscRateRow(this)">
                           <div class="toggle-track"><div class="toggle-thumb"></div></div>
                         </label>
                       </div>
@@ -1895,7 +1950,7 @@ input[type=range].disc-range::-moz-range-thumb {
                           <div class="disc-rate-status">알림 비활성화</div>
                         </div>
                         <label class="toggle-wrap">
-                          <input type="checkbox" onchange="updateDiscRateRow(this)">
+                          <input type="checkbox" class="disc-chk" onchange="updateDiscRateRow(this)">
                           <div class="toggle-track"><div class="toggle-thumb"></div></div>
                         </label>
                       </div>
@@ -1905,7 +1960,7 @@ input[type=range].disc-range::-moz-range-thumb {
                           <div class="disc-rate-status">알림 활성화</div>
                         </div>
                         <label class="toggle-wrap">
-                          <input type="checkbox" checked onchange="updateDiscRateRow(this)">
+                          <input type="checkbox" class="disc-chk" checked onchange="updateDiscRateRow(this)">
                           <div class="toggle-track"><div class="toggle-thumb"></div></div>
                         </label>
                       </div>
@@ -1915,7 +1970,7 @@ input[type=range].disc-range::-moz-range-thumb {
                           <div class="disc-rate-status">알림 비활성화</div>
                         </div>
                         <label class="toggle-wrap">
-                          <input type="checkbox" onchange="updateDiscRateRow(this)">
+                          <input type="checkbox" class="disc-chk" onchange="updateDiscRateRow(this)">
                           <div class="toggle-track"><div class="toggle-thumb"></div></div>
                         </label>
                       </div>
@@ -1925,7 +1980,7 @@ input[type=range].disc-range::-moz-range-thumb {
                           <div class="disc-rate-status">알림 비활성화</div>
                         </div>
                         <label class="toggle-wrap">
-                          <input type="checkbox" onchange="updateDiscRateRow(this)">
+                          <input type="checkbox" class="disc-chk" onchange="updateDiscRateRow(this)">
                           <div class="toggle-track"><div class="toggle-thumb"></div></div>
                         </label>
                       </div>
@@ -2352,12 +2407,32 @@ input[type=range].disc-range::-moz-range-thumb {
             <div class="success-unit">개 쿠폰 발견!</div>
             <div class="success-msg">연동이 완료되었어요. 새로운 혜택을 확인해보세요.</div>
           </div>
-          <div class="connect-section-lbl">연동 완료 서비스</div>
-          <div class="conn-svc-list">
-            <span class="conn-svc-badge">카카오</span>
-            <span class="conn-svc-badge">이마트</span>
-            <span class="conn-svc-badge">배달의민족</span>
+          <!-- 연동 데이터 확인 섹션 -->
+          <div class="connect-section-lbl">연동 데이터 확인</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:white;border-radius:10px;border:2px solid var(--gray-200)">
+              <div style="font-weight:700;font-size:16px">이마트</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:14px;color:var(--gray-500)">쿠폰 12개 · 포인트 8,400원</span>
+                <span style="padding:4px 10px;background:var(--accent);border-radius:50px;font-size:12px;font-weight:800;color:#5a4a00">연동 완료</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:white;border-radius:10px;border:2px solid var(--gray-200)">
+              <div style="font-weight:700;font-size:16px">배달의민족</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:14px;color:var(--gray-500)">쿠폰 7개 · 포인트 2,300원</span>
+                <span style="padding:4px 10px;background:var(--accent);border-radius:50px;font-size:12px;font-weight:800;color:#5a4a00">연동 완료</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:white;border-radius:10px;border:2px solid var(--gray-200)">
+              <div style="font-weight:700;font-size:16px">KT 멤버십</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:14px;color:var(--gray-500)">쿠폰 28개 · 포인트 15,200원</span>
+                <span style="padding:4px 10px;background:var(--accent);border-radius:50px;font-size:12px;font-weight:800;color:#5a4a00">연동 완료</span>
+              </div>
+            </div>
           </div>
+          <div class="connect-section-lbl">다음으로 하시겠어요?</div>
           <div class="connect-cta-grid">
             <button class="btn-primary" data-action="nav-connect">다른 서비스 추가 연동</button>
             <button class="btn-outline-primary" data-action="nav-wallet">내 쿠폰함 가기</button>
@@ -2375,6 +2450,53 @@ input[type=range].disc-range::-moz-range-thumb {
             <div class="fail-desc">서버와의 연결이 원활하지 않습니다.<br>잠시 후 다시 시도하거나, 나중에 시도해주세요.</div>
             <button class="btn-primary" data-action="connect-retry">다시 시도</button>
             <button class="btn-outline" style="margin-top:12px;font-size:16px" data-action="nav-home">나중에 하기 · 홈으로</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NOTI ALERT: GPS 기반 추천 쿠폰 ── -->
+      <div id="p-noti-alert" class="app-page">
+        <div class="breadcrumb">
+          <span class="bc-link" data-action="go-home">홈</span>
+          <span class="bc-sep">›</span>
+          <span class="bc-cur">추천 쿠폰 알림</span>
+        </div>
+        <div style="max-width:700px;margin:0 auto">
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--primary-lt);border-radius:10px;margin-bottom:20px;font-size:14px;color:var(--primary);font-weight:700">
+            <span>📍</span>
+            <span>GPS 기반 · 이마트 영등포점 0.3km 근처에서 쿠폰이 발견되었어요</span>
+          </div>
+          <div class="noti-cpn-card">
+            <div class="noti-cpn-badge">🔔 GPS 알림 도착</div>
+            <div class="noti-cpn-brand">이마트</div>
+            <div class="noti-cpn-disc">30%</div>
+            <div class="noti-cpn-cond">3만원 이상 구매 시 적용</div>
+            <div class="noti-cpn-exp">오늘 자정 만료</div>
+          </div>
+          <div style="font-size:17px;font-weight:900;color:var(--gray-900);margin-bottom:14px">어떻게 사용하시겠어요?</div>
+          <div class="noti-use-grid">
+            <div class="noti-use-card" data-action="noti-download">
+              <div class="noti-use-icon">⬇️</div>
+              <div class="noti-use-title">쿠폰함 다운로드</div>
+              <div class="noti-use-desc">쿠폰함에 저장 후<br>결제 시 자동 적용</div>
+            </div>
+            <div class="noti-use-card" data-action="go-barcode">
+              <div class="noti-use-icon">📱</div>
+              <div class="noti-use-title">바코드로 바로 사용</div>
+              <div class="noti-use-desc">계산대에서<br>바코드 제시</div>
+            </div>
+          </div>
+          <div style="background:var(--gray-100);border-radius:12px;padding:16px 20px;margin-top:8px">
+            <div style="font-size:14px;font-weight:800;color:var(--gray-700);margin-bottom:10px">🧠 AI 추천 이유</div>
+            <div style="font-size:14px;color:var(--gray-600);line-height:1.7">
+              자주 방문하시는 <strong style="color:var(--primary)">이마트</strong>가 현재 위치에서
+              <strong style="color:var(--primary)">0.3km</strong> 이내에 있고,
+              오늘 자정 만료되는 <strong style="color:var(--danger)">30% 할인 쿠폰</strong>이 있어 알림을 보냈어요.
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px">
+            <button class="btn-ghost" style="flex:1;font-size:14px" data-action="go-home">나중에 하기</button>
+            <button class="btn-outline" style="flex:1;font-size:14px" onclick="showToast('관련 알림 빈도가 줄어듭니다')">이 알림 그만 받기</button>
           </div>
         </div>
       </div>
@@ -2410,7 +2532,7 @@ const downloaded = new Set(['baemin','starbucks']);
 
 /* ============================================================ NAVIGATION ============================================================ */
 function go(id, back) {
-  const appPages = {home:1,download:1,wallet:1,detail:1,barcode:1,mypage:1,'points-hub':1,'points-service':1,'connect':1,'connect-easy':1,'connect-manual':1,'connect-manual-form':1,'connect-auth':1,'connect-success':1,'connect-fail':1,search:1};
+  const appPages = {home:1,download:1,wallet:1,detail:1,barcode:1,mypage:1,'points-hub':1,'points-service':1,'connect':1,'connect-easy':1,'connect-manual':1,'connect-manual-form':1,'connect-auth':1,'connect-success':1,'connect-fail':1,search:1,'noti-alert':1};
   if (appPages[id]) {
     document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
     const shell = document.getElementById('app-shell');
@@ -2600,6 +2722,8 @@ const ACT = {
   'go-more-connect': ()=>go('more-connect'),
   'go-signup-complete': ()=>go('signup-complete'),
   'go-noti-consent': ()=>go('noti-consent'),
+  'nav-noti-alert':  ()=>{ showAppPage('noti-alert'); updateSidebar(''); },
+  'noti-download':   ()=>{ showToast('쿠폰함에 저장되었어요! 결제 시 자동으로 적용됩니다 ✓'); setTimeout(()=>{ showAppPage('wallet'); updateSidebar('wallet'); applyWalletFilter(wCat,wSort); },1200); },
   'go-home':         ()=>go('home'),
   'go-detail':       ()=>go('detail'),
   'go-barcode':      ()=>go('barcode'),
