@@ -2964,6 +2964,9 @@ function showAppPage(id) {
   document.querySelectorAll('.app-page').forEach(p=>p.style.display='none');
   const page = document.getElementById('p-'+id);
   if (page) { page.style.display='block'; page.classList.add('fade-in'); }
+  // 페이지 전환 시 항상 최상단으로 스크롤 리셋
+  const mc = document.querySelector('.main-content');
+  if (mc) mc.scrollTop = 0;
   if (id==='barcode') drawBRC();
   if (id==='detail') drawDetBRC();
   if (id==='home') initCarousel();
