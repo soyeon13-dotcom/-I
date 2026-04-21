@@ -445,6 +445,43 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .dl-btn:hover { background:var(--primary); color:white; }
 .dl-btn.downloaded { background:#D4F0E1; color:var(--success); border-color:#D4F0E1; cursor:default; }
 
+/* ── 쿠폰 카드 브랜드 로고 헤더 ── */
+.cpn-header { display:flex; align-items:center; gap:11px; }
+.cpn-logo {
+  width:48px; height:48px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; font-weight:900; letter-spacing:-1px;
+  box-shadow:0 2px 8px rgba(0,0,0,.10);
+}
+.cpn-brand-wrap { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.cpn-cat-tag { font-size:11px; color:var(--gray-400); font-weight:600; letter-spacing:.2px; }
+
+/* ── 상세 페이지 인라인 바코드 ── */
+.det-brc-section {
+  background:white; border-radius:14px;
+  border:2px solid var(--gray-200); padding:28px;
+  display:flex; flex-direction:column; align-items:center;
+}
+.det-brc-label { font-size:16px; font-weight:800; color:var(--gray-900); margin-bottom:4px; align-self:flex-start; }
+.det-brc-sub   { font-size:13px; color:var(--gray-400); margin-bottom:20px; align-self:flex-start; }
+.det-brc-svg   { width:100%; max-width:420px; height:auto; display:block; }
+.det-brc-num {
+  font-size:28px; font-weight:900; color:var(--gray-900);
+  letter-spacing:4px; text-align:center; margin:16px 0 6px;
+  font-variant-numeric:tabular-nums;
+}
+.det-brc-manual { font-size:13px; color:var(--gray-400); text-align:center; line-height:1.5; }
+
+/* ── 보안 안심 문구 배지 ── */
+.security-badge {
+  display:flex; align-items:flex-start; gap:14px;
+  background:#F0FBF4; border:2px solid #B8E5C8; border-radius:12px;
+  padding:16px 20px; margin:18px 0 6px;
+}
+.sec-icon { font-size:22px; flex-shrink:0; margin-top:1px; }
+.sec-title { font-size:13px; font-weight:800; color:#1A7A45; margin-bottom:3px; }
+.sec-body  { font-size:12px; color:#2d6a4f; line-height:1.65; }
+
 /* RIGHT PANEL */
 .right-panel { display:flex; flex-direction:column; gap:20px; }
 .panel-card { background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.06); padding:24px; border:2px solid var(--gray-200); }
@@ -1165,6 +1202,13 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="svc-card"><div class="svc-info"><div class="svc-name">GS25 / CU</div><div class="svc-desc">편의점 쿠폰</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
         <div class="svc-card"><div class="svc-info"><div class="svc-name">스타벅스</div><div class="svc-desc">리워드, 무료음료</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
       </div>
+      <div class="security-badge">
+        <span class="sec-icon">🔒</span>
+        <div>
+          <div class="sec-title">개인정보 보호 안내</div>
+          <div class="sec-body">고객님의 정보는 암호화되어 안전하게 보호됩니다. 오직 쿠폰 혜택 추천을 위해서만 사용되며 외부로 절대 유출되지 않으니 안심하세요.</div>
+        </div>
+      </div>
       <button class="btn-primary" data-action="go-signup-complete">연결 완료하기</button>
     </div>
   </div>
@@ -1589,7 +1633,14 @@ input[type=range].disc-range::-moz-range-thumb {
             </div>
           </div>
           <button class="btn-primary" data-action="go-noti-consent" style="margin-top:8px">로그인</button>
-          <div style="text-align:center;font-size:14px;color:var(--gray-500);margin-top:4px">
+          <div class="security-badge" style="margin-top:16px">
+            <span class="sec-icon">🔒</span>
+            <div>
+              <div class="sec-title">개인정보 보호 안내</div>
+              <div class="sec-body">고객님의 정보는 암호화되어 안전하게 보호됩니다. 오직 쿠폰 혜택 추천을 위해서만 사용되며 외부로 절대 유출되지 않으니 안심하세요.</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:14px;color:var(--gray-500);margin-top:8px">
             <span style="cursor:pointer;text-decoration:underline">비밀번호 찾기</span>
             &nbsp;|&nbsp;
             <span style="cursor:pointer;color:var(--primary);font-weight:700" data-action="go-signup">회원가입</span>
@@ -1883,6 +1934,15 @@ input[type=range].disc-range::-moz-range-thumb {
                 <div class="det-row"><span class="det-lbl">제공</span><span class="det-val">KT 멤버십 혜택</span></div>
               </div>
             </div>
+            <!-- ── 인라인 바코드 ── -->
+            <div class="det-brc-section">
+              <div class="det-brc-label">바코드로 결제하기</div>
+              <div class="det-brc-sub">계산대에서 직원에게 화면을 보여주거나 번호를 알려주세요</div>
+              <svg class="det-brc-svg" id="detBrcSvg" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"></svg>
+              <div class="det-brc-num">1234 5678 9012 3456</div>
+              <div class="det-brc-manual">🖨 직원 직접 입력 가능 · 위 16자리 번호를 알려주세요</div>
+            </div>
+
             <div class="nearby-section">
               <div class="panel-title" style="font-size:18px;font-weight:800;margin-bottom:8px">주변 사용처</div>
               <div class="nearby-gps-tag" style="font-size:13px;color:var(--gray-500);margin-bottom:14px">📍 GPS 기반 · 가까운 순 정렬</div>
@@ -1905,8 +1965,8 @@ input[type=range].disc-range::-moz-range-thumb {
               <div class="det-price-lbl">할인 혜택</div>
               <div class="det-price-val">최대 15,000원</div>
             </div>
-            <button class="btn-primary" data-action="go-barcode" style="font-size:18px">바코드로 사용하기</button>
-            <button class="btn-accent" data-action="download-cpn" style="font-size:16px">다운로드하기</button>
+            <button class="btn-accent" data-action="download-cpn" style="font-size:17px">다운로드하기</button>
+            <button class="btn-outline" data-action="go-barcode" style="font-size:16px">전체 화면 바코드 보기</button>
             <button class="btn-ghost">공유하기</button>
             <div style="background:var(--primary-lt);border-radius:10px;padding:18px;font-size:14px;color:var(--gray-600);line-height:1.7;margin-top:4px">
               <strong style="color:var(--primary)">추천 이유</strong><br>
@@ -2624,6 +2684,13 @@ input[type=range].disc-range::-moz-range-thumb {
             <label class="agree-row"><input type="checkbox" class="agree-sub"> 서비스 연동 권한 허용 (필수)</label>
             <label class="agree-row"><input type="checkbox" class="agree-sub"> 쿠폰 데이터 자동 수집 동의 (선택)</label>
           </div>
+          <div class="security-badge">
+            <span class="sec-icon">🛡️</span>
+            <div>
+              <div class="sec-title">개인정보 보호 안내</div>
+              <div class="sec-body">고객님의 정보는 암호화되어 안전하게 보호됩니다. 오직 쿠폰 혜택 추천을 위해서만 사용되며 외부로 절대 유출되지 않으니 안심하세요.</div>
+            </div>
+          </div>
           <button class="btn-primary" data-action="start-auth" data-from="easy">자동 연동 시작</button>
           <button class="btn-outline" style="margin-top:10px;font-size:15px" data-action="nav-connect">이전으로</button>
         </div>
@@ -2690,7 +2757,14 @@ input[type=range].disc-range::-moz-range-thumb {
               <input type="tel" inputmode="numeric" placeholder="멤버십 번호 14자리 입력" maxlength="14" style="font-size:16px">
             </div>
           </div>
-          <button class="btn-primary" style="margin-top:24px" data-action="start-auth" data-from="manual">인증 시작</button>
+          <div class="security-badge" style="margin-top:20px">
+            <span class="sec-icon">🔒</span>
+            <div>
+              <div class="sec-title">개인정보 보호 안내</div>
+              <div class="sec-body">입력하신 인증 정보는 AES-256 암호화로 전송되며 서버에 저장되지 않습니다. 오직 쿠폰 혜택 추천을 위해서만 사용됩니다.</div>
+            </div>
+          </div>
+          <button class="btn-primary" style="margin-top:16px" data-action="start-auth" data-from="manual">인증 시작</button>
           <button class="btn-outline" style="margin-top:10px;font-size:15px" data-action="nav-connect-manual">이전으로</button>
         </div>
       </div>
@@ -2891,6 +2965,7 @@ function showAppPage(id) {
   const page = document.getElementById('p-'+id);
   if (page) { page.style.display='block'; page.classList.add('fade-in'); }
   if (id==='barcode') drawBRC();
+  if (id==='detail') drawDetBRC();
   if (id==='home') initCarousel();
   if (id==='points-hub') { initPointsHub(); drawRepBRC(); }
 }
@@ -3071,6 +3146,70 @@ function fmtPhone(inp) {
   inp.value=v;
 }
 
+/* ============================================================ BRAND LOGOS ============================================================ */
+const BRAND_LOGO_MAP = {
+  '이마트':       { bg:'#FFEC00', color:'#d40000', letter:'E',  cat:'마트' },
+  '배달의민족':   { bg:'#30D5C8', color:'#004c47', letter:'B',  cat:'배달' },
+  '스타벅스':     { bg:'#00704A', color:'#fff',    letter:'★', cat:'카페' },
+  'GS25':        { bg:'#0072c6', color:'#fff',    letter:'G',  cat:'편의점' },
+  '쿠팡':        { bg:'#ff6000', color:'#fff',    letter:'쿠', cat:'쇼핑' },
+  '올리브영':    { bg:'#00a550', color:'#fff',    letter:'O',  cat:'뷰티' },
+  '롯데마트':    { bg:'#e60012', color:'#fff',    letter:'롯', cat:'마트' },
+  '투썸플레이스': { bg:'#c8a16d', color:'#fff',   letter:'T',  cat:'카페' },
+  '요기요':      { bg:'#ff1744', color:'#fff',    letter:'요', cat:'배달' },
+  'KT':          { bg:'#1a56db', color:'#fff',    letter:'K',  cat:'통신사' },
+  'SKT':         { bg:'#e51400', color:'#fff',    letter:'S',  cat:'통신사' },
+  'CU':          { bg:'#7b2d8b', color:'#fff',    letter:'C',  cat:'편의점' },
+  '쿠팡이츠':    { bg:'#ff6000', color:'#fff',    letter:'쿠', cat:'배달' },
+  '카카오':      { bg:'#FEE500', color:'#3a1d00', letter:'K',  cat:'플랫폼' },
+  '네이버':      { bg:'#03C75A', color:'#fff',    letter:'N',  cat:'플랫폼' },
+  '홈플러스':    { bg:'#006633', color:'#fff',    letter:'H',  cat:'마트' },
+  '코스트코':    { bg:'#005daa', color:'#fff',    letter:'C',  cat:'마트' },
+};
+
+function injectBrandLogos() {
+  document.querySelectorAll('.cpn-card').forEach(card => {
+    const brandEl = card.querySelector('.cpn-brand');
+    if (!brandEl || brandEl.closest('.cpn-header')) return;
+
+    const fullText = brandEl.textContent.trim();
+    const parts = fullText.split('·');
+    const brandName = parts[0].trim();
+    const catText   = parts[1] ? parts[1].trim() : '';
+
+    const info = BRAND_LOGO_MAP[brandName] || {
+      bg: 'var(--primary-lt)', color: 'var(--primary)',
+      letter: [...brandName][0],
+      cat: catText
+    };
+
+    const header = document.createElement('div');
+    header.className = 'cpn-header';
+
+    const logo = document.createElement('div');
+    logo.className = 'cpn-logo';
+    logo.style.cssText = `background:${info.bg};color:${info.color}`;
+    logo.textContent = info.letter;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'cpn-brand-wrap';
+
+    const newBrand = document.createElement('div');
+    newBrand.className = 'cpn-brand';
+    newBrand.textContent = brandName;
+
+    const catTag = document.createElement('div');
+    catTag.className = 'cpn-cat-tag';
+    catTag.textContent = info.cat || catText;
+
+    wrap.appendChild(newBrand);
+    if (catTag.textContent) wrap.appendChild(catTag);
+    header.appendChild(logo);
+    header.appendChild(wrap);
+    brandEl.replaceWith(header);
+  });
+}
+
 /* ============================================================ BARCODE ============================================================ */
 const REP_BRC_DATA = {
   gs25:    { name:'GS25 멤버십',   num:'9876 5432 1098 7654' },
@@ -3089,6 +3228,12 @@ function drawBRC() {
   const pat=[1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,1,0,0];
   const bw=300/pat.length;
   pat.forEach((on,i)=>{ if(!on)return; const r=document.createElementNS('http://www.w3.org/2000/svg','rect'); r.setAttribute('x',i*bw);r.setAttribute('y',0);r.setAttribute('width',bw*.7);r.setAttribute('height',100);r.setAttribute('fill','#111111'); svg.appendChild(r); });
+}
+function drawDetBRC() {
+  const svg=document.getElementById('detBrcSvg'); if(!svg)return; svg.innerHTML='';
+  const pat=[1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,0];
+  const bw=400/pat.length;
+  pat.forEach((on,i)=>{ if(!on)return; const r=document.createElementNS('http://www.w3.org/2000/svg','rect'); r.setAttribute('x',i*bw);r.setAttribute('y',0);r.setAttribute('width',bw*.72);r.setAttribute('height',120);r.setAttribute('fill','#111'); svg.appendChild(r); });
 }
 
 /* ============================================================ DOWNLOAD BTN ============================================================ */
@@ -3198,6 +3343,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(inner) inner.appendChild(btn);
   },1500);
   initCarousel();
+  injectBrandLogos();
 });
 window.addEventListener('resize',()=>{ if(S.appPage==='home') goCar(S.carIdx); });
 
