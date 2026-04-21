@@ -1697,30 +1697,6 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="page-title">오늘의 추천 혜택</div>
         <div class="page-sub">김미경님을 위해 엄선된 쿠폰이에요</div>
 
-        <!-- ── 상단 퀵 접근 영역 ── -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
-          <!-- 바코드 위젯 -->
-          <div class="home-brc-widget" data-action="nav-points">
-            <div style="display:flex;align-items:center;gap:14px">
-              <div style="font-size:28px;line-height:1;letter-spacing:-1px;color:var(--primary);font-weight:900">▌▐▌▐▌</div>
-              <div>
-                <div style="font-size:14px;font-weight:900;color:var(--gray-900);margin-bottom:2px">내 바코드 · 포인트</div>
-                <div style="font-size:12px;color:var(--gray-500)">6개 서비스 · 총 38,500원</div>
-              </div>
-            </div>
-            <div style="font-size:20px;color:var(--gray-400)">›</div>
-          </div>
-          <!-- GPS 위치 기반 쿠폰 배너 -->
-          <div class="gps-noti-bar" data-action="nav-noti-alert" style="margin:0;border-radius:14px">
-            <div class="gps-noti-dot"></div>
-            <div class="gps-noti-content">
-              <div class="gps-noti-title" style="font-size:13px">📍 이마트 영등포점 근처</div>
-              <div class="gps-noti-sub" style="font-size:12px">30% 할인 쿠폰 사용 가능!</div>
-            </div>
-            <div class="gps-noti-arrow">›</div>
-          </div>
-        </div>
-
         <!-- CAROUSEL -->
         <div style="margin-bottom:12px">
           <div class="sec-lbl">만료 임박 쿠폰 — 지금 바로 사용하세요</div>
@@ -1757,6 +1733,30 @@ input[type=range].disc-range::-moz-range-thumb {
           <button class="c-btn" id="cPrev" onclick="moveCar(-1)">이전</button>
           <div class="carousel-dots" id="cDots"></div>
           <button class="c-btn" id="cNext" onclick="moveCar(1)">다음</button>
+        </div>
+
+        <!-- ── 퀵 접근 (바코드 + 위치기반) — 캐러셀 아래 ── -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;margin-bottom:8px">
+          <!-- 바코드 위젯 -->
+          <div class="home-brc-widget" data-action="nav-points">
+            <div style="display:flex;align-items:center;gap:14px">
+              <div style="font-size:26px;line-height:1;letter-spacing:-1px;color:var(--primary);font-weight:900">▌▐▌▐▌</div>
+              <div>
+                <div style="font-size:14px;font-weight:900;color:var(--gray-900);margin-bottom:2px">내 바코드 · 포인트</div>
+                <div style="font-size:12px;color:var(--gray-500)">6개 서비스 · 총 38,500원</div>
+              </div>
+            </div>
+            <div style="font-size:20px;color:var(--gray-400)">›</div>
+          </div>
+          <!-- GPS 위치 기반 쿠폰 배너 -->
+          <div class="gps-noti-bar" data-action="nav-noti-alert" style="margin:0;border-radius:14px">
+            <div class="gps-noti-dot"></div>
+            <div class="gps-noti-content">
+              <div class="gps-noti-title" style="font-size:13px">📍 이마트 영등포점 근처</div>
+              <div class="gps-noti-sub" style="font-size:12px">30% 할인 쿠폰 사용 가능!</div>
+            </div>
+            <div class="gps-noti-arrow">›</div>
+          </div>
         </div>
 
         <!-- HOME GRID -->
@@ -2264,48 +2264,46 @@ input[type=range].disc-range::-moz-range-thumb {
           </div>
         </div>
 
-        <!-- ── 카테고리 필터 칩 (쿠폰함과 동일 스타일) ── -->
-        <div class="wlt-filter-bar" style="overflow-x:auto;padding-bottom:4px;margin-bottom:16px">
-          <div class="wlt-cat-tabs" style="display:flex;gap:8px;min-width:max-content">
-            <div class="wlt-cat-btn on" data-action="pts-cat" data-cat="all"><div class="wlt-cat-icon">전체</div><div class="wlt-cat-count">6</div></div>
-            <div class="wlt-cat-btn" data-action="pts-cat" data-cat="문화생활"><div class="wlt-cat-icon">문화생활</div><div class="wlt-cat-count">2</div></div>
-            <div class="wlt-cat-btn" data-action="pts-cat" data-cat="식품"><div class="wlt-cat-icon">식품</div><div class="wlt-cat-count">2</div></div>
-            <div class="wlt-cat-btn" data-action="pts-cat" data-cat="쇼핑"><div class="wlt-cat-icon">쇼핑</div><div class="wlt-cat-count">1</div></div>
-            <div class="wlt-cat-btn" data-action="pts-cat" data-cat="가전"><div class="wlt-cat-icon">가전</div><div class="wlt-cat-count">1</div></div>
+        <!-- ── ① 대표 바코드 (최상단 전체폭 — 바로 보임) ── -->
+        <div class="pts-brc-card" style="margin-bottom:20px;padding:28px 32px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--gray-400);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px">대표 바코드</div>
+              <div class="pts-brc-brand" id="repBrcBrand" style="font-size:18px">GS25 멤버십</div>
+            </div>
+            <select id="repBrcSelect" style="font-size:14px;font-weight:700;border:2px solid var(--gray-200);border-radius:8px;padding:6px 12px;color:var(--primary);background:white;outline:none;cursor:pointer;height:40px" onchange="switchRepBrc(this.value)">
+              <option value="gs25">GS25 멤버십</option>
+              <option value="cu">CU 포인트</option>
+              <option value="cgv">CGV 포인트</option>
+              <option value="megabox">메가박스</option>
+            </select>
           </div>
+          <svg id="ptsRepBrc" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:110px;display:block"></svg>
+          <div class="pts-rep-num" style="font-size:20px;letter-spacing:6px;margin-top:14px;margin-bottom:6px">9876 5432 1098 7654</div>
+          <div style="font-size:12px;color:var(--gray-400);text-align:center">계산대에서 직원에게 보여주세요</div>
         </div>
 
-        <!-- ── 상단 요약 2열 (총 포인트 + 대표 바코드) ── -->
-        <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:16px;margin-bottom:24px;align-items:stretch">
-          <!-- 총 포인트 -->
-          <div class="pts-hero" id="ptsHero" style="margin-bottom:0">
+        <!-- ── ② 총 포인트 + 카테고리 필터 ── -->
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;margin-bottom:20px">
+          <!-- 총 포인트 compact -->
+          <div class="pts-hero" id="ptsHero" style="margin-bottom:0;min-width:200px;padding:20px 24px">
             <div class="pts-hero-lbl">총 보유 포인트</div>
             <div class="pts-total-row">
-              <div class="pts-total" id="ptsTotalNum">0</div>
-              <div class="pts-unit">원</div>
+              <div class="pts-total" id="ptsTotalNum" style="font-size:30px">0</div>
+              <div class="pts-unit" style="font-size:15px">원</div>
             </div>
-            <div class="pts-sub" style="margin-top:12px">6개 서비스 통합</div>
-            <div style="margin-top:16px;display:flex;flex-direction:column;gap:6px">
-              <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,.75)"><span>문화생활</span><span style="font-weight:700;color:white">20,500원</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,.75)"><span>식품</span><span style="font-weight:700;color:white">4,700원</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,.75)"><span>쇼핑</span><span style="font-weight:700;color:white">6,500원</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,.75)"><span>가전</span><span style="font-weight:700;color:white">7,800원</span></div>
-            </div>
+            <div class="pts-sub" style="margin-top:8px;font-size:12px">6개 서비스 통합</div>
           </div>
-          <!-- 대표 바코드 -->
-          <div class="pts-brc-card" style="margin-bottom:0">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-              <div class="pts-brc-lbl" style="margin-bottom:0">대표 바코드</div>
-              <select id="repBrcSelect" style="font-size:13px;font-weight:700;border:1.5px solid var(--gray-200);border-radius:6px;padding:4px 8px;color:var(--primary);background:white;outline:none;cursor:pointer" onchange="switchRepBrc(this.value)">
-                <option value="gs25">GS25 멤버십</option>
-                <option value="cu">CU 포인트</option>
-                <option value="cgv">CGV 포인트</option>
-                <option value="megabox">메가박스</option>
-              </select>
+          <!-- 카테고리 필터 칩 -->
+          <div>
+            <div style="font-size:11px;font-weight:800;color:var(--gray-400);letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase">서비스 필터</div>
+            <div class="wlt-cat-tabs" style="display:flex;gap:8px;flex-wrap:wrap">
+              <div class="wlt-cat-btn on" data-action="pts-cat" data-cat="all"><div class="wlt-cat-icon">전체</div><div class="wlt-cat-count">6</div></div>
+              <div class="wlt-cat-btn" data-action="pts-cat" data-cat="문화생활"><div class="wlt-cat-icon">문화생활</div><div class="wlt-cat-count">2</div></div>
+              <div class="wlt-cat-btn" data-action="pts-cat" data-cat="식품"><div class="wlt-cat-icon">식품</div><div class="wlt-cat-count">2</div></div>
+              <div class="wlt-cat-btn" data-action="pts-cat" data-cat="쇼핑"><div class="wlt-cat-icon">쇼핑</div><div class="wlt-cat-count">1</div></div>
+              <div class="wlt-cat-btn" data-action="pts-cat" data-cat="가전"><div class="wlt-cat-icon">가전</div><div class="wlt-cat-count">1</div></div>
             </div>
-            <div class="pts-brc-brand" id="repBrcBrand">GS25 멤버십</div>
-            <svg id="ptsRepBrc" viewBox="0 0 260 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px;height:90px"></svg>
-            <div class="pts-rep-num" id="repBrcNum">9876 5432 1098 7654</div>
           </div>
         </div>
 
@@ -3456,12 +3454,13 @@ function drawRepBRC() {
   const svg = document.getElementById('ptsRepBrc'); if (!svg) return;
   svg.innerHTML = '';
   const pat = [1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1];
-  const bw = 260 / pat.length;
+  const W = 400; // viewBox 너비에 맞춤
+  const bw = W / pat.length;
   pat.forEach((on, i) => {
     if (!on) return;
     const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
     r.setAttribute('x', i * bw); r.setAttribute('y', 0);
-    r.setAttribute('width', bw * .72); r.setAttribute('height', 80);
+    r.setAttribute('width', bw * .72); r.setAttribute('height', 100);
     r.setAttribute('fill', '#111111');
     svg.appendChild(r);
   });
