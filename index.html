@@ -302,7 +302,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 /* ============================================================
    APP SHELL
    ============================================================ */
-#app-shell { display:none; min-height:100vh; flex-direction:column; }
+#app-shell { display:none; height:100vh; overflow:hidden; flex-direction:column; }
 #app-shell.active { display:flex; }
 
 /* HEADER */
@@ -344,7 +344,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .hdr-mypage-btn:hover { background:var(--primary); color:white; }
 
 /* SIDEBAR */
-.app-body { display:flex; padding-top:var(--header-h); min-height:100vh; }
+.app-body { display:flex; padding-top:var(--header-h); height:100vh; box-sizing:border-box; overflow:hidden; }
 .sidebar {
   width:var(--sidebar-w); flex-shrink:0; background:white;
   border-right:2px solid var(--gray-200);
@@ -373,7 +373,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .sb-sav-sub { font-size:13px; color:rgba(255,255,255,.55); margin-top:4px; }
 
 /* MAIN CONTENT */
-.main-content { flex:1; margin-left:var(--sidebar-w); padding:36px 40px; height:calc(100vh - var(--header-h)); overflow-y:auto; box-sizing:border-box; }
+.main-content { flex:1; margin-left:var(--sidebar-w); padding:36px 40px; min-height:0; overflow-y:auto; box-sizing:border-box; }
 .page-title { font-size:28px; font-weight:900; color:var(--gray-900); margin-bottom:4px; }
 .page-sub   { font-size:16px; color:var(--gray-500); margin-bottom:32px; }
 .sec-lbl    { font-size:13px; font-weight:800; color:var(--gray-500); letter-spacing:.5px; margin-bottom:12px; text-transform:uppercase; }
