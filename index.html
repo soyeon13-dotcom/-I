@@ -373,7 +373,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .sb-sav-sub { font-size:13px; color:rgba(255,255,255,.55); margin-top:4px; }
 
 /* MAIN CONTENT */
-.main-content { flex:1; margin-left:var(--sidebar-w); padding:36px 40px; }
+.main-content { flex:1; margin-left:var(--sidebar-w); padding:36px 40px; height:calc(100vh - var(--header-h)); overflow-y:auto; box-sizing:border-box; }
 .page-title { font-size:28px; font-weight:900; color:var(--gray-900); margin-bottom:4px; }
 .page-sub   { font-size:16px; color:var(--gray-500); margin-bottom:32px; }
 .sec-lbl    { font-size:13px; font-weight:800; color:var(--gray-500); letter-spacing:.5px; margin-bottom:12px; text-transform:uppercase; }
@@ -1800,7 +1800,7 @@ input[type=range].disc-range::-moz-range-thumb {
                 <div class="settings-row"><span class="s-lbl">알림 방식</span><span class="s-val">앱 + 문자</span></div>
                 <div class="settings-row"><span class="s-lbl">연동 서비스</span><span class="s-val">4개 연동됨</span></div>
               </div>
-              <button class="btn-outline" style="margin-top:14px;font-size:14px;min-height:44px" data-action="nav-mypage">설정 변경</button>
+              <button class="btn-outline" style="margin-top:14px;font-size:14px;min-height:44px" data-action="nav-mypage-noti">설정 변경</button>
             </div>
             <!-- GPS 알림 시뮬레이션 배너 -->
             <div class="gps-noti-bar" data-action="nav-noti-alert">
@@ -3278,7 +3278,7 @@ const ACT = {
   'nav-download':    ()=>{ showAppPage('download'); updateSidebar('download'); },
   'nav-wallet':      ()=>{ showAppPage('wallet'); updateSidebar('wallet'); applyWalletFilter(wCat,wSort); },
   'nav-mypage':          ()=>{ showAppPage('mypage'); updateSidebar('mypage'); },
-  'nav-mypage-noti':     ()=>{ showMypageSub('noti'); },
+  'nav-mypage-noti':     ()=>{ showAppPage('mypage'); updateSidebar('mypage'); setTimeout(()=>showMypageSub('noti'), 50); },
   'nav-mypage-info':     ()=>{ showMypageSub('info'); },
   'nav-mypage-profile':  ()=>{ showAppPage('mypage'); updateSidebar('mypage'); setTimeout(()=>showMypageSub('profile'),50); },
   'mypage-tab':          (e)=>{ const tab=e.target.closest('[data-tab]'); if(!tab)return; const t=tab.dataset.tab; document.querySelectorAll('[data-action="mypage-tab"]').forEach(el=>el.classList.remove('on')); tab.classList.add('on'); if(t==='connect'){ showAppPage('connect'); updateSidebar(''); } else showMypageSub(t); },
