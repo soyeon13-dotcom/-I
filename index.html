@@ -373,7 +373,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .sb-sav-sub { font-size:13px; color:rgba(255,255,255,.55); margin-top:4px; }
 
 /* MAIN CONTENT */
-.main-content { flex:1; margin-left:var(--sidebar-w); padding:36px 40px; min-height:0; overflow-y:auto; box-sizing:border-box; }
+.main-content { flex:1; margin-left:var(--sidebar-w); padding:36px 40px; min-height:0; overflow-y:auto; overflow-x:hidden; box-sizing:border-box; }
 .page-title { font-size:28px; font-weight:900; color:var(--gray-900); margin-bottom:4px; }
 .page-sub   { font-size:16px; color:var(--gray-500); margin-bottom:32px; }
 .sec-lbl    { font-size:13px; font-weight:800; color:var(--gray-500); letter-spacing:.5px; margin-bottom:12px; text-transform:uppercase; }
@@ -2278,15 +2278,15 @@ input[type=range].disc-range::-moz-range-thumb {
               <option value="megabox">메가박스</option>
             </select>
           </div>
-          <svg id="ptsRepBrc" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:110px;display:block"></svg>
-          <div class="pts-rep-num" style="font-size:20px;letter-spacing:6px;margin-top:14px;margin-bottom:6px">9876 5432 1098 7654</div>
+          <svg id="ptsRepBrc" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:100%;height:110px;display:block"></svg>
+          <div class="pts-rep-num" style="font-size:18px;letter-spacing:4px;margin-top:14px;margin-bottom:6px;word-break:break-all">9876 5432 1098 7654</div>
           <div style="font-size:12px;color:var(--gray-400);text-align:center">계산대에서 직원에게 보여주세요</div>
         </div>
 
         <!-- ── ② 총 포인트 + 카테고리 필터 ── -->
-        <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;margin-bottom:20px">
+        <div style="display:grid;grid-template-columns:1fr 1.8fr;gap:16px;align-items:start;margin-bottom:20px">
           <!-- 총 포인트 compact -->
-          <div class="pts-hero" id="ptsHero" style="margin-bottom:0;min-width:200px;padding:20px 24px">
+          <div class="pts-hero" id="ptsHero" style="margin-bottom:0;min-width:0;padding:20px 24px">
             <div class="pts-hero-lbl">총 보유 포인트</div>
             <div class="pts-total-row">
               <div class="pts-total" id="ptsTotalNum" style="font-size:30px">0</div>
@@ -2295,7 +2295,7 @@ input[type=range].disc-range::-moz-range-thumb {
             <div class="pts-sub" style="margin-top:8px;font-size:12px">6개 서비스 통합</div>
           </div>
           <!-- 카테고리 필터 칩 -->
-          <div>
+          <div style="min-width:0">
             <div style="font-size:11px;font-weight:800;color:var(--gray-400);letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase">서비스 필터</div>
             <div class="wlt-cat-tabs" style="display:flex;gap:8px;flex-wrap:wrap">
               <div class="wlt-cat-btn on" data-action="pts-cat" data-cat="all"><div class="wlt-cat-icon">전체</div><div class="wlt-cat-count">6</div></div>
@@ -3006,7 +3006,7 @@ function showAppPage(id) {
   if (page) { page.style.display='block'; page.classList.add('fade-in'); }
   // 페이지 전환 시 항상 최상단으로 스크롤 리셋
   const mc = document.querySelector('.main-content');
-  if (mc) mc.scrollTop = 0;
+  if (mc) { mc.scrollTop = 0; mc.scrollLeft = 0; }
   if (id==='barcode') drawBRC();
   if (id==='detail') drawDetBRC();
   if (id==='home') initCarousel();
