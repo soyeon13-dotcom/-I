@@ -693,7 +693,7 @@ input[type=range].disc-range::-moz-range-thumb {
 /* ============================================================
    DETAIL PAGE
    ============================================================ */
-.det-layout { display:grid; grid-template-columns:1fr 380px; gap:28px; align-items:start; }
+.det-layout { display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start; }
 .breadcrumb { display:flex; align-items:center; gap:8px; margin-bottom:24px; font-size:15px; color:var(--gray-500); }
 .breadcrumb .bc-link { cursor:pointer; font-weight:600; }
 .breadcrumb .bc-link:hover { color:var(--primary); }
@@ -2791,28 +2791,16 @@ input[type=range].disc-range::-moz-range-thumb {
           <div class="det-brc-manual">🖨 스캔 불가 시 위 16자리 번호를 알려주세요</div>
         </div>
 
-        <!-- ② 본문 레이아웃 -->
+        <!-- ② 본문 레이아웃 (좌: 할인률+주변사용처 / 우: 액션+쿠폰정보) -->
         <div class="det-layout">
+
+          <!-- 좌측 50% : 할인률 카드 + 주변 사용처 -->
           <div style="display:flex;flex-direction:column;gap:20px">
             <div class="det-hero-card">
               <div class="det-hero-brand">이마트</div>
               <div class="det-hero-disc">30%</div>
               <div class="det-hero-cond">3만원 이상 결제 시 자동 적용</div>
               <div class="det-hero-badge">오늘 자정 만료</div>
-            </div>
-            <div class="det-info-card">
-              <div class="det-urgency">
-                <div class="det-urg-txt">오늘 자정 만료 — 지금 바로 사용하세요</div>
-              </div>
-              <div class="det-sec">
-                <h3>쿠폰 정보</h3>
-                <div class="det-row"><span class="det-lbl">할인 혜택</span><span class="det-val">30% 할인 (최대 15,000원)</span></div>
-                <div class="det-row"><span class="det-lbl">최소 구매</span><span class="det-val">30,000원 이상</span></div>
-                <div class="det-row"><span class="det-lbl">사용 가능 매장</span><span class="det-val">이마트 전국 매장</span></div>
-                <div class="det-row"><span class="det-lbl">유효기간</span><span class="det-val" style="color:var(--danger)">2026.04.12 (오늘 만료)</span></div>
-                <div class="det-row"><span class="det-lbl">중복 사용</span><span class="det-val">불가</span></div>
-                <div class="det-row"><span class="det-lbl">제공</span><span class="det-val">KT 멤버십 혜택</span></div>
-              </div>
             </div>
             <div class="nearby-section">
               <div class="panel-title" style="font-size:18px;font-weight:800;margin-bottom:8px">주변 사용처</div>
@@ -2831,19 +2819,37 @@ input[type=range].disc-range::-moz-range-thumb {
               </div>
             </div>
           </div>
-          <!-- ③ 액션: 다운로드만 보조 버튼으로 -->
-          <div class="det-action-card">
-            <div class="det-price-box">
-              <div class="det-price-lbl">예상 절감 금액</div>
-              <div class="det-price-val">최대 15,000원</div>
+
+          <!-- 우측 50% : 액션 카드 + 쿠폰 정보 -->
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div class="det-action-card">
+              <div class="det-price-box">
+                <div class="det-price-lbl">예상 절감 금액</div>
+                <div class="det-price-val">최대 15,000원</div>
+              </div>
+              <button class="btn-accent" data-action="download-cpn" style="font-size:17px">다운로드</button>
+              <button class="btn-ghost" style="font-size:14px">공유하기</button>
+              <div style="background:var(--primary-lt);border-radius:10px;padding:18px;font-size:14px;color:var(--gray-600);line-height:1.7;margin-top:4px">
+                <strong style="color:var(--primary)">추천 이유</strong><br>
+                자주 방문하는 이마트 + 오늘 만료 쿠폰을 놓치지 않도록 알려드렸어요
+              </div>
             </div>
-            <button class="btn-accent" data-action="download-cpn" style="font-size:17px">쿠폰함에 저장하기</button>
-            <button class="btn-ghost" style="font-size:14px">공유하기</button>
-            <div style="background:var(--primary-lt);border-radius:10px;padding:18px;font-size:14px;color:var(--gray-600);line-height:1.7;margin-top:4px">
-              <strong style="color:var(--primary)">추천 이유</strong><br>
-              자주 방문하는 이마트 + 오늘 만료 쿠폰을 놓치지 않도록 알려드렸어요
+            <div class="det-info-card">
+              <div class="det-urgency">
+                <div class="det-urg-txt">오늘 자정 만료 — 지금 바로 사용하세요</div>
+              </div>
+              <div class="det-sec">
+                <h3>쿠폰 정보</h3>
+                <div class="det-row"><span class="det-lbl">할인 혜택</span><span class="det-val">30% 할인 (최대 15,000원)</span></div>
+                <div class="det-row"><span class="det-lbl">최소 구매</span><span class="det-val">30,000원 이상</span></div>
+                <div class="det-row"><span class="det-lbl">사용 가능 매장</span><span class="det-val">이마트 전국 매장</span></div>
+                <div class="det-row"><span class="det-lbl">유효기간</span><span class="det-val" style="color:var(--danger)">2026.04.12 (오늘 만료)</span></div>
+                <div class="det-row"><span class="det-lbl">중복 사용</span><span class="det-val">불가</span></div>
+                <div class="det-row"><span class="det-lbl">제공</span><span class="det-val">KT 멤버십 혜택</span></div>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
 
