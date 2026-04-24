@@ -3877,13 +3877,45 @@ input[type=range].disc-range::-moz-range-thumb {
 
       <!-- ── SEARCH RESULTS ── -->
       <div id="p-search" class="app-page">
-        <div class="page-title">검색 결과</div>
-        <div class="search-result-bar">
-          <span class="search-kw-badge" id="searchKwBadge"></span>
-          <span class="search-count" id="searchCount" style="font-size:15px;color:var(--gray-500)"></span>
-          <button class="btn-ghost" style="margin-left:auto;font-size:15px" data-action="nav-home">‹ 뒤로</button>
+        <div class="page-nav" style="margin-bottom:12px">
+          <button class="pnav-back" data-action="go-back">‹ 뒤로</button>
+          <span class="pnav-title">검색 결과</span>
         </div>
-        <div class="cpn-grid" id="searchResultList"></div>
+        <!-- 키워드 + 카운트 + 정렬 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <span id="searchKwBadge" style="font-size:17px;font-weight:800;color:var(--gray-900)"></span>
+            <span id="searchCount" style="font-size:14px;color:var(--gray-500);margin-left:8px;font-weight:600"></span>
+          </div>
+          <div class="wlt-sort-wrap" style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:14px;color:var(--gray-500);font-weight:600">정렬</span>
+            <select class="wlt-sort-select">
+              <option>마감임박순</option>
+              <option>최대할인순</option>
+              <option>거리순</option>
+              <option>인기순</option>
+            </select>
+          </div>
+        </div>
+        <!-- 카테고리 필터 탭 (wallet과 동일) -->
+        <div class="wlt-filter-bar" style="overflow-x:auto;padding-bottom:4px;margin-bottom:12px">
+          <div class="wlt-cat-tabs">
+            <div class="wlt-cat-btn on" data-action="src-filter" data-val="all"><span class="wlt-cat-icon">전체</span><span class="wlt-cat-count" id="srcCntAll">0</span></div>
+            <div class="wlt-cat-btn" data-action="src-filter" data-val="food"><span class="wlt-cat-icon">식품</span><span class="wlt-cat-count" id="srcCntFood">0</span></div>
+            <div class="wlt-cat-btn" data-action="src-filter" data-val="fashion"><span class="wlt-cat-icon">패션</span><span class="wlt-cat-count" id="srcCntFashion">0</span></div>
+            <div class="wlt-cat-btn" data-action="src-filter" data-val="appliance"><span class="wlt-cat-icon">가전</span><span class="wlt-cat-count" id="srcCntAppliance">0</span></div>
+            <div class="wlt-cat-btn" data-action="src-filter" data-val="culture"><span class="wlt-cat-icon">문화생활</span><span class="wlt-cat-count" id="srcCntCulture">0</span></div>
+          </div>
+        </div>
+        <!-- 상태 탭 (wallet과 동일) -->
+        <div class="wallet-tabs">
+          <div class="wlt-tab on" data-action="src-tab" data-status="all">전체</div>
+          <div class="wlt-tab" data-action="src-tab" data-status="available">지금 사용 가능</div>
+          <div class="wlt-tab" data-action="src-tab" data-status="expire">만료 임박</div>
+          <div class="wlt-tab" data-action="src-tab" data-status="downloaded">다운로드 완료</div>
+        </div>
+        <!-- 결과 그리드 (wallet-grid와 동일) -->
+        <div id="searchResultList" class="wallet-grid"></div>
       </div>
 
     </main>
@@ -4071,25 +4103,44 @@ function countUp() {
 }
 
 /* ============================================================ KEYWORD SEARCH ============================================================ */
+// 검색 결과 저장소
+let srcAllCards = [];
+
 function doSearch(kw) {
   if (!kw.trim()) return;
   S.searchKw = kw.trim();
   showAppPage('search'); updateSidebar('');
   const badge = document.getElementById('searchKwBadge');
-  const list  = document.getElementById('searchResultList');
-  const cnt   = document.getElementById('searchCount');
   if (badge) badge.textContent = '"' + S.searchKw + '"';
-  const allCards = [...document.querySelectorAll('#walletGrid .cpn-card, #p-download .cpn-card')];
-  const results  = allCards.filter(c => c.textContent.toLowerCase().includes(S.searchKw.toLowerCase()));
-  if (list) {
-    list.innerHTML = '';
-    if (results.length === 0) {
-      list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--gray-400);font-size:18px">검색 결과가 없습니다</div>';
-    } else {
-      results.forEach(c => list.appendChild(c.cloneNode(true)));
-    }
+  const allCards = [...document.querySelectorAll('#walletGrid .cpn-card')];
+  srcAllCards = allCards.filter(c => c.textContent.toLowerCase().includes(S.searchKw.toLowerCase()));
+  // 카테고리 탭 초기화 (전체 on)
+  document.querySelectorAll('[data-action="src-filter"]').forEach(b => b.classList.toggle('on', b.dataset.val === 'all'));
+  document.querySelectorAll('[data-action="src-tab"]').forEach(b => b.classList.toggle('on', b.dataset.status === 'all'));
+  // 카운트 업데이트
+  const cats = ['food','fashion','appliance','culture'];
+  const ids  = {food:'srcCntFood',fashion:'srcCntFashion',appliance:'srcCntAppliance',culture:'srcCntCulture'};
+  const el = document.getElementById('srcCntAll');
+  if (el) el.textContent = srcAllCards.length;
+  cats.forEach(cat => {
+    const n = srcAllCards.filter(c => (c.dataset.cat||'') === cat).length;
+    const cel = document.getElementById(ids[cat]);
+    if (cel) cel.textContent = n;
+  });
+  renderSrcGrid(srcAllCards);
+}
+
+function renderSrcGrid(cards) {
+  const list = document.getElementById('searchResultList');
+  const cnt  = document.getElementById('searchCount');
+  if (!list) return;
+  list.innerHTML = '';
+  if (cards.length === 0) {
+    list.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--gray-400);font-size:18px;grid-column:1/-1">검색 결과가 없습니다</div>';
+  } else {
+    cards.forEach(c => list.appendChild(c.cloneNode(true)));
   }
-  if (cnt) cnt.textContent = results.length + '개 결과';
+  if (cnt) cnt.textContent = cards.length + '개 결과';
 }
 
 /* ============================================================ BARCODE INSTANT POPUP ============================================================ */
@@ -4406,6 +4457,8 @@ const ACT = {
   'wlt-brand':       (e)=>{ document.querySelectorAll('[data-action="wlt-brand"]').forEach(b=>b.classList.remove('on')); const el=e.target.closest('[data-action]'); el.classList.add('on'); const brand=el.dataset.brand; document.querySelectorAll('#walletGrid .cpn-card').forEach(c=>{ const txt=c.querySelector('.cpn-brand')?.textContent||''; c.style.display=(brand==='all'||txt.includes(brand))?'':'none'; }); },
   'wlt-sort':        (e)=>{ document.querySelectorAll('[data-action="wlt-sort"]').forEach(b=>b.classList.remove('on')); const el=e.target.closest('[data-action]'); el.classList.add('on'); wSort=el.dataset.val; applyWalletFilter(wCat,wSort); },
   'wlt-tab':         (e)=>{ document.querySelectorAll('.wlt-tab').forEach(t=>t.classList.remove('on')); const tab=e.target.closest('.wlt-tab'); tab.classList.add('on'); applyWalletTab(tab.dataset.status||'all'); },
+  'src-filter':      (e)=>{ const btn=e.target.closest('[data-action="src-filter"]'); if(!btn)return; document.querySelectorAll('[data-action="src-filter"]').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); const val=btn.dataset.val; const filtered=val==='all'?srcAllCards:srcAllCards.filter(c=>(c.dataset.cat||'')===val); renderSrcGrid(filtered); },
+  'src-tab':         (e)=>{ const btn=e.target.closest('[data-action="src-tab"]'); if(!btn)return; document.querySelectorAll('[data-action="src-tab"]').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); const st=btn.dataset.status; const filtered=st==='all'?srcAllCards:srcAllCards.filter(c=>(c.dataset.status||'')===st); renderSrcGrid(filtered); },
 };
 
 document.addEventListener('click', e=>{
