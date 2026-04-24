@@ -592,19 +592,18 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .wallet-layout { display:flex; flex-direction:column; gap:0; }
 /* 필터 바 */
 .wlt-filter-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:12px; flex-wrap:wrap; }
-.wlt-cat-tabs  { display:flex; gap:8px; flex-wrap:wrap; }
+.wlt-cat-tabs  { display:flex; gap:8px; width:100%; }
 .wlt-cat-btn {
-  display:flex; flex-direction:column; align-items:center; gap:4px;
-  padding:10px 16px; border-radius:12px; border:2px solid var(--gray-200);
-  background:white; cursor:pointer; transition:all .15s; min-width:60px;
+  display:flex; flex-direction:row; align-items:center; justify-content:center; gap:6px;
+  flex:1; padding:11px 8px; border-radius:9999px; border:2px solid var(--gray-200);
+  background:white; cursor:pointer; transition:all .15s; min-width:0;
 }
 .wlt-cat-btn:hover { border-color:var(--primary); }
-.wlt-cat-btn.on { background:var(--primary-lt); border-color:var(--primary); }
-.wlt-cat-icon { font-size:22px; line-height:1; }
-.wlt-cat-lbl  { font-size:13px; font-weight:700; color:var(--gray-700); }
-.wlt-cat-btn.on .wlt-cat-lbl { color:var(--primary); }
-.wlt-cat-count { font-size:11px; color:var(--gray-400); font-weight:600; }
-.wlt-cat-btn.on .wlt-cat-count { color:var(--primary); opacity:.8; }
+.wlt-cat-btn.on { background:var(--primary); border-color:var(--primary); }
+.wlt-cat-icon { font-size:14px; font-weight:800; color:var(--gray-700); white-space:nowrap; }
+.wlt-cat-btn.on .wlt-cat-icon { color:white; }
+.wlt-cat-count { font-size:12px; color:var(--gray-400); font-weight:700; }
+.wlt-cat-btn.on .wlt-cat-count { color:rgba(255,255,255,.8); }
 /* 드롭다운 정렬 */
 .wlt-sort-wrap { display:flex; align-items:center; gap:8px; flex-shrink:0; }
 .wlt-sort-lbl  { font-size:14px; font-weight:700; color:var(--gray-600); white-space:nowrap; }
@@ -628,13 +627,21 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .filter-divider { height:1px; background:var(--gray-200); margin:16px 0; }
 
 .wallet-content { display:flex; flex-direction:column; gap:16px; }
-.wallet-tabs { display:flex; gap:0; border-bottom:2px solid var(--gray-200); margin-bottom:20px; }
+.wallet-tabs { display:flex; gap:8px; border-bottom:none; margin-bottom:20px; justify-content:flex-end; }
 .wlt-tab {
-  padding:13px 24px; font-size:16px; font-weight:700; color:var(--gray-500);
-  border-bottom:3px solid transparent; margin-bottom:-2px; cursor:pointer; transition:all .15s;
+  text-align:center; padding:8px 12px; font-size:13px; font-weight:700;
+  color:var(--gray-500); border-radius:9999px; border:2px solid var(--gray-200);
+  background:white; cursor:pointer; transition:all .15s; white-space:nowrap;
 }
-.wlt-tab:hover { color:var(--gray-900); }
-.wlt-tab.on { color:var(--primary); border-bottom-color:var(--primary); }
+.wlt-tab:hover { color:var(--gray-800); border-color:var(--gray-400); }
+.wlt-tab.on { background:var(--primary); color:white; border-color:var(--primary); }
+.mps-tab {
+  padding:13px 22px; font-size:15px; font-weight:700; color:var(--gray-400);
+  border-bottom:3px solid transparent; margin-bottom:-2px; cursor:pointer;
+  transition:color .15s, border-color .15s; white-space:nowrap;
+}
+.mps-tab:hover { color:var(--gray-700); }
+.mps-tab.on { color:var(--primary); border-bottom-color:var(--primary); }
 .wallet-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
 
 /* ============================================================
@@ -1220,14 +1227,12 @@ input[type=range].disc-range::-moz-range-thumb {
    HOME — 쿠폰 채널 필터 탭 (온라인/오프라인/둘다)
    ============================================================ */
 .home-channel-tabs {
-  display:flex; gap:8px; margin-bottom:16px; flex-wrap:nowrap; overflow-x:auto;
-  scrollbar-width:none; padding-bottom:2px;
+  display:flex; gap:8px; margin-bottom:16px;
 }
-.home-channel-tabs::-webkit-scrollbar { display:none; }
 .hct-btn {
-  padding:8px 18px; border-radius:50px; font-size:13px; font-weight:700;
+  flex:1; text-align:center; padding:8px 12px; border-radius:9999px; font-size:13px; font-weight:700;
   border:2px solid var(--gray-200); background:white; color:var(--gray-600);
-  cursor:pointer; transition:all .15s; white-space:nowrap; flex-shrink:0;
+  cursor:pointer; transition:all .15s; white-space:nowrap;
 }
 .hct-btn:hover { border-color:var(--primary); color:var(--primary); }
 .hct-btn.on { background:var(--primary); border-color:var(--primary); color:white; }
@@ -1276,6 +1281,11 @@ input[type=range].disc-range::-moz-range-thumb {
   transition:all .15s;
 }
 .nearby-cpn-item:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(15,65,166,.1); }
+.nearby-cpn-item.map-selected {
+  border-color:var(--primary); border-width:2.5px;
+  background:linear-gradient(135deg,#EEF2FF 0%,#E0E7FF 100%);
+  box-shadow:0 4px 20px rgba(15,65,166,.18);
+}
 .nci-dist-badge {
   background:var(--primary-lt); color:var(--primary); border-radius:10px;
   padding:8px 12px; text-align:center; flex-shrink:0; min-width:52px;
@@ -2703,12 +2713,12 @@ input[type=range].disc-range::-moz-range-thumb {
           </div>
         </div>
         <div class="wlt-filter-bar" style="overflow-x:auto;padding-bottom:4px;margin-bottom:12px">
-          <div class="wlt-cat-tabs" style="display:flex;gap:8px;min-width:max-content">
-            <div class="wlt-cat-btn on" data-action="wlt-filter" data-val="all"><div class="wlt-cat-icon">전체</div><div class="wlt-cat-count">47</div></div>
-            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="food"><div class="wlt-cat-icon">식품</div><div class="wlt-cat-count">21</div></div>
-            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="fashion"><div class="wlt-cat-icon">패션</div><div class="wlt-cat-count">8</div></div>
-            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="appliance"><div class="wlt-cat-icon">가전</div><div class="wlt-cat-count">7</div></div>
-            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="culture"><div class="wlt-cat-icon">문화생활</div><div class="wlt-cat-count">11</div></div>
+          <div class="wlt-cat-tabs">
+            <div class="wlt-cat-btn on" data-action="wlt-filter" data-val="all"><span class="wlt-cat-icon">전체</span><span class="wlt-cat-count">47</span></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="food"><span class="wlt-cat-icon">식품</span><span class="wlt-cat-count">21</span></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="fashion"><span class="wlt-cat-icon">패션</span><span class="wlt-cat-count">8</span></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="appliance"><span class="wlt-cat-icon">가전</span><span class="wlt-cat-count">7</span></div>
+            <div class="wlt-cat-btn" data-action="wlt-filter" data-val="culture"><span class="wlt-cat-icon">문화생활</span><span class="wlt-cat-count">11</span></div>
           </div>
         </div>
         <!-- 곧 만료 강조 스트립 -->
@@ -2741,10 +2751,10 @@ input[type=range].disc-range::-moz-range-thumb {
         </div>
         <!-- 상태 기반 탭 4개 -->
         <div class="wallet-tabs">
-          <div class="wlt-tab on" data-action="wlt-tab" data-status="all">전체</div>
+          <div class="wlt-tab on" data-action="wlt-tab" data-status="downloaded">다운로드 완료</div>
+          <div class="wlt-tab" data-action="wlt-tab" data-status="all">전체</div>
           <div class="wlt-tab" data-action="wlt-tab" data-status="available">지금 사용 가능</div>
-          <div class="wlt-tab" data-action="wlt-tab" data-status="expire">곧 만료</div>
-          <div class="wlt-tab" data-action="wlt-tab" data-status="downloaded">다운로드한 쿠폰</div>
+          <div class="wlt-tab" data-action="wlt-tab" data-status="expire">만료 임박</div>
         </div>
         <div id="walletGrid" class="wallet-grid">
           <div class="cpn-card" data-action="go-detail" data-id="emart" data-cat="food" data-disc="30" data-exp="0" data-status="available"><div class="cpn-brand">이마트 · 식품</div><div class="cpn-title">전 매장 30% 할인</div><div class="cpn-disc">30%</div><div class="cpn-footer"><span class="cpn-cond">3만원 이상</span><span class="cpn-exp exp-red">오늘 만료</span></div><span class="cpn-status-badge badge-expire">⚡ 만료 임박</span></div>
@@ -3083,10 +3093,10 @@ input[type=range].disc-range::-moz-range-thumb {
 
         <!-- 탭 메뉴 -->
         <div style="display:flex;gap:0;border-bottom:2px solid var(--gray-200);margin-bottom:24px">
-          <div class="wlt-tab on" data-action="mypage-tab" data-tab="noti" style="font-size:16px;padding:14px 24px">알림 설정</div>
-          <div class="wlt-tab" data-action="mypage-tab" data-tab="info" style="font-size:16px;padding:14px 24px">기본 정보</div>
-          <div class="wlt-tab" data-action="mypage-tab" data-tab="profile" style="font-size:16px;padding:14px 24px">프로필 편집</div>
-          <div class="wlt-tab" data-action="mypage-tab" data-tab="connect" style="font-size:16px;padding:14px 24px">연동 관리</div>
+          <div class="mps-tab on" data-action="mypage-tab" data-tab="noti">알림 설정</div>
+          <div class="mps-tab" data-action="mypage-tab" data-tab="info">기본 정보</div>
+          <div class="mps-tab" data-action="mypage-tab" data-tab="profile">프로필 편집</div>
+          <div class="mps-tab" data-action="mypage-tab" data-tab="connect">연동 관리</div>
         </div>
 
         <div id="mypage-sub">
@@ -3270,6 +3280,50 @@ input[type=range].disc-range::-moz-range-thumb {
                 <button class="btn-save" style="margin-top:20px" data-action="save-noti">저장하기</button>
               </div>
             </div>
+
+            <!-- mps-connect: 연동 관리 -->
+            <div id="mps-connect" class="mps" style="display:none">
+              <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+                <div>
+                  <div style="font-size:17px;font-weight:800;color:var(--gray-900)">연동된 서비스</div>
+                  <div style="font-size:14px;color:var(--gray-500);margin-top:2px">총 3개 서비스가 연동되어 있어요</div>
+                </div>
+                <button class="btn-primary" style="font-size:14px;padding:10px 18px" data-action="nav-connect-svc">+ 연동 추가</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px">
+                <div style="display:flex;align-items:center;gap:16px;background:white;border:1.5px solid var(--gray-200);border-radius:16px;padding:16px 20px">
+                  <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#e8001d,#ff4d6d);display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:15px;flex-shrink:0">KT</div>
+                  <div style="flex:1">
+                    <div style="font-size:16px;font-weight:700;color:var(--gray-900)">KT 멤버십</div>
+                    <div style="font-size:13px;color:var(--gray-500);margin-top:2px">포인트 12,450P · 마지막 동기화 방금 전</div>
+                  </div>
+                  <button class="btn-ghost" style="font-size:13px;color:var(--gray-400);padding:8px 14px;border-color:var(--gray-200)">해제</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;background:white;border:1.5px solid var(--gray-200);border-radius:16px;padding:16px 20px">
+                  <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f5a623,#e8870a);display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:13px;flex-shrink:0">이마트</div>
+                  <div style="flex:1">
+                    <div style="font-size:16px;font-weight:700;color:var(--gray-900)">이마트</div>
+                    <div style="font-size:13px;color:var(--gray-500);margin-top:2px">포인트 8,200P · 마지막 동기화 1시간 전</div>
+                  </div>
+                  <button class="btn-ghost" style="font-size:13px;color:var(--gray-400);padding:8px 14px;border-color:var(--gray-200)">해제</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;background:white;border:1.5px solid var(--gray-200);border-radius:16px;padding:16px 20px">
+                  <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#00c3e3,#0099cc);display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:12px;flex-shrink:0">배민</div>
+                  <div style="flex:1">
+                    <div style="font-size:16px;font-weight:700;color:var(--gray-900)">배달의민족</div>
+                    <div style="font-size:13px;color:var(--gray-500);margin-top:2px">포인트 3,100P · 마지막 동기화 3시간 전</div>
+                  </div>
+                  <button class="btn-ghost" style="font-size:13px;color:var(--gray-400);padding:8px 14px;border-color:var(--gray-200)">해제</button>
+                </div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#f0fdf4,#e8f5e9);border:1.5px solid #86efac;border-radius:14px;padding:18px 20px">
+                <span style="font-size:24px;flex-shrink:0">🔒</span>
+                <div>
+                  <div style="font-size:15px;font-weight:800;color:#166534;margin-bottom:4px">은행 수준 보안으로 안전하게 연동해요</div>
+                  <div style="font-size:13px;color:#166534;line-height:1.5;font-weight:500">입력 정보는 AES-256 암호화로 전송 · 서버 미저장<br>쿠폰 데이터만 수집 · 결제·개인정보 접근 없음</div>
+                </div>
+              </div>
+            </div><!-- /mps-connect -->
 
           </div><!-- /mypage-sub -->
         </div>
@@ -3960,9 +4014,25 @@ function initNearbyMap() {
     });
     L.marker([s.lat,s.lng],{icon})
       .addTo(nearbyMap)
-      .bindPopup(`<b>${s.name}</b><br>쿠폰: ${s.disc}`);
+      .bindPopup(`<b>${s.name}</b><br>쿠폰: ${s.disc}`)
+      .on('click', ()=>{ highlightNearbyItem(s.name); });
   });
   setTimeout(()=>nearbyMap.invalidateSize(),200);
+}
+
+function highlightNearbyItem(storeName) {
+  const list = document.getElementById('nearbyList');
+  if (!list) return;
+  // 모든 아이템 하이라이트 해제
+  list.querySelectorAll('.nearby-cpn-item').forEach(el => el.classList.remove('map-selected'));
+  // 해당 아이템 찾기
+  const target = [...list.querySelectorAll('.nearby-cpn-item')]
+    .find(el => (el.dataset.store || '') === storeName);
+  if (!target) return;
+  // 하이라이트 적용
+  target.classList.add('map-selected');
+  // 박스 최상단으로 스크롤
+  list.scrollTo({ top: target.offsetTop - list.offsetTop, behavior: 'smooth' });
 }
 
 /* ============================================================ LOADING ============================================================ */
@@ -4277,11 +4347,12 @@ const ACT = {
   'nav-mypage-noti':     ()=>{ showAppPage('mypage'); updateSidebar('mypage'); setTimeout(()=>showMypageSub('noti'), 50); },
   'nav-mypage-info':     ()=>{ showMypageSub('info'); },
   'nav-mypage-profile':  ()=>{ showAppPage('mypage'); updateSidebar('mypage'); setTimeout(()=>showMypageSub('profile'),50); },
-  'mypage-tab':          (e)=>{ const tab=e.target.closest('[data-tab]'); if(!tab)return; const t=tab.dataset.tab; document.querySelectorAll('[data-action="mypage-tab"]').forEach(el=>el.classList.remove('on')); tab.classList.add('on'); if(t==='connect'){ showAppPage('connect'); updateSidebar(''); } else showMypageSub(t); },
+  'mypage-tab':          (e)=>{ const tab=e.target.closest('[data-tab]'); if(!tab)return; const t=tab.dataset.tab; document.querySelectorAll('[data-action="mypage-tab"]').forEach(el=>el.classList.remove('on')); tab.classList.add('on'); showMypageSub(t); },
   'save-noti':           ()=>showToast('설정이 안전하게 변경되었습니다'),
   'noti-master':         (e)=>toggleNotiMaster(e.target.closest('[data-val]').dataset.val),
   'save-info':           ()=>showToast('설정이 안전하게 변경되었습니다'),
   'nav-connect':         ()=>{ showAppPage('connect-svc-select'); updateSidebar(''); },
+  'nav-connect-svc':     ()=>{ showAppPage('connect-svc-select'); updateSidebar(''); },
   'nav-connect-easy':    ()=>showAppPage('connect-easy'),
   'nav-connect-manual':  ()=>showAppPage('connect-manual'),
   'select-svc':          (e)=>{
