@@ -1362,18 +1362,39 @@ input[type=range].disc-range::-moz-range-thumb {
 .esc-exp    { font-size:12px; font-weight:700; color:var(--danger); }
 
 /* ============================================================
-   HOME — 쿠폰 채널 필터 탭 (온라인/오프라인/둘다)
+   HOME — 쿠폰 채널 필터 탭 (세그먼트 컨트롤)
    ============================================================ */
+/* 외부 컨테이너 — 세그먼트 컨트롤, 중앙 정렬 */
 .home-channel-tabs {
-  display:flex; gap:8px; margin-bottom:16px;
+  position:relative; display:flex; align-items:stretch;
+  background:var(--gray-200); border-radius:14px;
+  padding:4px; margin-bottom:20px; gap:0;
+  width:fit-content; margin-left:auto; margin-right:auto;
 }
+/* 슬라이딩 pill 인디케이터 */
+.home-seg-pill {
+  position:absolute; top:4px; height:calc(100% - 8px);
+  background:var(--primary); border-radius:10px;
+  transition:left .35s cubic-bezier(.4,0,.2,1), width .35s cubic-bezier(.4,0,.2,1);
+  pointer-events:none; z-index:0;
+  box-shadow:0 2px 10px rgba(15,65,166,.22);
+}
+/* 각 탭 항목 — 콤팩트 */
 .hct-btn {
-  flex:1; text-align:center; padding:8px 12px; border-radius:9999px; font-size:13px; font-weight:700;
-  border:2px solid var(--gray-200); background:white; color:var(--gray-600);
-  cursor:pointer; transition:all .15s; white-space:nowrap;
+  min-width:72px; display:flex; align-items:center; justify-content:center;
+  padding:8px 14px; border-radius:10px;
+  font-size:13px; font-weight:700; color:var(--gray-400);
+  cursor:pointer; white-space:nowrap; position:relative; z-index:1;
+  transition:color .22s ease; user-select:none;
 }
-.hct-btn:hover { border-color:var(--primary); color:var(--primary); }
-.hct-btn.on { background:var(--primary); border-color:var(--primary); color:white; }
+.hct-btn:hover:not(.on) { color:var(--gray-700); }
+.hct-btn.on { color:white; }
+
+/* 쿠폰 섹션 전체 컨테이너 박스 */
+.home-cpn-box {
+  background:white; border:2px solid var(--gray-200);
+  border-radius:20px; padding:24px;
+}
 
 /* ============================================================
    GPS 맵 페이지
@@ -1766,16 +1787,16 @@ input[type=range].disc-range::-moz-range-thumb {
   display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;
 }
 .home-cpn-card {
-  background:white; border-radius:14px; padding:16px;
+  background:white; border-radius:14px; padding:18px 16px;
   border:2px solid var(--gray-200); cursor:pointer;
-  transition:all .15s; display:flex; flex-direction:column; gap:6px;
-  min-height:170px; position:relative;
+  transition:all .15s; display:flex; flex-direction:column; gap:8px;
+  min-height:230px; position:relative;
 }
 .home-cpn-card:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(15,65,166,.1); transform:translateY(-2px); }
 .home-cpn-card[style*="display:none"] { display:none !important; }
-.hcc-brand { font-size:11px; font-weight:700; color:var(--gray-500); }
-.hcc-disc  { font-size:26px; font-weight:700; color:var(--primary); line-height:1.1; }
-.hcc-title { font-size:12px; font-weight:700; color:var(--gray-800); line-height:1.3; word-break:keep-all; flex:1; }
+.hcc-brand { font-size:12px; font-weight:700; color:var(--gray-500); }
+.hcc-disc  { font-size:30px; font-weight:700; color:var(--primary); line-height:1.1; }
+.hcc-title { font-size:13px; font-weight:700; color:var(--gray-800); line-height:1.4; word-break:keep-all; flex:1; }
 .hcc-exp   { font-size:11px; font-weight:700; }
 .hcc-exp-red { color:var(--danger); }
 .hcc-exp-org { color:var(--warning); }
@@ -2657,7 +2678,9 @@ input[type=range].disc-range::-moz-range-thumb {
     </nav>
     <div class="hdr-search">
       <span class="hdr-search-lbl">🔍</span>
-      <input id="searchInput" type="text" placeholder="브랜드, 카테고리 검색..." onkeydown="if(event.key==='Enter') doSearch(this.value)">
+      <input id="searchInput" type="text" placeholder="브랜드, 카테고리 검색..."
+        oninput="homeSearch(this.value)"
+        onkeydown="if(event.key==='Enter') doSearch(this.value)">
     </div>
     <div class="hdr-right">
       <!-- 알림 드롭다운 래퍼 -->
@@ -2858,114 +2881,101 @@ input[type=range].disc-range::-moz-range-thumb {
           </div>
         </div>
 
-        <!-- ③ 섹션별 쿠폰 -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <div class="sec-lbl" style="margin-bottom:0">지금 사용 가능한 쿠폰</div>
-          <div class="home-channel-tabs" style="margin-bottom:0">
-            <div class="hct-btn on" data-ch="all"     onclick="filterHomeCpn('all',this)">전체</div>
-            <div class="hct-btn"    data-ch="offline" onclick="filterHomeCpn('offline',this)">오프라인</div>
-            <div class="hct-btn"    data-ch="online"  onclick="filterHomeCpn('online',this)">온라인</div>
-            <div class="hct-btn"    data-ch="both"    onclick="filterHomeCpn('both',this)">온·오프라인</div>
-          </div>
+        <!-- ③ 카테고리 필터 + 쿠폰 그리드 -->
+        <!-- 채널 세그먼트 컨트롤 -->
+        <div class="home-channel-tabs" id="homeCatTabs">
+          <div class="home-seg-pill" id="homeSegPill"></div>
+          <div class="hct-btn on" data-cat="all"     onclick="filterHomeCpn('all',this)">전체</div>
+          <div class="hct-btn"    data-cat="offline" onclick="filterHomeCpn('offline',this)">오프라인</div>
+          <div class="hct-btn"    data-cat="online"  onclick="filterHomeCpn('online',this)">온라인</div>
+          <div class="hct-btn"    data-cat="both"    onclick="filterHomeCpn('both',this)">온·오프라인</div>
         </div>
 
         <div id="homeSections">
+          <div id="homeCpnGrid" class="home-cpn-grid">
 
-          <!-- ── 오프라인 섹션 ── -->
-          <div id="sec-offline" class="home-sec" data-ch="offline">
-            <div class="home-sec-hdr hsh-offline">
-              <span class="home-sec-title">오프라인 쿠폰</span>
-              <span class="home-sec-count">3개</span>
+            <div class="home-cpn-card" data-cat="offline" data-action="go-detail" data-id="emart">
+              <span class="hcc-channel hcc-offline">오프라인</span>
+              <div class="hcc-brand">이마트</div>
+              <div class="hcc-disc">30%</div>
+              <div class="hcc-title">전 매장 쇼핑 할인</div>
+              <div class="hcc-exp hcc-exp-red">오늘 만료</div>
+              <button class="hcc-use" data-action="go-detail" data-id="emart">사용하기</button>
             </div>
-            <div class="home-cpn-grid">
-              <div class="home-cpn-card" data-ch="offline" data-action="go-detail" data-id="emart">
-                <span class="hcc-channel hcc-offline">오프라인</span>
-                <div class="hcc-brand">이마트</div>
-                <div class="hcc-disc">30%</div>
-                <div class="hcc-title">전 매장 쇼핑 할인</div>
-                <div class="hcc-exp hcc-exp-red">오늘 만료</div>
-                <button class="hcc-use" data-action="go-detail" data-id="emart">사용하기</button>
-              </div>
-              <div class="home-cpn-card" data-ch="offline" data-action="go-detail" data-id="gs25">
-                <span class="hcc-channel hcc-offline">오프라인</span>
-                <div class="hcc-brand">GS25</div>
-                <div class="hcc-disc">20%</div>
-                <div class="hcc-title">도시락 20% 할인</div>
-                <div class="hcc-exp hcc-exp-gry">D-14</div>
-                <button class="hcc-use" data-action="go-detail" data-id="gs25">사용하기</button>
-              </div>
-              <div class="home-cpn-card" data-ch="offline" data-action="go-detail" data-id="lottemart">
-                <span class="hcc-channel hcc-offline">오프라인</span>
-                <div class="hcc-brand">롯데마트</div>
-                <div class="hcc-disc">25%</div>
-                <div class="hcc-title">신선식품 25% 할인</div>
-                <div class="hcc-exp hcc-exp-org">D-5</div>
-                <button class="hcc-use" data-action="go-detail" data-id="lottemart">사용하기</button>
-              </div>
+
+            <div class="home-cpn-card" data-cat="offline" data-action="go-detail" data-id="gs25">
+              <span class="hcc-channel hcc-offline">오프라인</span>
+              <div class="hcc-brand">GS25</div>
+              <div class="hcc-disc">20%</div>
+              <div class="hcc-title">도시락 20% 할인</div>
+              <div class="hcc-exp hcc-exp-gry">D-14</div>
+              <button class="hcc-use" data-action="go-detail" data-id="gs25">사용하기</button>
             </div>
+
+            <div class="home-cpn-card" data-cat="offline" data-action="go-detail" data-id="lottemart">
+              <span class="hcc-channel hcc-offline">오프라인</span>
+              <div class="hcc-brand">롯데마트</div>
+              <div class="hcc-disc">25%</div>
+              <div class="hcc-title">신선식품 25% 할인</div>
+              <div class="hcc-exp hcc-exp-org">D-5</div>
+              <button class="hcc-use" data-action="go-detail" data-id="lottemart">사용하기</button>
+            </div>
+
+            <div class="home-cpn-card" data-cat="online" data-action="go-detail" data-id="baemin">
+              <span class="hcc-channel hcc-online">온라인</span>
+              <div class="hcc-brand">배달의민족</div>
+              <div class="hcc-disc">3,000원</div>
+              <div class="hcc-title">배달 주문 할인</div>
+              <div class="hcc-exp hcc-exp-org">D-2</div>
+              <button class="hcc-use" data-action="go-detail" data-id="baemin">사용하기</button>
+            </div>
+
+            <div class="home-cpn-card" data-cat="online" data-action="go-detail" data-id="yogiyo">
+              <span class="hcc-channel hcc-online">온라인</span>
+              <div class="hcc-brand">요기요</div>
+              <div class="hcc-disc">12%</div>
+              <div class="hcc-title">첫 주문 12% 할인</div>
+              <div class="hcc-exp hcc-exp-org">D-2</div>
+              <button class="hcc-use" data-action="go-detail" data-id="yogiyo">사용하기</button>
+            </div>
+
+            <div class="home-cpn-card" data-cat="online" data-action="go-detail" data-id="coupang">
+              <span class="hcc-channel hcc-online">온라인</span>
+              <div class="hcc-brand">쿠팡</div>
+              <div class="hcc-disc">10%</div>
+              <div class="hcc-title">전 카테고리 할인</div>
+              <div class="hcc-exp hcc-exp-gry">D-21</div>
+              <button class="hcc-use" data-action="go-detail" data-id="coupang">사용하기</button>
+            </div>
+
+            <div class="home-cpn-card" data-cat="both" data-action="go-detail" data-id="starbucks">
+              <span class="hcc-channel hcc-both">온·오프라인</span>
+              <div class="hcc-brand">스타벅스</div>
+              <div class="hcc-disc">1+1</div>
+              <div class="hcc-title">음료 1+1 증정</div>
+              <div class="hcc-exp hcc-exp-gry">D-7</div>
+              <button class="hcc-use" data-action="go-detail" data-id="starbucks">사용하기</button>
+            </div>
+
+            <div class="home-cpn-card" data-cat="both" data-action="go-detail" data-id="oliveyoung">
+              <span class="hcc-channel hcc-both">온·오프라인</span>
+              <div class="hcc-brand">올리브영</div>
+              <div class="hcc-disc">5,000원</div>
+              <div class="hcc-title">전 상품 5,000원 할인</div>
+              <div class="hcc-exp hcc-exp-gry">D-30</div>
+              <button class="hcc-use" data-action="go-detail" data-id="oliveyoung">사용하기</button>
+            </div>
+
           </div>
-
-          <!-- ── 온라인 섹션 ── -->
-          <div id="sec-online" class="home-sec" data-ch="online">
-            <div class="home-sec-hdr hsh-online">
-              <span class="home-sec-title">온라인 쿠폰</span>
-              <span class="home-sec-count">3개</span>
-            </div>
-            <div class="home-cpn-grid">
-              <div class="home-cpn-card" data-ch="online" data-action="go-detail" data-id="baemin">
-                <span class="hcc-channel hcc-online">온라인</span>
-                <div class="hcc-brand">배달의민족</div>
-                <div class="hcc-disc">3,000원</div>
-                <div class="hcc-title">배달 주문 할인</div>
-                <div class="hcc-exp hcc-exp-org">D-2</div>
-                <button class="hcc-use" data-action="go-detail" data-id="baemin">사용하기</button>
-              </div>
-              <div class="home-cpn-card" data-ch="online" data-action="go-detail" data-id="yogiyo">
-                <span class="hcc-channel hcc-online">온라인</span>
-                <div class="hcc-brand">요기요</div>
-                <div class="hcc-disc">12%</div>
-                <div class="hcc-title">첫 주문 12% 할인</div>
-                <div class="hcc-exp hcc-exp-org">D-2</div>
-                <button class="hcc-use" data-action="go-detail" data-id="yogiyo">사용하기</button>
-              </div>
-              <div class="home-cpn-card" data-ch="online" data-action="go-detail" data-id="coupang">
-                <span class="hcc-channel hcc-online">온라인</span>
-                <div class="hcc-brand">쿠팡</div>
-                <div class="hcc-disc">10%</div>
-                <div class="hcc-title">전 카테고리 할인</div>
-                <div class="hcc-exp hcc-exp-gry">D-21</div>
-                <button class="hcc-use" data-action="go-detail" data-id="coupang">사용하기</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- ── 온·오프라인 섹션 ── -->
-          <div id="sec-both" class="home-sec" data-ch="both">
-            <div class="home-sec-hdr hsh-both">
-              <span class="home-sec-title">온·오프라인 쿠폰</span>
-              <span class="home-sec-count">2개</span>
-            </div>
-            <div class="home-cpn-grid">
-              <div class="home-cpn-card" data-ch="both" data-action="go-detail" data-id="starbucks">
-                <span class="hcc-channel hcc-both">온·오프라인</span>
-                <div class="hcc-brand">스타벅스</div>
-                <div class="hcc-disc">1+1</div>
-                <div class="hcc-title">음료 1+1 증정</div>
-                <div class="hcc-exp hcc-exp-gry">D-7</div>
-                <button class="hcc-use" data-action="go-detail" data-id="starbucks">사용하기</button>
-              </div>
-              <div class="home-cpn-card" data-ch="both" data-action="go-detail" data-id="oliveyoung">
-                <span class="hcc-channel hcc-both">온·오프라인</span>
-                <div class="hcc-brand">올리브영</div>
-                <div class="hcc-disc">5,000원</div>
-                <div class="hcc-title">전 상품 5,000원 할인</div>
-                <div class="hcc-exp hcc-exp-gry">D-30</div>
-                <button class="hcc-use" data-action="go-detail" data-id="oliveyoung">사용하기</button>
-              </div>
-            </div>
-          </div>
-
         </div><!-- /homeSections -->
+
+        <!-- 검색 결과 없음 -->
+        <div id="homeNoResult" style="display:none;padding:40px 0;text-align:center;color:var(--gray-400)">
+          <div style="font-size:36px;margin-bottom:12px">🔍</div>
+          <div style="font-size:17px;font-weight:700;color:var(--gray-600);margin-bottom:6px">검색 결과가 없습니다</div>
+          <div style="font-size:14px">다른 키워드나 카테고리로 검색해보세요</div>
+        </div>
+
 
       </div>
 
@@ -4329,7 +4339,20 @@ function showAppPage(id, skipHistory) {
   if (mc) { mc.scrollTop = 0; mc.scrollLeft = 0; }
   if (id==='barcode') drawBRC();
   if (id==='detail') drawDetBRC();
-  if (id==='home') initCarousel();
+  if (id==='home') {
+    initCarousel();
+    // 홈 진입 시 검색·채널 초기화
+    const inp = document.getElementById('searchInput');
+    if (inp) inp.value = '';
+    _homeCh = 'all';
+    document.querySelectorAll('.hct-btn').forEach(b => b.classList.toggle('on', b.dataset.cat === 'all'));
+    // pill 위치는 레이아웃 계산 후 이동
+    requestAnimationFrame(() => {
+      const firstBtn = document.querySelector('#homeCatTabs .hct-btn.on');
+      moveSegPill(firstBtn);
+    });
+    _applyHomeFilter();
+  }
   if (id==='points-hub') initPointsHub();
 }
 function updateSidebar(id) {
@@ -4339,35 +4362,54 @@ function updateSidebar(id) {
   if (map[id]!==undefined&&items[map[id]]) items[map[id]].classList.add('on');
 }
 
-/* ── 홈 쿠폰 채널 필터 ── */
-function filterHomeCpn(ch, btn) {
-  document.querySelectorAll('.hct-btn').forEach(b => b.classList.remove('on'));
-  if (btn) btn.classList.add('on');
-
-  const wrap = document.getElementById('homeSections');
+/* ── 홈 세그먼트 pill 위치 이동 ── */
+function moveSegPill(btn) {
+  const pill = document.getElementById('homeSegPill');
+  if (!pill || !btn) return;
+  const wrap = btn.closest('.home-channel-tabs');
   if (!wrap) return;
-  const secs = [...wrap.querySelectorAll('.home-sec')];
+  const wRect = wrap.getBoundingClientRect();
+  const bRect = btn.getBoundingClientRect();
+  pill.style.left  = (bRect.left - wRect.left) + 'px';
+  pill.style.width = bRect.width + 'px';
+}
 
-  if (ch === 'all') {
-    // 원래 순서(offline→online→both)로 복원
-    ['offline','online','both'].forEach(key => {
-      const el = document.getElementById('sec-' + key);
-      if (el) { el.style.display = ''; wrap.appendChild(el); }
-    });
-  } else {
-    // 선택된 섹션을 맨 위로, 나머지는 순서 유지하며 아래로
-    const target = document.getElementById('sec-' + ch);
-    if (!target) return;
-    target.style.display = '';
-    wrap.prepend(target);           // 맨 위로
-    // 나머지 섹션 순서 정렬
-    secs.filter(s => s !== target).forEach(s => { s.style.display = ''; wrap.appendChild(s); });
+/* ── 홈 쿠폰 채널 필터 ── */
+let _homeCh = 'all';
+
+function filterHomeCpn(ch, btn) {
+  _homeCh = ch;
+  document.querySelectorAll('.hct-btn').forEach(b => b.classList.remove('on'));
+  if (btn) { btn.classList.add('on'); moveSegPill(btn); }
+  _applyHomeFilter();
+}
+
+function homeSearch(kw) {
+  // 홈 페이지가 활성화된 상태일 때만 인라인 필터링
+  const homePage = document.getElementById('p-home');
+  if (homePage && homePage.style.display !== 'none') {
+    _applyHomeFilter();
   }
+}
 
-  // 선택된 섹션에 강조 클래스
-  secs.forEach(s => s.classList.remove('sec-top'));
-  const first = wrap.querySelector('.home-sec');
-  if (first) first.classList.add('sec-top');
+function _applyHomeFilter() {
+  const kw = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+  const noResult = document.getElementById('homeNoResult');
+  let anyVisible = false;
+
+  document.querySelectorAll('#homeCpnGrid .home-cpn-card').forEach(card => {
+    const cat = card.dataset.cat || '';
+    const brand = (card.querySelector('.hcc-brand')?.textContent || '').toLowerCase();
+    const title = (card.querySelector('.hcc-title')?.textContent || '').toLowerCase();
+    const matchCat = _homeCh === 'all' || cat === _homeCh;
+    const matchKw  = !kw || brand.includes(kw) || title.includes(kw);
+    const show = matchCat && matchKw;
+    card.style.display = show ? '' : 'none';
+    if (show) anyVisible = true;
+  });
+
+  // 결과 없음 메시지
+  if (noResult) noResult.style.display = !anyVisible ? '' : 'none';
 }
 
 /* ── GPS 주변 목록 검색 필터 ── */
