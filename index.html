@@ -51,6 +51,9 @@
   --sidebar-w: 0px;
   --header-h:  68px;
   --font: 'SUIT', system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system, sans-serif;
+
+  /* 16칼럼 그리드 — 양쪽 3칸 마진 */
+  --grid-gutter: calc(100vw * 3 / 16);
 }
 
 /* ============================================================
@@ -59,12 +62,12 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 button { border: none; cursor: pointer; background: none; font-family: var(--font); }
 input  { font-family: var(--font); outline: none; border: none; background: none; }
-body   { font-family: var(--font); background: var(--surface); color: var(--gray-900); min-height: 100vh; }
+body   { font-family: var(--font); background: #ffffff; color: var(--gray-900); min-height: 100vh; }
 
 /* ============================================================
    SCREEN SYSTEM
    ============================================================ */
-.screen { display: none; background: var(--surface); }
+.screen { display: none; background: #ffffff; }
 .screen.active { display: block; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .fade-in { animation: fadeIn .25s ease forwards; }
@@ -75,23 +78,29 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
    ONBOARDING SHELL
    ============================================================ */
 .ob-page {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 48px 24px;
-  background: var(--surface);
+  min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 48px var(--grid-gutter);
+  background: #ffffff;
+}
+.ob-page.auth-bg {
+  background: var(--primary);
+  align-items: center;
 }
 .ob-card {
-  background: white; border-radius: 16px;
-  box-shadow: 0 4px 32px rgba(0,0,0,.08);
-  width: 100%; max-width: 520px; padding: 52px 56px; position: relative;
+  background: #ffffff; border-radius: 0;
+  box-shadow: none;
+  width: 100%; max-width: 520px; padding: 40px 0 0; position: relative;
+}
+.auth-bg .ob-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 48px rgba(0,0,0,.22);
+  padding: 48px 52px;
 }
 .ob-card.wide  { max-width: 780px; }
 .ob-card.xwide { max-width: 1000px; }
 
-/* Progress */
-.ob-prog { margin-bottom: 36px; }
-.ob-prog-info { display:flex; justify-content:space-between; margin-bottom:8px; }
-.ob-prog-step { font-size:14px; font-weight:700; color:var(--gray-500); }
-.ob-prog-track { height:5px; background:var(--gray-200); border-radius:3px; overflow:hidden; }
-.ob-prog-fill  { height:100%; background:var(--primary); border-radius:3px; transition:width .4s ease; }
+/* Progress — 전체 제거 */
+.ob-prog { display:none; }
 
 /* Back / Skip */
 .ob-back {
@@ -199,7 +208,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .field-prefix { font-size:18px; font-weight:700; color:var(--gray-400); margin-right:10px; }
 /* 비밀번호 표시/숨기기 토글 */
 .pw-toggle {
-  background:none; border:none; cursor:pointer; padding:6px; margin-left:6px;
+  display:none; background:none; border:none; cursor:pointer; padding:6px; margin-left:6px;
   color:var(--gray-400); font-size:20px; line-height:1; flex-shrink:0;
   transition:color .15s;
 }
@@ -208,7 +217,45 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 /* OTP single field */
 .otp-panel { display:none; margin-top:18px; }
 .otp-panel.vis { display:block; }
+/* 성별 선택 버튼 */
+.gender-btn { flex:1; padding:14px 16px; border:2px solid var(--gray-200); border-radius:10px; font-size:15px; font-weight:700; color:var(--gray-500); background:var(--gray-100); cursor:pointer; transition:all .15s; font-family:var(--font); min-height:60px; }
+.gender-btn:hover { border-color:var(--primary); color:var(--primary); }
+.gender-btn.sel { border-color:var(--primary); background:var(--primary); color:white; }
+/* SMS 인라인 버튼 */
+.sms-row { display:flex; gap:8px; align-items:stretch; width:100%; }
+.sms-row .field-wrap { flex:1; margin-bottom:0; }
+.btn-sms-send { padding:0 18px; background:var(--primary); color:white; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:var(--font); flex-shrink:0; min-height:60px; }
+.btn-sms-resend { padding:0 14px; background:var(--secondary-lt); color:var(--secondary); border:2px solid var(--secondary); border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:var(--font); flex-shrink:0; min-height:60px; }
+/* 생년월일 가로 직접입력 */
+.birth-row { display:flex; align-items:center; gap:6px; width:100%; }
+.birth-field-wrap { display:flex; align-items:center; gap:4px; }
+.birth-field-wrap.yr { flex:2.2; }
+.birth-field-wrap.md { flex:1.2; }
+.birth-input {
+  width:100%; min-height:52px; border:2px solid var(--gray-300); border-radius:10px;
+  background:white; font-size:15px; font-weight:600; color:var(--gray-800);
+  font-family:var(--font); padding:0 10px; outline:none; transition:border-color .2s;
+  text-align:center;
+}
+.birth-input:focus { border-color:var(--primary); }
+.birth-sep { font-size:14px; font-weight:700; color:var(--gray-500); flex-shrink:0; }
+/* 이메일 분할 */
+.email-row { display:flex; align-items:center; gap:6px; width:100%; }
+.email-row .field-wrap { margin-bottom:0; }
+.email-at { font-size:17px; font-weight:700; color:var(--gray-500); flex-shrink:0; }
+.email-domain-wrap { flex:1; min-height:60px; border-radius:10px; border:2px solid var(--gray-300); background:white; display:flex; align-items:center; padding:0 14px; transition:border-color .2s; }
+.email-domain-wrap:focus-within { border-color:var(--primary); }
+.email-domain-wrap select { flex:1; font-size:15px; font-weight:600; color:var(--gray-800); background:transparent; border:none; outline:none; font-family:var(--font); cursor:pointer; }
 .otp-lbl { font-size:15px; color:var(--gray-600); margin-bottom:10px; font-weight:600; }
+.otp-big-wrap { margin-top:12px; margin-bottom:4px; }
+.otp-big-wrap .field-wrap { margin-bottom:0; }
+.otp-big-wrap input { font-size:28px; font-weight:700; letter-spacing:4px; text-align:left; color:var(--primary); }
+.otp-big-wrap input::placeholder { font-size:16px; letter-spacing:0; font-weight:400; color:var(--gray-400); }
+.otp-footer-row { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+.otp-timer { font-size:14px; color:var(--gray-400); }
+.otp-resend-btn { font-size:14px; font-weight:700; color:var(--primary); background:none; border:none; cursor:pointer; font-family:var(--font); padding:0; }
+.otp-resend-btn:hover { text-decoration:underline; }
+/* 구버전 호환 */
 .otp-footer { font-size:14px; color:var(--gray-400); margin-top:10px; }
 .otp-resend { color:var(--primary); font-weight:700; cursor:pointer; }
 
@@ -250,22 +297,33 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 /* Service list */
 .svc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
 .svc-card {
-  padding:18px 20px; background:var(--gray-100); border-radius:12px;
-  border:2px solid transparent; display:flex; align-items:center; gap:14px;
+  padding:16px 18px; background:white; border-radius:12px;
+  border:2px solid var(--gray-200); display:flex; align-items:center; gap:12px;
+  transition:all .2s;
 }
-.svc-info { flex:1; }
-.svc-name { font-size:16px; font-weight:700; color:var(--gray-900); }
-.svc-desc { font-size:13px; color:var(--gray-500); margin-top:2px; }
+.svc-logo {
+  width:42px; height:42px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:900; color:white; letter-spacing:-0.5px;
+}
+.svc-info { flex:1; min-width:0; }
+.svc-name { font-size:15px; font-weight:700; color:var(--gray-900); }
+.svc-desc { font-size:12px; color:var(--gray-500); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .conn-btn {
-  padding:10px 18px; border-radius:8px; font-size:14px; font-weight:700;
-  background:var(--gray-200); color:var(--gray-600);
-  cursor:pointer; transition:all .2s; white-space:nowrap; border:2px solid var(--gray-300);
+  padding:8px 14px; border-radius:8px; font-size:13px; font-weight:700;
+  background:var(--gray-100); color:var(--gray-600);
+  cursor:pointer; transition:all .2s; white-space:nowrap; border:2px solid var(--gray-200); flex-shrink:0;
 }
 .conn-btn:hover { background:var(--primary); color:white; border-color:var(--primary); }
 .conn-btn.done { background:var(--accent-dk); color:#5a4a00; border-color:var(--accent-dk); font-weight:700; }
-/* 연동 카드 전체 상태 표시 */
-.svc-card { background:var(--gray-100); border:2px solid var(--gray-200); transition:all .2s; }
-.svc-card.connected { background:var(--accent); border-color:var(--accent-dk); }
+.svc-card.connected { background:#fffbeb; border-color:var(--accent-dk); }
+/* 빠른선택 칩 */
+.quick-sel-chip {
+  padding:7px 16px; border:1.5px solid var(--gray-300); border-radius:20px;
+  font-size:13px; font-weight:700; color:var(--gray-600); background:white;
+  cursor:pointer; font-family:var(--font); transition:all .15s; white-space:nowrap;
+}
+.quick-sel-chip:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-lt); }
 
 /* Loading steps */
 .ld-steps { display:flex; flex-direction:column; gap:12px; width:100%; max-width:440px; margin:0 auto; }
@@ -358,7 +416,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .app-header {
   position:fixed; top:0; left:0; right:0; z-index:100;
   height:var(--header-h); background:white; border-bottom:2px solid var(--gray-200);
-  display:flex; align-items:center; padding:0 24px; gap:16px;
+  display:flex; align-items:center; padding:0 var(--grid-gutter); gap:16px;
 }
 .hdr-logo { font-size:22px; font-weight:700; color:var(--primary); white-space:nowrap; letter-spacing:-0.5px; cursor:pointer; flex-shrink:0; }
 /* 상단 네비게이션 */
@@ -494,7 +552,7 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 .sb-sav-sub { font-size:13px; color:rgba(255,255,255,.55); margin-top:4px; }
 
 /* MAIN CONTENT */
-.main-content { flex:1; margin-left:var(--sidebar-w); padding:36px 40px; min-height:0; overflow-y:auto; overflow-x:hidden; box-sizing:border-box; background:var(--surface); }
+.main-content { flex:1; margin-left:var(--sidebar-w); padding:36px var(--grid-gutter); min-height:0; overflow-y:auto; overflow-x:hidden; box-sizing:border-box; background:var(--surface); }
 .page-title { font-size:28px; font-weight:700; color:var(--gray-900); margin-bottom:4px; }
 .page-sub   { font-size:16px; color:var(--gray-500); margin-bottom:32px; }
 .sec-lbl    { font-size:13px; font-weight:700; color:var(--gray-500); letter-spacing:.5px; margin-bottom:12px; text-transform:uppercase; }
@@ -587,7 +645,23 @@ body   { font-family: var(--font); background: var(--surface); color: var(--gray
 }
 .det-brc-label { font-size:16px; font-weight:700; color:var(--gray-900); margin-bottom:4px; align-self:flex-start; }
 .det-brc-sub   { font-size:13px; color:var(--gray-400); margin-bottom:20px; align-self:flex-start; }
-.det-brc-svg   { width:100%; max-width:420px; height:auto; display:block; }
+.det-brc-svg   { width:100%; max-width:420px; height:auto; display:block; cursor:zoom-in; }
+/* ── 바코드 확대 모달 ── */
+#brcZoomModal {
+  display:none; position:fixed; inset:0; z-index:9998;
+  background:rgba(0,0,0,.7); align-items:center; justify-content:center;
+}
+#brcZoomModal.open { display:flex; }
+.brc-zoom-box {
+  background:white; border-radius:24px; padding:36px 40px;
+  max-width:90vw; width:640px; text-align:center;
+  box-shadow:0 24px 80px rgba(0,0,0,.35);
+  animation: fadeIn .2s ease;
+}
+.brc-zoom-label { font-size:14px; font-weight:700; color:var(--gray-500); margin-bottom:6px; }
+.brc-zoom-num   { font-size:22px; font-weight:700; letter-spacing:4px; color:var(--gray-900); margin-top:14px; }
+.brc-zoom-hint  { font-size:13px; color:var(--gray-400); margin-top:6px; margin-bottom:20px; }
+.brc-zoom-close { padding:12px 32px; background:var(--primary); color:white; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; }
 .det-brc-num {
   font-size:28px; font-weight:700; color:var(--gray-900);
   letter-spacing:4px; text-align:center; margin:16px 0 6px;
@@ -725,6 +799,28 @@ input[type=range].disc-range::-moz-range-thumb {
 .disc-range-labels { display:flex; justify-content:space-between; font-size:13px; color:var(--gray-400); font-weight:600; margin-top:6px; }
 
 /* ============================================================
+   NOTI SETTINGS — 카테고리 칩 + 브랜드 칩
+   ============================================================ */
+.noti-cat-row { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+.noti-cat-chip { padding:10px 18px; border:2px solid var(--gray-200); border-radius:24px; font-size:14px; font-weight:700; color:var(--gray-600); background:white; cursor:pointer; transition:all .15s; white-space:nowrap; user-select:none; }
+.noti-cat-chip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+.noti-brand-row { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; min-height:72px; padding:4px 0; }
+.noti-brand-chip { display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 16px; border:2px solid var(--gray-200); border-radius:14px; font-size:12px; font-weight:700; color:var(--gray-700); background:white; cursor:pointer; transition:all .15s; min-width:64px; user-select:none; }
+.noti-brand-chip .nbi { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:white; flex-shrink:0; }
+.noti-brand-chip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+/* 브랜드 알림방식 패널 — 3컬럼 그리드 */
+.noti-brand-method-panel { margin-top:4px; margin-bottom:16px; border:1.5px solid var(--gray-200); border-radius:14px; overflow:hidden; background:white; }
+.noti-brand-method-header { display:grid; grid-template-columns:90px 130px 1fr; gap:10px; padding:8px 14px; background:var(--gray-100); font-size:12px; font-weight:700; color:var(--gray-500); letter-spacing:.3px; }
+.noti-brand-method-row { display:grid; grid-template-columns:90px 130px 1fr; align-items:center; gap:10px; padding:12px 14px; border-bottom:1.5px solid var(--gray-100); }
+.noti-brand-method-row:last-child { border-bottom:none; }
+.noti-brand-method-sel { height:36px; border:1.5px solid var(--gray-200); border-radius:8px; padding:0 10px; font-size:13px; font-weight:700; color:var(--gray-800); background:white; outline:none; font-family:var(--font); cursor:pointer; width:100%; }
+/* 할인율 가로 스크롤 칩 */
+.noti-disc-hscroll { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; padding:2px 2px; }
+.noti-disc-hscroll::-webkit-scrollbar { display:none; }
+.noti-disc-hchip { flex-shrink:0; padding:6px 11px; border:1.5px solid var(--gray-200); border-radius:18px; font-size:12px; font-weight:700; color:var(--gray-500); cursor:pointer; white-space:nowrap; transition:all .12s; background:white; }
+.noti-disc-hchip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+
+/* ============================================================
    SEARCH RESULTS PAGE
    ============================================================ */
 .search-result-bar { display:flex; align-items:center; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
@@ -771,7 +867,7 @@ input[type=range].disc-range::-moz-range-thumb {
 .brc-card { background:white; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.06); padding:40px; text-align:center; border:2px solid var(--gray-200); }
 .brc-card h3 { font-size:24px; font-weight:700; color:var(--gray-900); margin-bottom:8px; }
 .brc-card p  { font-size:16px; color:var(--gray-500); margin-bottom:28px; }
-.brc-svg { width:100%; max-width:440px; height:120px; }
+.brc-svg { width:100%; max-width:440px; height:120px; cursor:zoom-in; }
 .brc-num { font-family:'Courier New',monospace; font-size:24px; font-weight:700; letter-spacing:4px; color:var(--gray-900); margin-top:16px; }
 .brc-note { background:var(--secondary-lt); border-left:4px solid var(--secondary); border-radius:0 10px 10px 0; padding:16px 20px; }
 .brc-note span { font-size:15px; color:var(--secondary); font-weight:700; }
@@ -1765,6 +1861,37 @@ input[type=range].disc-range::-moz-range-thumb {
   font-size:14px; font-weight:700; color:#7a4a00;
 }
 .cond-warning-icon { font-size:20px; flex-shrink:0; }
+
+/* 알림설정 팝업 */
+.noti-popup-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.52);
+  display:flex; align-items:center; justify-content:center;
+  z-index:9999; animation:fadeIn .2s ease;
+}
+.noti-popup-card {
+  background:white; border-radius:24px; padding:40px 36px;
+  max-width:440px; width:calc(100% - 48px);
+  box-shadow:0 12px 56px rgba(0,0,0,.22);
+  text-align:center; animation:popIn .3s ease;
+}
+.noti-popup-icon {
+  width:80px; height:80px; background:var(--primary-lt); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:38px; margin:0 auto 20px;
+}
+.noti-popup-title { font-size:22px; font-weight:800; color:var(--gray-900); line-height:1.35; margin-bottom:20px; }
+.noti-popup-benefits {
+  background:var(--gray-100); border-radius:14px; padding:18px 20px;
+  margin-bottom:24px; text-align:left;
+}
+.noti-popup-benefit-row {
+  display:flex; align-items:center; gap:10px;
+  font-size:14px; color:var(--gray-700); font-weight:600;
+  padding:5px 0;
+}
+.noti-popup-benefit-row + .noti-popup-benefit-row { border-top:1px solid var(--gray-200); }
+.noti-popup-check { color:var(--primary); font-size:17px; font-weight:900; flex-shrink:0; }
+.noti-popup-btns { display:flex; flex-direction:column; gap:10px; }
 </style>
 </head>
 <body>
@@ -1776,44 +1903,10 @@ input[type=range].disc-range::-moz-range-thumb {
       <div class="sp-logo"><span class="sp-logo-txt">USE</span></div>
       <div class="sp-title">USE</div>
       <div class="sp-sub">필요한 혜택, 알아서 챙겨드려요</div>
-      <div class="sp-spin"></div>
-      <div class="sp-progress-wrap"><div class="sp-progress-bar" id="splashProgress"></div></div>
     </div>
   </div>
 </div>
 
-<!-- ==================== SIGNUP ==================== -->
-<div class="screen" id="s-signup">
-  <div class="ob-page">
-    <div class="su-split">
-      <div class="su-left">
-        <span class="tag">처음 오셨나요</span>
-        <h1>USE로<br>혜택을 자동으로</h1>
-        <p>내가 찾지 않아도, 지금 쓸 수 있는<br>혜택이 자동으로 나타납니다</p>
-        <div class="su-left-benefits">
-          <div class="b-row"><div class="b-dot"></div><span class="b-txt">직접 찾지 않아도 자동으로 수집</span></div>
-          <div class="b-row"><div class="b-dot"></div><span class="b-txt">만료 전에 미리 알림 발송</span></div>
-          <div class="b-row"><div class="b-dot"></div><span class="b-txt">결제 직전, 쓸 수 있는 쿠폰 추천</span></div>
-        </div>
-      </div>
-      <div class="su-right">
-        <div class="auth-tab-row">
-          <div class="auth-tab" data-action="go-login">로그인</div>
-          <div class="auth-tab on">회원가입</div>
-        </div>
-        <div class="sub-txt" style="margin-bottom:28px">아래 방법으로 시작하세요</div>
-        <div class="su-btns">
-          <button class="social-btn btn-main" data-action="go-terms">휴대폰 번호로 시작하기</button>
-          <div class="divider">또는 간편 가입</div>
-          <button class="social-btn btn-kakao" data-action="go-social-kakao">카카오로 시작하기</button>
-          <button class="social-btn btn-naver" data-action="go-social-naver">네이버로 시작하기</button>
-          <button class="social-btn btn-toss"  data-action="go-social-toss">토스로 시작하기</button>
-        </div>
-        <div class="su-footer">시작하면 <u data-action="go-terms-content" style="cursor:pointer">이용약관</u> 및 <u data-action="go-privacy-content" style="cursor:pointer">개인정보처리방침</u>에 동의한 것으로 간주됩니다.</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ==================== PHONE VERIFY ==================== -->
 <div class="screen" id="s-phone">
@@ -1821,20 +1914,24 @@ input[type=range].disc-range::-moz-range-thumb {
     <div class="ob-card">
       <div class="ob-back" data-action="go-back">‹ 뒤로</div>
       <h2 class="ob-h2">휴대폰 번호를 입력해 주세요</h2>
-      <p class="ob-sub">본인 확인 후 가입이 완료됩니다</p>
-      <div class="field-wrap" id="phWrap">
-        <span class="field-prefix">+82</span>
-        <input id="phField" type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13"
-          oninput="fmtPhone(this)">
-      </div>
-      <button class="btn-primary" data-action="send-sms" style="margin-bottom:0">인증번호 받기</button>
-      <div class="otp-panel" id="otpPanel">
-        <div class="otp-lbl" style="margin-top:20px">문자로 받은 인증번호 6자리를 입력하세요</div>
+      <div class="sms-row" style="margin-bottom:0">
         <div class="field-wrap">
-          <input id="otpField" type="tel" inputmode="numeric" placeholder="인증번호 6자리 입력" maxlength="6"
-            oninput="checkOTP(this)">
+          <input id="phField" type="tel" inputmode="numeric" placeholder="-0000-0000" maxlength="13"
+            value="010" oninput="fmtPhone(this)">
         </div>
-        <div class="otp-footer"><span id="otpTimer">재발송 가능: 59초 후</span></div>
+        <button class="btn-sms-send" data-action="send-sms">인증번호 받기</button>
+      </div>
+      <div class="otp-panel" id="otpPanel">
+        <div class="otp-big-wrap">
+          <div class="field-wrap">
+            <input id="otpField" type="tel" inputmode="numeric" placeholder="인증번호 6자리" maxlength="6"
+              oninput="checkOTP(this)">
+          </div>
+        </div>
+        <div class="otp-footer-row">
+          <span class="otp-timer" id="otpTimer">재발송 가능: 59초 후</span>
+          <button class="otp-resend-btn" data-action="resend-sms">재전송</button>
+        </div>
         <button class="btn-primary" data-action="go-coupon-intro" style="margin-top:16px">확인</button>
       </div>
     </div>
@@ -1844,15 +1941,9 @@ input[type=range].disc-range::-moz-range-thumb {
 <!-- ==================== COUPON INTRO ==================== -->
 <div class="screen" id="s-coupon-intro">
   <div class="ob-page">
-    <div class="ob-card wide" style="text-align:center">
-      <span class="ob-skip" data-action="go-noti-consent">나중에 하기</span>
-      <div class="ob-prog">
-        <div class="ob-prog-info"><span class="ob-prog-step">1 / 5단계</span><span class="ob-prog-step">쿠폰 연동 안내</span></div>
-        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:20%"></div></div>
-      </div>
-      <h2 class="ob-h2" style="text-align:center">여기저기 흩어진 쿠폰을<br>한 곳에 모아드릴게요</h2>
-      <p class="ob-sub" style="text-align:center">카카오, 통신사, 마트, 배달앱 등 여러 곳에 있는 쿠폰을 자동으로 찾아서 딱 필요한 순간에 알려드립니다</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px">
+    <div class="ob-card wide" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+      <h2 class="ob-h2" style="text-align:center;white-space:nowrap;font-size:22px;margin-bottom:28px">여기저기 흩어진 쿠폰을 한 곳에 모아드릴게요</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;width:100%">
         <div style="background:var(--primary-lt);border-radius:12px;padding:24px 16px;text-align:center;border:2px solid var(--primary-lt)">
           <div style="font-size:16px;font-weight:700;color:var(--primary);margin-bottom:6px">자동 수집</div>
           <div style="font-size:14px;color:var(--gray-600)">직접 찾지 않아도 자동으로 수집</div>
@@ -1866,11 +1957,7 @@ input[type=range].disc-range::-moz-range-thumb {
           <div style="font-size:14px;color:var(--gray-600)">결제 직전, 쓸 수 있는 쿠폰 추천</div>
         </div>
       </div>
-      <div class="ob-btns" style="max-width:420px;margin:0 auto">
-        <button class="btn-primary" data-action="go-loading">빠르게 시작하기</button>
-        <button class="btn-outline" data-action="go-integration">직접 선택하기</button>
-        <button class="btn-ghost"  data-action="go-noti-consent">나중에 하기</button>
-      </div>
+      <button class="btn-primary" data-action="go-loading" style="max-width:320px;margin:0 auto">빠르게 시작하기</button>
     </div>
   </div>
 </div>
@@ -1915,30 +2002,115 @@ input[type=range].disc-range::-moz-range-thumb {
 <div class="screen" id="s-integration">
   <div class="ob-page">
     <div class="ob-card xwide">
-      <span class="ob-skip" data-action="go-noti-consent">건너뛰기</span>
-      <div class="ob-back" data-action="go-back">‹ 뒤로</div>
-      <div class="ob-prog">
-        <div class="ob-prog-info"><span class="ob-prog-step">2 / 5단계</span><span class="ob-prog-step">추가 연동</span></div>
-        <div class="ob-prog-track"><div class="ob-prog-fill" style="width:40%"></div></div>
+      <div class="ob-back" style="margin-bottom:16px" data-action="go-back">‹ 뒤로</div>
+
+      <!-- 타이틀 + 전체 버튼 -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <h2 class="ob-h2" style="margin-bottom:0">연동할 서비스를 선택해 주세요</h2>
+        <button id="svcAllBtn" onclick="toggleAllSvc()"
+          style="padding:8px 20px;border-radius:20px;border:2px solid var(--gray-300);background:var(--gray-100);color:var(--gray-500);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--font);flex-shrink:0;transition:all .15s;margin-left:12px">전체</button>
       </div>
-      <h2 class="ob-h2">추가 연동할 서비스</h2>
-      <p class="ob-sub">더 많은 혜택을 가져올 수 있어요. 언제든 추가 또는 해제 가능합니다</p>
+
       <div class="svc-grid">
-        <div class="svc-card connected"><div class="svc-info"><div class="svc-name">KT / SKT / LGU+</div><div class="svc-desc">통신사 멤버십 쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">✓ 연동 완료</button></div>
-        <div class="svc-card"><div class="svc-info"><div class="svc-name">카카오</div><div class="svc-desc">선물, 교환권, 쿠폰</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
-        <div class="svc-card connected"><div class="svc-info"><div class="svc-name">이마트</div><div class="svc-desc">e-money, 할인쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">✓ 연동 완료</button></div>
-        <div class="svc-card connected"><div class="svc-info"><div class="svc-name">배달의민족</div><div class="svc-desc">배달 할인쿠폰</div></div><button class="conn-btn done" data-action="toggle-svc">✓ 연동 완료</button></div>
-        <div class="svc-card"><div class="svc-info"><div class="svc-name">GS25 / CU</div><div class="svc-desc">편의점 쿠폰</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
-        <div class="svc-card"><div class="svc-info"><div class="svc-name">스타벅스</div><div class="svc-desc">리워드, 무료음료</div></div><button class="conn-btn" data-action="toggle-svc">연동하기</button></div>
-      </div>
-      <div class="security-badge">
-        <span class="sec-icon">🔒</span>
-        <div>
-          <div class="sec-title">개인정보 보호 안내</div>
-          <div class="sec-body">고객님의 정보는 암호화되어 안전하게 보호됩니다. 오직 쿠폰 혜택 추천을 위해서만 사용되며 외부로 절대 유출되지 않으니 안심하세요.</div>
+        <!-- 통신사 -->
+        <div class="svc-card connected" data-cat="통신사">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#e8001d,#ff4d6d)">KT</div>
+          <div class="svc-info"><div class="svc-name">KT</div><div class="svc-desc">멤버십 쿠폰·포인트</div></div>
+          <button class="conn-btn done" data-action="toggle-svc">✓ 완료</button>
+        </div>
+        <div class="svc-card" data-cat="통신사">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#e40000,#ff6b6b)">SKT</div>
+          <div class="svc-info"><div class="svc-name">SKT</div><div class="svc-desc">T멤버십 혜택</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <div class="svc-card" data-cat="통신사">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#e5007f,#ff4db8)">U+</div>
+          <div class="svc-info"><div class="svc-name">LG U+</div><div class="svc-desc">U+ 멤버십 쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <!-- 마트 -->
+        <div class="svc-card connected" data-cat="마트">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#f5a623,#e8870a);color:#fff">E</div>
+          <div class="svc-info"><div class="svc-name">이마트</div><div class="svc-desc">e-money·할인쿠폰</div></div>
+          <button class="conn-btn done" data-action="toggle-svc">✓ 완료</button>
+        </div>
+        <div class="svc-card" data-cat="마트">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#1565c0,#42a5f5)">H</div>
+          <div class="svc-info"><div class="svc-name">홈플러스</div><div class="svc-desc">포인트·할인쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <div class="svc-card" data-cat="마트">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#e53935,#ef9a9a)">L</div>
+          <div class="svc-info"><div class="svc-name">롯데마트</div><div class="svc-desc">L.POINT·쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <!-- 편의점 -->
+        <div class="svc-card" data-cat="편의점">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#0066b3,#4da6ff)">GS</div>
+          <div class="svc-info"><div class="svc-name">GS25</div><div class="svc-desc">나만의 냉장고 쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <div class="svc-card" data-cat="편의점">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">CU</div>
+          <div class="svc-info"><div class="svc-name">CU</div><div class="svc-desc">포켓CU 쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <div class="svc-card" data-cat="편의점">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#d32f2f,#ff7043)">7</div>
+          <div class="svc-info"><div class="svc-name">세븐일레븐</div><div class="svc-desc">모바일 쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <!-- 배달 -->
+        <div class="svc-card connected" data-cat="배달">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#00c3e3,#0099cc)">B</div>
+          <div class="svc-info"><div class="svc-name">배달의민족</div><div class="svc-desc">배달 할인쿠폰</div></div>
+          <button class="conn-btn done" data-action="toggle-svc">✓ 완료</button>
+        </div>
+        <div class="svc-card" data-cat="배달">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#ef4444,#fca5a5)">쿠</div>
+          <div class="svc-info"><div class="svc-name">쿠팡이츠</div><div class="svc-desc">배달 할인쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <div class="svc-card" data-cat="배달">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#f97316,#fbbf24)">요</div>
+          <div class="svc-info"><div class="svc-name">요기요</div><div class="svc-desc">배달 할인쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <!-- 카페·음료 -->
+        <div class="svc-card" data-cat="카페">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#00704a,#00a067)">★</div>
+          <div class="svc-info"><div class="svc-name">스타벅스</div><div class="svc-desc">리워드·무료음료</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <div class="svc-card" data-cat="카페">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#fee500,#ffd000);color:#3a1d00">메</div>
+          <div class="svc-info"><div class="svc-name">메가커피</div><div class="svc-desc">쿠폰·스탬프</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <!-- 패션·뷰티 -->
+        <div class="svc-card" data-cat="패션">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#059669,#34d399)">올</div>
+          <div class="svc-info"><div class="svc-name">올리브영</div><div class="svc-desc">멤버십·할인쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <div class="svc-card" data-cat="패션">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#1a1a1a,#555)">무</div>
+          <div class="svc-info"><div class="svc-name">무신사</div><div class="svc-desc">적립금·쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <!-- 플랫폼 -->
+        <div class="svc-card" data-cat="플랫폼">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#fee500,#ffd000);color:#3a1d00">K</div>
+          <div class="svc-info"><div class="svc-name">카카오</div><div class="svc-desc">선물하기·교환권</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
+        </div>
+        <div class="svc-card" data-cat="플랫폼">
+          <div class="svc-logo" style="background:linear-gradient(135deg,#03c75a,#00a847)">N</div>
+          <div class="svc-info"><div class="svc-name">네이버</div><div class="svc-desc">네이버페이 쿠폰</div></div>
+          <button class="conn-btn" data-action="toggle-svc">연동하기</button>
         </div>
       </div>
-      <button class="btn-primary" data-action="go-noti-consent">연결 완료하기</button>
+      <button class="btn-primary" data-action="go-signup-complete">연결 완료하기</button>
     </div>
   </div>
 </div>
@@ -1956,7 +2128,6 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="ob-prog-track"><div class="ob-prog-fill" style="width:60%"></div></div>
       </div>
       <h2 class="ob-h2">관심 카테고리를 선택해 주세요</h2>
-      <p class="ob-sub">복수 선택 가능 · 나중에 언제든 변경 가능</p>
       <!-- 전체선택/전체해제 -->
       <div style="display:flex;gap:8px;margin-bottom:14px">
         <button style="flex:1;padding:8px 0;border-radius:8px;border:1.5px solid var(--primary);background:var(--primary-lt);color:var(--primary);font-size:14px;font-weight:700;cursor:pointer" data-action="cat-all">전체 선택</button>
@@ -1988,12 +2159,9 @@ input[type=range].disc-range::-moz-range-thumb {
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
         <div>
           <h2 class="ob-h2" style="margin-bottom:4px">자주 이용하는 브랜드를 선택하세요</h2>
-          <p class="ob-sub" style="margin-bottom:0">선택한 브랜드의 쿠폰을 우선적으로 알려드려요</p>
         </div>
-        <div style="display:flex;gap:6px;flex-shrink:0;padding-top:6px">
-          <button style="padding:6px 14px;border-radius:6px;border:1.5px solid var(--primary);background:var(--primary-lt);color:var(--primary);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap" data-action="brand-all">전체 선택</button>
-          <button style="padding:6px 14px;border-radius:6px;border:1.5px solid var(--gray-300);background:white;color:var(--gray-500);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap" data-action="brand-none">전체 해제</button>
-        </div>
+        <button id="brandAllToggleBtn" onclick="toggleBrandAll()"
+          style="padding:8px 20px;border-radius:20px;border:2px solid var(--primary);background:var(--primary);color:white;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--font);flex-shrink:0;transition:all .15s">전체</button>
       </div>
       <div class="brand-grid" id="brandGrid">
         <div class="brand-chip sel" data-action="toggle-brand">이마트</div>
@@ -2021,11 +2189,10 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="ob-prog-track"><div class="ob-prog-fill" style="width:80%"></div></div>
       </div>
       <h2 class="ob-h2">어느 정도 할인이면<br>알림 받을까요?</h2>
-      <p class="ob-sub">이 기준 이상의 쿠폰만 알려드려요</p>
       <div class="disc-slider-wrap" style="padding:28px 0 8px">
         <div class="disc-slider-val"><span id="discVal">30</span><span class="disc-pct">%</span></div>
         <div class="disc-slider-hint" style="text-align:center;font-size:15px;color:var(--gray-500);margin-bottom:24px">이 기준 이상의 쿠폰만 알려드려요</div>
-        <input type="range" class="disc-range" id="discRange" min="0" max="100" value="30"
+        <input type="range" class="disc-range" id="discRange" min="0" max="100" value="30" step="5"
           oninput="document.getElementById('discVal').textContent=this.value; updateDiscSlider(this)"
           style="width:100%;margin-bottom:12px">
         <div class="disc-range-labels" style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray-400);font-weight:600">
@@ -2048,7 +2215,6 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="ob-prog-track"><div class="ob-prog-fill" style="width:80%"></div></div>
       </div>
       <h2 class="ob-h2">알림은 어디로<br>받으실 건가요?</h2>
-      <p class="ob-sub">중요한 혜택만 골라서 보내드려요</p>
       <div class="opt-grid" id="notifOpts">
         <div class="opt-card" data-action="sel-notif"><div class="opt-title">앱 알림</div><div class="opt-sub">브라우저 알림으로 받기</div></div>
         <div class="opt-card" data-action="sel-notif"><div class="opt-title">문자(SMS)</div><div class="opt-sub">문자 메시지로 받기</div></div>
@@ -2069,7 +2235,6 @@ input[type=range].disc-range::-moz-range-thumb {
       </div>
       <div style="width:96px;height:96px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:700;color:white;margin:20px auto 24px;animation:popIn .5s ease">✓</div>
       <h2 class="ob-h2" style="text-align:center">설정이 완료되었습니다</h2>
-      <p class="ob-sub" style="text-align:center"><strong style="color:var(--primary)">47개</strong>의 쿠폰이 내 쿠폰함에 준비되어 있어요</p>
       <div style="background:var(--gray-100);border-radius:14px;overflow:hidden;margin-bottom:24px">
         <!-- 탭 헤더 3개 -->
         <div style="display:flex;border-bottom:2px solid var(--gray-200)">
@@ -2140,7 +2305,6 @@ input[type=range].disc-range::-moz-range-thumb {
     <div class="ob-card">
       <div class="ob-back" data-action="go-back">‹ 뒤로</div>
       <h2 class="ob-h2">서비스 이용에 필요한<br>동의를 진행합니다</h2>
-      <p class="ob-sub">아래 항목에 동의해 주세요</p>
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px">
         <label style="display:flex;align-items:center;gap:12px;padding:16px 18px;border-radius:10px;border:2px solid var(--primary);background:var(--primary-lt);cursor:pointer">
           <input type="checkbox" id="agreeAll" style="accent-color:var(--primary);width:20px;height:20px" onchange="document.querySelectorAll('.agree-chk').forEach(c=>c.checked=this.checked)">
@@ -2174,30 +2338,69 @@ input[type=range].disc-range::-moz-range-thumb {
     <div class="ob-card">
       <div class="ob-back" data-action="go-back">‹ 뒤로</div>
       <h2 class="ob-h2">기본 정보를 입력해 주세요</h2>
-      <p class="ob-sub">정확한 서비스 이용을 위해 필요해요</p>
       <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">
+        <!-- 이름 -->
         <div>
           <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">이름</label>
-          <div class="field-wrap" style="margin-bottom:0"><input type="text" placeholder="이름을 입력하세요" style="font-size:16px"></div>
+          <div class="field-wrap" style="margin-bottom:0">
+            <input id="siName" type="text" placeholder="이름을 입력해 주세요" style="font-size:16px">
+          </div>
         </div>
+        <!-- 성별 -->
         <div>
           <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">성별</label>
           <div style="display:flex;gap:10px">
-            <label style="flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:10px;border:2px solid var(--gray-200);cursor:pointer;font-size:15px;font-weight:700"><input type="radio" name="gender" style="accent-color:var(--primary);width:18px;height:18px"> 남성</label>
-            <label style="flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:10px;border:2px solid var(--gray-200);cursor:pointer;font-size:15px;font-weight:700"><input type="radio" name="gender" style="accent-color:var(--primary);width:18px;height:18px"> 여성</label>
+            <button type="button" class="gender-btn" id="genderM" onclick="selectGender('M')">남성</button>
+            <button type="button" class="gender-btn" id="genderF" onclick="selectGender('F')">여성</button>
           </div>
         </div>
+        <!-- 생년월일 -->
         <div>
           <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">생년월일</label>
-          <div class="field-wrap" style="margin-bottom:0"><input type="text" inputmode="numeric" placeholder="2000.00.00" maxlength="10" style="font-size:16px" oninput="fmtBirth(this)"></div>
+          <div class="birth-row">
+            <div class="birth-field-wrap yr">
+              <input id="birthY" class="birth-input" type="tel" inputmode="numeric" placeholder="0000" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
+              <span class="birth-sep">년</span>
+            </div>
+            <div class="birth-field-wrap md">
+              <input id="birthM" class="birth-input" type="tel" inputmode="numeric" placeholder="00" maxlength="2" oninput="this.value=this.value.replace(/\D/g,'')">
+              <span class="birth-sep">월</span>
+            </div>
+            <div class="birth-field-wrap md">
+              <input id="birthD" class="birth-input" type="tel" inputmode="numeric" placeholder="00" maxlength="2" oninput="this.value=this.value.replace(/\D/g,'')">
+              <span class="birth-sep">일</span>
+            </div>
+          </div>
         </div>
+        <!-- 휴대폰 번호 -->
         <div>
           <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">휴대폰 번호</label>
-          <div class="field-wrap" style="margin-bottom:0"><input type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13" style="font-size:16px" oninput="fmtPhone(this)"></div>
+          <div class="field-wrap" style="margin-bottom:0">
+            <input id="siPhone" type="tel" inputmode="numeric" placeholder="-0000-0000" maxlength="13" style="font-size:16px" value="010" oninput="fmtPhone(this)">
+          </div>
         </div>
+        <!-- 이메일 -->
         <div>
           <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">이메일</label>
-          <div class="field-wrap" style="margin-bottom:0"><input type="email" placeholder="example@email.com" style="font-size:16px"></div>
+          <div class="email-row">
+            <div class="field-wrap" style="flex:1">
+              <input id="emailId" type="text" placeholder="이메일 아이디" style="font-size:15px">
+            </div>
+            <span class="email-at">@</span>
+            <div class="email-domain-wrap">
+              <select id="emailDomain" onchange="handleEmailDomain(this)">
+                <option value="naver.com">naver.com</option>
+                <option value="gmail.com">gmail.com</option>
+                <option value="kakao.com">kakao.com</option>
+                <option value="hanmail.net">hanmail.net</option>
+                <option value="icloud.com">icloud.com</option>
+                <option value="custom">직접입력</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-wrap" id="emailCustomWrap" style="display:none;margin-top:8px">
+            <input id="emailCustom" type="text" placeholder="도메인을 직접 입력해 주세요" style="font-size:15px">
+          </div>
         </div>
       </div>
       <button class="btn-primary" data-action="go-signup-id">다음</button>
@@ -2211,7 +2414,6 @@ input[type=range].disc-range::-moz-range-thumb {
     <div class="ob-card">
       <div class="ob-back" data-action="go-back">‹ 뒤로</div>
       <h2 class="ob-h2">아이디와 비밀번호를<br>만들어 주세요</h2>
-      <p class="ob-sub">로그인할 때 사용할 정보예요</p>
       <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">
         <div>
           <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">아이디</label>
@@ -2220,14 +2422,14 @@ input[type=range].disc-range::-moz-range-thumb {
         <div>
           <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">비밀번호</label>
           <div class="field-wrap" style="margin-bottom:0">
-            <input id="signupPw" type="password" placeholder="영문+숫자+특수문자 8자 이상" style="font-size:16px">
+            <input id="signupPw" type="password" placeholder="영문+숫자+특수문자 8자 이상" style="font-size:16px" oninput="updatePwToggle(this)">
             <button class="pw-toggle" type="button" onclick="togglePw('signupPw',this)" title="비밀번호 표시">👁</button>
           </div>
         </div>
         <div>
           <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">비밀번호 확인</label>
           <div class="field-wrap" style="margin-bottom:0">
-            <input id="signupPwConfirm" type="password" placeholder="비밀번호를 다시 입력하세요" style="font-size:16px">
+            <input id="signupPwConfirm" type="password" placeholder="비밀번호를 다시 입력하세요" style="font-size:16px" oninput="updatePwToggle(this)">
             <button class="pw-toggle" type="button" onclick="togglePw('signupPwConfirm',this)" title="비밀번호 표시">👁</button>
           </div>
         </div>
@@ -2241,21 +2443,27 @@ input[type=range].disc-range::-moz-range-thumb {
 <div class="screen" id="s-more-connect">
   <div class="ob-page">
     <div class="ob-card wide" style="text-align:center">
-      <div style="width:80px;height:80px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 20px">🔗</div>
-      <h2 class="ob-h2" style="text-align:center">추가로 직접 연결할<br>서비스가 있으신가요?</h2>
-      <p class="ob-sub" style="text-align:center">자동으로 연동된 서비스 외에<br>더 연결하면 더 많은 혜택을 받을 수 있어요</p>
-      <div style="background:var(--gray-100);border-radius:14px;padding:18px;margin-bottom:28px;text-align:left">
-        <div style="font-size:14px;color:var(--gray-500);margin-bottom:8px">자동 연동 완료</div>
+      <h2 class="ob-h2" style="margin-bottom:8px">쿠폰을 모두 찾았어요!</h2>
+      <div style="font-size:16px;color:var(--gray-500);margin-bottom:28px">선택한 서비스에서 총 <strong style="color:var(--primary)">47개</strong>의 쿠폰을 발견했어요</div>
+
+      <!-- 수집 결과 -->
+      <div style="background:var(--primary-lt);border-radius:14px;padding:20px;margin-bottom:24px;text-align:left">
+        <div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:12px">연동 완료된 서비스</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px">
-          <span style="padding:6px 14px;background:var(--accent);border-radius:50px;font-size:13px;font-weight:700;color:#5a4a00">KT/SKT/LGU+ ✓</span>
-          <span style="padding:6px 14px;background:var(--accent);border-radius:50px;font-size:13px;font-weight:700;color:#5a4a00">이마트 ✓</span>
-          <span style="padding:6px 14px;background:var(--accent);border-radius:50px;font-size:13px;font-weight:700;color:#5a4a00">배달의민족 ✓</span>
+          <span style="padding:7px 16px;background:white;border-radius:50px;font-size:13px;font-weight:700;color:var(--primary);border:1.5px solid var(--primary)">KT ✓</span>
+          <span style="padding:7px 16px;background:white;border-radius:50px;font-size:13px;font-weight:700;color:var(--primary);border:1.5px solid var(--primary)">이마트 ✓</span>
+          <span style="padding:7px 16px;background:white;border-radius:50px;font-size:13px;font-weight:700;color:var(--primary);border:1.5px solid var(--primary)">배달의민족 ✓</span>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto">
-        <button class="btn-primary" data-action="go-integration" style="font-size:18px">직접 선택하기</button>
-        <button class="btn-outline" data-action="go-noti-consent" style="font-size:18px">아니요, 다음으로</button>
+
+      <!-- 추가 선택 제안 -->
+      <div style="background:var(--gray-100);border-radius:14px;padding:20px;margin-bottom:28px;text-align:left">
+        <div style="font-size:15px;font-weight:800;color:var(--gray-900);margin-bottom:4px">더 많은 쿠폰을 찾고 싶다면?</div>
+        <div style="font-size:13px;color:var(--gray-500);margin-bottom:14px">직접 선택하면 더 많은 서비스의 쿠폰을 가져올 수 있어요</div>
+        <button class="btn-outline" data-action="go-integration" style="font-size:15px;min-height:48px">+ 서비스 추가 선택하기</button>
       </div>
+
+      <button class="btn-primary" data-action="go-signup-complete" style="font-size:18px">이대로 시작하기</button>
     </div>
   </div>
 </div>
@@ -2266,7 +2474,6 @@ input[type=range].disc-range::-moz-range-thumb {
     <div class="ob-card" style="text-align:center">
       <div style="width:96px;height:96px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:700;color:white;margin:0 auto 24px;animation:popIn .5s ease">✓</div>
       <h2 class="ob-h2" style="text-align:center">계정 생성이<br>완료되었습니다!</h2>
-      <p class="ob-sub" style="text-align:center">이제 바로 서비스를 이용하실 수 있어요!</p>
       <div style="background:var(--primary-lt);border-radius:14px;padding:24px;margin-bottom:28px">
         <div style="font-size:14px;color:var(--gray-600);margin-bottom:10px;font-weight:700">연동된 서비스</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
@@ -2275,7 +2482,7 @@ input[type=range].disc-range::-moz-range-thumb {
           <span style="padding:6px 14px;background:white;border-radius:50px;font-size:14px;font-weight:700;color:var(--primary);border:2px solid var(--primary-lt)">배달의민족</span>
         </div>
       </div>
-      <button class="btn-primary" data-action="go-home" style="max-width:320px;margin:0 auto">USE 시작하기 🎉</button>
+      <div style="margin-top:8px;font-size:14px;color:var(--gray-400);font-weight:600" id="signupCountdown">잠시 후 자동으로 이동합니다…</div>
     </div>
   </div>
 </div>
@@ -2286,7 +2493,6 @@ input[type=range].disc-range::-moz-range-thumb {
     <div class="ob-card wide" style="text-align:center">
       <div style="width:80px;height:80px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 20px">🔔</div>
       <h2 class="ob-h2" style="text-align:center">맞춤 혜택 알림을<br>받아보시겠어요?</h2>
-      <p class="ob-sub" style="text-align:center">딱 필요한 쿠폰 혜택만 골라서 알려드릴게요<br>1분이면 충분해요!</p>
       <div style="background:var(--gray-100);border-radius:14px;padding:20px;margin-bottom:28px;text-align:left">
         <div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:12px">알림 설정 시 혜택</div>
         <div style="display:flex;flex-direction:column;gap:8px">
@@ -2310,7 +2516,6 @@ input[type=range].disc-range::-moz-range-thumb {
       <div class="ob-back" data-action="go-back">‹ 뒤로</div>
       <div id="social-login-logo" style="width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto 20px;color:white;background:#FEE500"></div>
       <h2 class="ob-h2" style="text-align:center" id="social-login-title">카카오 로그인</h2>
-      <p class="ob-sub" style="text-align:center" id="social-login-sub">카카오 계정으로 로그인하세요</p>
       <div style="background:var(--gray-100);border-radius:14px;padding:24px;margin-bottom:24px">
         <div style="display:flex;flex-direction:column;gap:14px">
           <div>
@@ -2319,7 +2524,10 @@ input[type=range].disc-range::-moz-range-thumb {
           </div>
           <div>
             <label style="font-size:14px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:6px">비밀번호</label>
-            <div class="field-wrap" style="margin-bottom:0"><input type="password" placeholder="비밀번호" style="font-size:16px"></div>
+            <div class="field-wrap" style="margin-bottom:0">
+              <input id="socialPw" type="password" placeholder="비밀번호" style="font-size:16px" oninput="updatePwToggle(this)">
+              <button class="pw-toggle" type="button" onclick="togglePw('socialPw',this)" title="비밀번호 표시">👁</button>
+            </div>
           </div>
         </div>
       </div>
@@ -2385,45 +2593,55 @@ input[type=range].disc-range::-moz-range-thumb {
 
 <!-- ==================== LOGIN ==================== -->
 <div class="screen" id="s-login">
-  <div class="ob-page">
+  <div class="ob-page auth-bg">
     <div class="su-split">
       <div class="su-left">
         <span class="tag">다시 오셨군요</span>
-        <h1>로그인하고<br>쿠폰을 확인하세요</h1>
-        <p>47개의 쿠폰이 준비되어 있어요.<br>지금 바로 혜택을 누려보세요.</p>
-      </div>
-      <div class="su-right login-right">
-        <div class="auth-tab-row">
-          <div class="auth-tab on">로그인</div>
-          <div class="auth-tab" data-action="go-signup">회원가입</div>
+        <h1>USE로<br>혜택을 자동으로</h1>
+        <p>내가 찾지 않아도, 지금 쓸 수 있는<br>혜택이 자동으로 나타납니다</p>
+        <div class="su-left-benefits">
+          <div class="b-row"><div class="b-dot"></div><span class="b-txt">직접 찾지 않아도 자동으로 수집</span></div>
+          <div class="b-row"><div class="b-dot"></div><span class="b-txt">만료 전에 미리 알림 발송</span></div>
+          <div class="b-row"><div class="b-dot"></div><span class="b-txt">결제 직전, 쓸 수 있는 쿠폰 추천</span></div>
         </div>
-        <div class="sub-txt" style="margin-bottom:28px">아이디와 비밀번호를 입력해 주세요</div>
-        <div class="ob-btns">
-          <div>
-            <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">아이디 (휴대폰 번호)</label>
-            <div class="field-wrap" style="margin-bottom:0">
-              <input type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13" style="font-size:18px" oninput="fmtPhone(this)">
-            </div>
-          </div>
-          <div>
-            <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">비밀번호</label>
-            <div class="field-wrap" style="margin-bottom:0">
-              <input type="password" placeholder="비밀번호를 입력하세요" style="font-size:18px">
-            </div>
-          </div>
-          <button class="btn-primary" data-action="go-home" style="margin-top:8px">로그인</button>
-          <div class="security-badge" style="margin-top:16px">
-            <span class="sec-icon">🔒</span>
+      </div>
+      <div class="su-right">
+        <div class="auth-tab-row">
+          <div class="auth-tab on" id="tabLogin" onclick="showLoginTab('login')">로그인</div>
+          <div class="auth-tab" id="tabSignup" onclick="showLoginTab('signup')">회원가입</div>
+        </div>
+
+        <!-- 로그인 패널 -->
+        <div id="loginPanel">
+          <div class="su-btns">
             <div>
-              <div class="sec-title">개인정보 보호 안내</div>
-              <div class="sec-body">고객님의 정보는 암호화되어 안전하게 보호됩니다. 오직 쿠폰 혜택 추천을 위해서만 사용되며 외부로 절대 유출되지 않으니 안심하세요.</div>
+              <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">휴대폰 번호</label>
+              <div class="field-wrap" style="margin-bottom:0">
+                <input type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13" value="010" style="font-size:16px" oninput="fmtPhone(this)">
+              </div>
             </div>
+            <div>
+              <label style="font-size:15px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:8px">비밀번호</label>
+              <div class="field-wrap" style="margin-bottom:0">
+                <input id="loginPw" type="password" placeholder="비밀번호를 입력해 주세요" style="font-size:16px" oninput="updatePwToggle(this)">
+                <button class="pw-toggle" type="button" onclick="togglePw('loginPw',this)" title="비밀번호 표시">👁</button>
+              </div>
+            </div>
+            <button class="btn-primary" data-action="go-home" style="margin-top:4px">로그인</button>
           </div>
-          <div style="text-align:center;font-size:14px;color:var(--gray-500);margin-top:8px">
-            <span style="cursor:pointer;text-decoration:underline">비밀번호 찾기</span>
-            &nbsp;|&nbsp;
-            <span style="cursor:pointer;color:var(--primary);font-weight:700" data-action="go-signup">회원가입</span>
+        </div>
+
+        <!-- 회원가입 패널 -->
+        <div id="signupPanel" style="display:none">
+          <div class="sub-txt" style="margin-bottom:28px">아래 방법으로 시작하세요</div>
+          <div class="su-btns">
+            <button class="social-btn btn-main" data-action="go-terms">휴대폰 번호로 시작하기</button>
+            <div class="divider">또는 간편 가입</div>
+            <button class="social-btn btn-kakao" data-action="go-social-kakao">카카오로 시작하기</button>
+            <button class="social-btn btn-naver" data-action="go-social-naver">네이버로 시작하기</button>
+            <button class="social-btn btn-toss"  data-action="go-social-toss">토스로 시작하기</button>
           </div>
+          <div class="su-footer">시작하면 <u data-action="go-terms-content" style="cursor:pointer">이용약관</u> 및 <u data-action="go-privacy-content" style="cursor:pointer">개인정보처리방침</u>에 동의한 것으로 간주됩니다.</div>
         </div>
       </div>
     </div>
@@ -2436,7 +2654,6 @@ input[type=range].disc-range::-moz-range-thumb {
     <div class="hdr-logo" data-action="nav-home">USE</div>
     <nav class="hdr-nav">
       <div class="hdr-nav-item on" data-action="nav-home">홈</div>
-      <div class="hdr-nav-item" data-action="nav-wallet">내 쿠폰함 <span class="hdr-nav-badge">47</span></div>
     </nav>
     <div class="hdr-search">
       <span class="hdr-search-lbl">🔍</span>
@@ -2446,13 +2663,13 @@ input[type=range].disc-range::-moz-range-thumb {
       <!-- 알림 드롭다운 래퍼 -->
       <div class="hdr-bell-wrap">
         <button class="hdr-bell-btn" id="bellBtn" onclick="toggleNotiDrop()">
-          🔔 알림
+          알림
           <span class="bell-badge" id="bellBadge">3</span>
         </button>
         <!-- 드롭다운 패널 -->
         <div class="noti-dropdown" id="notiDropdown">
           <div class="noti-drop-header">
-            <span class="noti-drop-title">🔔 알림</span>
+            <span class="noti-drop-title">알림</span>
             <span class="noti-drop-clear" onclick="clearNotiAll()">모두 읽음</span>
           </div>
           <div class="noti-drop-body" id="notiDropBody">
@@ -2534,6 +2751,7 @@ input[type=range].disc-range::-moz-range-thumb {
       <div class="noti-backdrop" id="notiBackdrop" onclick="closeNotiDrop()"></div>
 
       <button class="hdr-mypage-btn" data-action="nav-mypage">내 정보</button>
+      <button class="hdr-mypage-btn" data-action="nav-wallet">내 쿠폰함 <span class="hdr-nav-badge" style="background:var(--primary);color:white;border-radius:10px;padding:1px 7px;font-size:12px;margin-left:4px">47</span></button>
     </div>
   </header>
 
@@ -2886,7 +3104,7 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="det-brc-section" id="detBrcSection" style="margin-bottom:24px">
           <div class="det-brc-label">계산대에서 이 화면을 보여주세요</div>
           <div class="det-brc-sub">바코드 스캔 또는 숫자 번호 직원 입력 모두 가능합니다</div>
-          <svg class="det-brc-svg" id="detBrcSvg" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"></svg>
+          <svg class="det-brc-svg" id="detBrcSvg" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg" onclick="openBrcZoom('detBrcSvg','1234 5678 9012 3456','쿠폰 바코드')" title="클릭하면 크게 볼 수 있어요"></svg>
           <div class="det-brc-num">1234 5678 9012 3456</div>
           <div class="det-brc-manual">🖨 스캔 불가 시 위 16자리 번호를 알려주세요</div>
         </div>
@@ -2902,7 +3120,7 @@ input[type=range].disc-range::-moz-range-thumb {
               <div class="det-hero-cond">3만원 이상 결제 시 자동 적용</div>
               <div class="det-hero-badge">오늘 자정 만료</div>
             </div>
-            <div class="nearby-section">
+            <div class="nearby-section" id="detNearbySection">
               <div class="panel-title" style="font-size:18px;font-weight:700;margin-bottom:8px">주변 사용처</div>
               <div style="font-size:13px;color:var(--gray-500);margin-bottom:14px">📍 GPS 기반 · 가까운 순 정렬</div>
               <div style="display:flex;gap:8px;margin-bottom:16px">
@@ -2973,7 +3191,7 @@ input[type=range].disc-range::-moz-range-thumb {
           <div class="brc-fullscreen-card">
             <div class="brc-cpn-brand">이마트</div>
             <div class="brc-cpn-name">전 매장 쇼핑 30% 할인</div>
-            <svg class="brc-svg" id="brcSvg" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:100%;height:120px;margin:20px 0;display:block"></svg>
+            <svg class="brc-svg" id="brcSvg" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:100%;height:120px;margin:20px 0;display:block" onclick="openBrcZoom('brcSvg','1234 5678 9012 3456','멤버십 바코드')" title="클릭하면 크게 볼 수 있어요"></svg>
             <div class="brc-num-large">1234 5678 9012 3456</div>
             <div class="brc-num-hint">위 숫자를 직접 입력해도 사용 가능합니다</div>
             <div class="brc-keep-note">
@@ -3231,74 +3449,29 @@ input[type=range].disc-range::-moz-range-thumb {
                 </div>
                 <div class="noti-off-msg" id="notiOffMsg" style="display:none">알림이 꺼져 있습니다.</div>
                 <div id="notiSettings" class="noti-settings">
-                  <div style="font-size:13px;color:var(--gray-500);margin-bottom:16px;padding:10px 14px;background:var(--gray-100);border-radius:8px">카테고리별로 할인율 기준과 알림 방식을 개별 설정할 수 있어요</div>
 
-                  <!-- 카테고리별 설정 테이블 -->
-                  <div style="display:flex;flex-direction:column;gap:0">
-                    <!-- 헤더 -->
-                    <div style="display:grid;grid-template-columns:1fr 120px 180px 100px;gap:12px;padding:10px 14px;background:var(--gray-100);border-radius:8px;font-size:12px;font-weight:700;color:var(--gray-500);letter-spacing:.5px;margin-bottom:8px">
-                      <div>카테고리</div><div>알림 여부</div><div>알림 방식</div><div>최소 할인율</div>
-                    </div>
-                    <!-- 의료 -->
-                    <div style="display:grid;grid-template-columns:1fr 120px 180px 100px;gap:12px;align-items:center;padding:14px;border:2px solid var(--gray-200);border-radius:10px;margin-bottom:8px">
-                      <div style="font-size:16px;font-weight:700;color:var(--gray-900)">의료 · 헬스케어</div>
-                      <label class="toggle-wrap"><input type="checkbox" class="disc-chk" checked onchange="updateDiscRateRow(this)"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--gray-800);background:white;outline:none"><option>앱 푸시</option><option>문자(SMS)</option><option selected>앱 + 문자</option></select>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--primary);background:white;outline:none"><option>0%</option><option>10%</option><option selected>20%</option><option>30%</option><option>40%</option><option>50%</option><option>60%</option><option>70%</option><option>80%</option><option>90%</option><option>100%</option></select>
-                    </div>
-                    <!-- F&B -->
-                    <div style="display:grid;grid-template-columns:1fr 120px 180px 100px;gap:12px;align-items:center;padding:14px;border:2px solid var(--gray-200);border-radius:10px;margin-bottom:8px">
-                      <div style="font-size:16px;font-weight:700;color:var(--gray-900)">F&amp;B · 식음료</div>
-                      <label class="toggle-wrap"><input type="checkbox" class="disc-chk" checked onchange="updateDiscRateRow(this)"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--gray-800);background:white;outline:none"><option>앱 푸시</option><option>문자(SMS)</option><option selected>앱 + 문자</option></select>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--primary);background:white;outline:none"><option>0%</option><option>10%</option><option>20%</option><option selected>30%</option><option>40%</option><option>50%</option><option>60%</option><option>70%</option><option>80%</option><option>90%</option><option>100%</option></select>
-                    </div>
-                    <!-- 마트 -->
-                    <div style="display:grid;grid-template-columns:1fr 120px 180px 100px;gap:12px;align-items:center;padding:14px;border:2px solid var(--gray-200);border-radius:10px;margin-bottom:8px">
-                      <div style="font-size:16px;font-weight:700;color:var(--gray-900)">마트 · 편의점</div>
-                      <label class="toggle-wrap"><input type="checkbox" class="disc-chk" checked onchange="updateDiscRateRow(this)"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--gray-800);background:white;outline:none"><option>앱 푸시</option><option>문자(SMS)</option><option selected>앱 + 문자</option></select>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--primary);background:white;outline:none"><option>0%</option><option>10%</option><option selected>20%</option><option>30%</option><option>40%</option><option>50%</option><option>60%</option><option>70%</option><option>80%</option><option>90%</option><option>100%</option></select>
-                    </div>
-                    <!-- 교육 -->
-                    <div style="display:grid;grid-template-columns:1fr 120px 180px 100px;gap:12px;align-items:center;padding:14px;border:2px solid var(--gray-200);border-radius:10px;margin-bottom:8px">
-                      <div style="font-size:16px;font-weight:700;color:var(--gray-900)">교육 · 도서</div>
-                      <label class="toggle-wrap"><input type="checkbox" class="disc-chk" onchange="updateDiscRateRow(this)"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--gray-800);background:white;outline:none"><option selected>앱 푸시</option><option>문자(SMS)</option><option>앱 + 문자</option></select>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--primary);background:white;outline:none"><option>0%</option><option>10%</option><option>20%</option><option selected>30%</option><option>40%</option><option>50%</option><option>60%</option><option>70%</option><option>80%</option><option>90%</option><option>100%</option></select>
-                    </div>
-                    <!-- 여행 -->
-                    <div style="display:grid;grid-template-columns:1fr 120px 180px 100px;gap:12px;align-items:center;padding:14px;border:2px solid var(--gray-200);border-radius:10px;margin-bottom:8px">
-                      <div style="font-size:16px;font-weight:700;color:var(--gray-900)">여행 · 레저</div>
-                      <label class="toggle-wrap"><input type="checkbox" class="disc-chk" onchange="updateDiscRateRow(this)"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--gray-800);background:white;outline:none"><option selected>앱 푸시</option><option>문자(SMS)</option><option>앱 + 문자</option></select>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--primary);background:white;outline:none"><option>0%</option><option>10%</option><option>20%</option><option>30%</option><option selected>40%</option><option>50%</option><option>60%</option><option>70%</option><option>80%</option><option>90%</option><option>100%</option></select>
-                    </div>
-                    <!-- 패션/뷰티 -->
-                    <div style="display:grid;grid-template-columns:1fr 120px 180px 100px;gap:12px;align-items:center;padding:14px;border:2px solid var(--gray-200);border-radius:10px;margin-bottom:8px">
-                      <div style="font-size:16px;font-weight:700;color:var(--gray-900)">패션 · 뷰티</div>
-                      <label class="toggle-wrap"><input type="checkbox" class="disc-chk" checked onchange="updateDiscRateRow(this)"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--gray-800);background:white;outline:none"><option>앱 푸시</option><option selected>문자(SMS)</option><option>앱 + 문자</option></select>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--primary);background:white;outline:none"><option>0%</option><option>10%</option><option>20%</option><option selected>30%</option><option>40%</option><option>50%</option><option>60%</option><option>70%</option><option>80%</option><option>90%</option><option>100%</option></select>
-                    </div>
-                    <!-- 문화/영화 -->
-                    <div style="display:grid;grid-template-columns:1fr 120px 180px 100px;gap:12px;align-items:center;padding:14px;border:2px solid var(--gray-200);border-radius:10px;margin-bottom:8px">
-                      <div style="font-size:16px;font-weight:700;color:var(--gray-900)">문화 · 영화</div>
-                      <label class="toggle-wrap"><input type="checkbox" class="disc-chk" checked onchange="updateDiscRateRow(this)"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--gray-800);background:white;outline:none"><option selected>앱 푸시</option><option>문자(SMS)</option><option>앱 + 문자</option></select>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--primary);background:white;outline:none"><option>0%</option><option>10%</option><option selected>20%</option><option>30%</option><option>40%</option><option>50%</option><option>60%</option><option>70%</option><option>80%</option><option>90%</option><option>100%</option></select>
-                    </div>
-                    <!-- 기타 -->
-                    <div style="display:grid;grid-template-columns:1fr 120px 180px 100px;gap:12px;align-items:center;padding:14px;border:2px solid var(--gray-200);border-radius:10px;margin-bottom:8px">
-                      <div style="font-size:16px;font-weight:700;color:var(--gray-900)">기타 서비스</div>
-                      <label class="toggle-wrap"><input type="checkbox" class="disc-chk" onchange="updateDiscRateRow(this)"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--gray-800);background:white;outline:none"><option selected>앱 푸시</option><option>문자(SMS)</option><option>앱 + 문자</option></select>
-                      <select style="height:38px;border:1.5px solid var(--gray-200);border-radius:8px;padding:0 10px;font-size:14px;font-weight:700;color:var(--primary);background:white;outline:none"><option>0%</option><option>10%</option><option>20%</option><option selected>30%</option><option>40%</option><option>50%</option><option>60%</option><option>70%</option><option>80%</option><option>90%</option><option>100%</option></select>
-                    </div>
+                  <!-- 카테고리 가로 칩 (아이콘 없음) -->
+                  <div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:12px">카테고리 선택</div>
+                  <div class="noti-cat-row" id="notiCatRow">
+                    <div class="noti-cat-chip sel" data-cat="mart"     onclick="selectNotiCat('mart')">마트·편의점</div>
+                    <div class="noti-cat-chip"     data-cat="delivery" onclick="selectNotiCat('delivery')">배달·음식</div>
+                    <div class="noti-cat-chip"     data-cat="fashion"  onclick="selectNotiCat('fashion')">패션·뷰티</div>
+                    <div class="noti-cat-chip"     data-cat="culture"  onclick="selectNotiCat('culture')">문화·영화</div>
+                    <div class="noti-cat-chip"     data-cat="fnb"      onclick="selectNotiCat('fnb')">F&amp;B</div>
+                    <div class="noti-cat-chip"     data-cat="travel"   onclick="selectNotiCat('travel')">여행</div>
+                    <div class="noti-cat-chip"     data-cat="etc"      onclick="selectNotiCat('etc')">기타</div>
                   </div>
 
+                  <!-- 브랜드 가로 나열 -->
+                  <div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:10px">브랜드 선택 <span style="font-size:13px;font-weight:500;color:var(--gray-400)">— 선택 후 알림 방식과 할인율을 설정하세요</span></div>
+                  <div class="noti-brand-row" id="notiBrandRow"></div>
+
+                  <!-- 알림방식 패널 (브랜드 선택 시 표시) -->
+                  <div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:8px;display:none" id="notiBrandMethodsLabel">알림방식</div>
+                  <div id="notiBrandMethods" class="noti-brand-method-panel" style="display:none"></div>
+
                   <!-- GPS + 유사 추천 -->
-                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;padding-top:20px;border-top:1.5px solid var(--gray-200)">
                     <div class="toggle-row" style="border:2px solid var(--gray-200);border-radius:10px;padding:14px 16px;margin:0">
                       <div><div class="toggle-lbl">GPS 위치 알림</div><div class="toggle-sub">근처 매장 쿠폰 즉시 알림</div></div>
                       <label class="toggle-wrap"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
@@ -3306,33 +3479,6 @@ input[type=range].disc-range::-moz-range-thumb {
                     <div class="toggle-row" style="border:2px solid var(--gray-200);border-radius:10px;padding:14px 16px;margin:0">
                       <div><div class="toggle-lbl">유사 카테고리 추천</div><div class="toggle-sub">관심 카테고리 기반 추가 추천</div></div>
                       <label class="toggle-wrap"><input type="checkbox" checked><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-                    </div>
-                  </div>
-
-                  <!-- 특정 브랜드 알림 설정 -->
-                  <div style="margin-top:20px;padding-top:20px;border-top:1.5px solid var(--gray-200)">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                      <div>
-                        <div style="font-size:15px;font-weight:700;color:var(--gray-900)">특정 브랜드 알림</div>
-                        <div style="font-size:13px;color:var(--gray-500);margin-top:2px">선택한 브랜드의 쿠폰만 별도로 알림을 받아요</div>
-                      </div>
-                      <button onclick="clearBrandNoti()" style="font-size:12px;color:var(--gray-400);background:none;border:1.5px solid var(--gray-200);border-radius:7px;padding:6px 12px;cursor:pointer;font-family:var(--font);white-space:nowrap">전체 해제</button>
-                    </div>
-                    <!-- 검색창 -->
-                    <div style="position:relative;margin-bottom:14px">
-                      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;color:var(--gray-400)">🔍</span>
-                      <input type="text" id="brandNotiSearch" placeholder="브랜드명 검색..."
-                        style="width:100%;box-sizing:border-box;padding:10px 14px 10px 38px;border:2px solid var(--gray-200);border-radius:10px;font-size:14px;font-family:var(--font);outline:none;transition:border-color .15s"
-                        onfocus="this.style.borderColor='var(--primary)'"
-                        onblur="this.style.borderColor='var(--gray-200)'"
-                        oninput="filterBrandNoti(this.value)"
-                        onkeydown="if(event.key==='Enter') filterBrandNoti(this.value)">
-                    </div>
-                    <!-- 브랜드 칩 그리드 -->
-                    <div id="brandNotiGrid" style="display:flex;flex-wrap:wrap;gap:8px;min-height:40px"></div>
-                    <!-- 선택 요약 -->
-                    <div id="brandNotiSummary" style="margin-top:12px;font-size:13px;color:var(--gray-500);padding:10px 14px;background:var(--gray-100);border-radius:8px">
-                      선택된 브랜드 없음 — 모든 브랜드에 카테고리 설정이 적용돼요
                     </div>
                   </div>
 
@@ -3831,7 +3977,8 @@ input[type=range].disc-range::-moz-range-thumb {
               <input type="text" placeholder="아이디 입력" style="font-size:16px">
             </div>
             <div class="field-wrap">
-              <input type="password" placeholder="비밀번호 입력" style="font-size:16px">
+              <input id="connectPw" type="password" placeholder="비밀번호 입력" style="font-size:16px" oninput="updatePwToggle(this)">
+              <button class="pw-toggle" type="button" onclick="togglePw('connectPw',this)" title="비밀번호 표시">👁</button>
             </div>
           </div>
           <!-- 폼 C: 멤버십 번호 -->
@@ -4108,7 +4255,7 @@ input[type=range].disc-range::-moz-range-thumb {
 
 <script>
 /* ============================================================ STATE ============================================================ */
-const S = { cur:'splash', hist:[], appPage:'home', appHist:[], carIdx:0, connectMethod:'phone', connectFrom:'easy', authTimer:null, carTimer:null, searchKw:'', connectSvc:'', connectSvcName:'' };
+const S = { cur:'splash', hist:[], appPage:'home', appHist:[], carIdx:0, connectMethod:'phone', connectFrom:'easy', authTimer:null, carTimer:null, searchKw:'', connectSvc:'', connectSvcName:'', _signupTimer:null };
 
 const downloaded = new Set(['baemin','starbucks']);
 
@@ -4410,6 +4557,29 @@ function clearNotiAll() {
   if (badge) badge.style.display = 'none';
 }
 
+/* ── 바코드 확대 모달 ── */
+function openBrcZoom(srcId, numText, label) {
+  const modal  = document.getElementById('brcZoomModal'); if (!modal) return;
+  const zSvg   = document.getElementById('brcZoomSvg');
+  const zNum   = document.getElementById('brcZoomNum');
+  const zLabel = document.getElementById('brcZoomLabel');
+  const srcSvg = document.getElementById(srcId);
+  if (zLabel) zLabel.textContent = label || '바코드';
+  if (zNum)   zNum.textContent   = numText || '';
+  // 원본 SVG 내용 복사
+  if (zSvg && srcSvg) {
+    zSvg.setAttribute('viewBox', srcSvg.getAttribute('viewBox') || '0 0 400 120');
+    zSvg.innerHTML = srcSvg.innerHTML;
+  }
+  modal.classList.add('open');
+  document.documentElement.style.overflow = 'hidden';
+}
+function closeBrcZoom() {
+  const modal = document.getElementById('brcZoomModal'); if (!modal) return;
+  modal.classList.remove('open');
+  document.documentElement.style.overflow = '';
+}
+
 function showBrcPopup() {
   const popup = document.getElementById('brcInstantPopup'); if (!popup) return;
   // 팝업 SVG 그리기
@@ -4506,6 +4676,117 @@ function updateBrandNotiSummary() {
     const names = [...brandNotiSelected].join(', ');
     el.textContent = `${brandNotiSelected.size}개 선택됨 — ${names}`;
   }
+}
+
+/* ============================================================ NOTI SETTINGS — 카테고리·브랜드 선택 ============================================================ */
+const NOTI_BRANDS = {
+  mart:     [
+    {label:'이마트'},    {label:'GS25'},    {label:'CU'},
+    {label:'롯데마트'},  {label:'홈플러스'}, {label:'세븐일레븐'}
+  ],
+  delivery: [
+    {label:'배달의민족'}, {label:'요기요'}, {label:'쿠팡이츠'}
+  ],
+  fashion:  [
+    {label:'올리브영'}, {label:'무신사'}, {label:'H&M'}, {label:'자라'}
+  ],
+  culture:  [
+    {label:'CGV'}, {label:'롯데시네마'}, {label:'메가박스'}
+  ],
+  fnb:      [
+    {label:'스타벅스'}, {label:'맥도날드'}, {label:'버거킹'}, {label:'투썸플레이스'}
+  ],
+  travel:   [
+    {label:'야놀자'}, {label:'여기어때'}
+  ],
+  etc:      [
+    {label:'쿠팡'}, {label:'티몬'}, {label:'위메프'}
+  ]
+};
+const notiSelBrands = new Set();
+const notiBrandMethods = {}; // label → '앱 알림' | '문자(SMS)' | '앱 + 문자'
+
+function selectNotiCat(cat) {
+  document.querySelectorAll('.noti-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.cat === cat));
+  const row = document.getElementById('notiBrandRow');
+  if (!row) return;
+  const brands = NOTI_BRANDS[cat] || [];
+  row.innerHTML = brands.map(b => `
+    <div class="noti-brand-chip${notiSelBrands.has(b.label) ? ' sel' : ''}" onclick="toggleNotiBrand(this,'${b.label.replace(/'/g,"\\'")}')">
+      <span>${b.label}</span>
+    </div>`).join('');
+}
+
+function toggleNotiBrand(el, label) {
+  if (notiSelBrands.has(label)) {
+    notiSelBrands.delete(label);
+    el.classList.remove('sel');
+    delete notiBrandMethods[label];
+  } else {
+    notiSelBrands.add(label);
+    el.classList.add('sel');
+    notiBrandMethods[label] = '앱 알림';
+  }
+  renderNotiBrandMethods();
+}
+
+function renderNotiBrandMethods() {
+  const panel = document.getElementById('notiBrandMethods');
+  if (!panel) return;
+  if (notiSelBrands.size === 0) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  panel.innerHTML = [...notiSelBrands].map(label => `
+    <div class="noti-brand-method-row">
+      <span style="flex:1;font-size:14px;font-weight:700;color:var(--gray-900)">${label}</span>
+      <select class="noti-brand-method-sel" onchange="notiBrandMethods['${label.replace(/'/g,"\\'")}'] = this.value">
+        <option ${notiBrandMethods[label]==='앱 알림'   ?'selected':''}>앱 알림</option>
+        <option ${notiBrandMethods[label]==='문자(SMS)'?'selected':''}>문자(SMS)</option>
+        <option ${notiBrandMethods[label]==='앱 + 문자'?'selected':''}>앱 + 문자</option>
+      </select>
+    </div>`).join('');
+}
+
+/* 할인율 스크롤 피커 */
+let _notiDiscVal = 30;
+let _notiDiscOpen = false;
+
+function toggleNotiDiscPicker() {
+  const picker = document.getElementById('notiDiscPicker');
+  if (!picker) return;
+  _notiDiscOpen = !_notiDiscOpen;
+  if (_notiDiscOpen) {
+    // 처음 열 때 피커 아이템 생성
+    if (!picker.children.length) {
+      for (let v = 0; v <= 100; v += 5) {
+        const div = document.createElement('div');
+        div.className = 'noti-disc-item' + (v === _notiDiscVal ? ' sel' : '');
+        div.dataset.val = v;
+        div.textContent = v + '%';
+        div.onclick = () => selectNotiDisc(v);
+        picker.appendChild(div);
+      }
+    }
+    picker.style.display = 'block';
+    // 선택 항목으로 스크롤
+    const sel = picker.querySelector('.noti-disc-item.sel');
+    if (sel) setTimeout(() => sel.scrollIntoView({ block: 'center' }), 30);
+  } else {
+    picker.style.display = 'none';
+  }
+}
+
+function selectNotiDisc(val) {
+  _notiDiscVal = val;
+  const valEl = document.getElementById('notiDiscVal');
+  if (valEl) valEl.textContent = val;
+  document.querySelectorAll('.noti-disc-item').forEach(el =>
+    el.classList.toggle('sel', parseInt(el.dataset.val) === val));
+  // 닫기
+  setTimeout(() => {
+    const picker = document.getElementById('notiDiscPicker');
+    if (picker) picker.style.display = 'none';
+    _notiDiscOpen = false;
+  }, 160);
 }
 
 /* ============================================================ CAROUSEL — 10초 무한 마퀴 ============================================================ */
@@ -4621,11 +4902,20 @@ function applyWalletTab(statusKey) {
 /* ============================================================ OTP ============================================================ */
 let timerID=null;
 function startOTPTimer() {
-  let s=59; const el=document.getElementById('otpTimer'); clearInterval(timerID);
-  timerID=setInterval(()=>{
-    s--; if(el) el.textContent=`재발송 가능: ${s}초 후`;
-    if(s<=0){ clearInterval(timerID); if(el){el.innerHTML=''; const b=document.createElement('span'); b.className='otp-resend'; b.textContent='인증번호 재발송'; b.onclick=startOTPTimer; el.appendChild(b);} }
-  },1000);
+  let s=59;
+  const el = document.getElementById('otpTimer');
+  const btn = document.querySelector('.otp-resend-btn');
+  clearInterval(timerID);
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.4'; }
+  timerID = setInterval(()=>{
+    s--;
+    if (el) el.textContent = `재발송 가능: ${s}초 후`;
+    if (s <= 0) {
+      clearInterval(timerID);
+      if (el) el.textContent = '재전송 가능';
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    }
+  }, 1000);
 }
 function checkOTP(inp) {
   if(inp.value.length===6) setTimeout(()=>{ /* OTP auto-check */ },500);
@@ -4637,11 +4927,126 @@ function fmtPhone(inp) {
   inp.value=v;
 }
 
+function initBirthDropdowns() {
+  const yEl = document.getElementById('birthY');
+  const mEl = document.getElementById('birthM');
+  const dEl = document.getElementById('birthD');
+  if (!yEl || yEl.options.length > 1) return;
+  const curY = new Date().getFullYear();
+  for (let y = curY - 14; y >= 1924; y--) {
+    const o = document.createElement('option');
+    o.value = String(y);
+    o.textContent = y + '년';
+    yEl.appendChild(o);
+  }
+  for (let m = 1; m <= 12; m++) {
+    const o = document.createElement('option');
+    o.value = String(m).padStart(2,'0');
+    o.textContent = m + '월';
+    mEl.appendChild(o);
+  }
+  for (let d = 1; d <= 31; d++) {
+    const o = document.createElement('option');
+    o.value = String(d).padStart(2,'0');
+    o.textContent = d + '일';
+    dEl.appendChild(o);
+  }
+}
+
+function showLoginTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('tabLogin').classList.toggle('on', isLogin);
+  document.getElementById('tabSignup').classList.toggle('on', !isLogin);
+  document.getElementById('loginPanel').style.display  = isLogin ? '' : 'none';
+  document.getElementById('signupPanel').style.display = isLogin ? 'none' : '';
+}
+
+function selectGender(g) {
+  document.getElementById('genderM')?.classList.toggle('sel', g==='M');
+  document.getElementById('genderF')?.classList.toggle('sel', g==='F');
+}
+
+function handleEmailDomain(sel) {
+  const wrap = document.getElementById('emailCustomWrap');
+  if (wrap) wrap.style.display = sel.value === 'custom' ? '' : 'none';
+}
+
 function fmtBirth(inp) {
   let v=inp.value.replace(/\D/g,'').slice(0,8);
   if(v.length>6) v=v.slice(0,4)+'.'+v.slice(4,6)+'.'+v.slice(6);
   else if(v.length>4) v=v.slice(0,4)+'.'+v.slice(4);
   inp.value=v;
+}
+
+function showNotiPopup() {
+  const el = document.getElementById('notiPopup');
+  if (el) el.style.display = 'flex';
+}
+function closeNotiPopup(choice) {
+  const el = document.getElementById('notiPopup');
+  if (el) el.style.display = 'none';
+  if (choice === 'on') {
+    showAppPage('mypage'); updateSidebar('mypage');
+    setTimeout(()=>showMypageSub('noti'), 80);
+  }
+}
+
+function filterSvcCards(kw) {
+  const q = kw.toLowerCase().trim();
+  document.querySelectorAll('#s-integration .svc-card').forEach(card => {
+    const name = card.querySelector('.svc-name')?.textContent.toLowerCase() || '';
+    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+  });
+}
+
+function toggleAllSvc() {
+  const cards = [...document.querySelectorAll('#s-integration .svc-card')];
+  const btn = document.getElementById('svcAllBtn');
+  const allDone = cards.every(c => c.classList.contains('connected'));
+  cards.forEach(card => {
+    const b = card.querySelector('.conn-btn');
+    if (allDone) {
+      card.classList.remove('connected');
+      if (b) { b.classList.remove('done'); b.textContent = '연동하기'; }
+    } else {
+      card.classList.add('connected');
+      if (b) { b.classList.add('done'); b.textContent = '✓ 완료'; }
+    }
+  });
+  const nowAll = !allDone;
+  if (btn) {
+    btn.style.background = nowAll ? 'var(--primary)' : 'var(--gray-100)';
+    btn.style.borderColor = nowAll ? 'var(--primary)' : 'var(--gray-300)';
+    btn.style.color = nowAll ? 'white' : 'var(--gray-500)';
+  }
+}
+
+function toggleBrandAll() {
+  const chips = document.querySelectorAll('#brandGrid .brand-chip');
+  const btn = document.getElementById('brandAllToggleBtn');
+  const allSel = [...chips].every(c => c.classList.contains('sel'));
+  if (allSel) {
+    chips.forEach(c => c.classList.remove('sel'));
+    if (btn) { btn.style.background='var(--gray-200)'; btn.style.borderColor='var(--gray-300)'; btn.style.color='var(--gray-500)'; }
+  } else {
+    chips.forEach(c => c.classList.add('sel'));
+    if (btn) { btn.style.background='var(--primary)'; btn.style.borderColor='var(--primary)'; btn.style.color='white'; }
+  }
+}
+
+function quickSelectCat(cat) {
+  document.querySelectorAll(`#s-integration .svc-card[data-cat="${cat}"]`).forEach(card => {
+    const btn = card.querySelector('.conn-btn');
+    if (!card.classList.contains('connected')) {
+      card.classList.add('connected');
+      if (btn) { btn.classList.add('done'); btn.textContent = '✓ 완료'; }
+    }
+  });
+}
+
+function updatePwToggle(inp) {
+  const btn = inp.closest('.field-wrap')?.querySelector('.pw-toggle');
+  if (btn) btn.style.display = inp.value ? 'block' : 'none';
 }
 
 function togglePw(inputId, btn) {
@@ -4704,14 +5109,28 @@ function handleDownload(btn) {
 
 /* ============================================================ EVENT DELEGATION ============================================================ */
 const ACT = {
-  'go-phone':        ()=>go('phone'),
+  'go-phone': ()=>{
+    const id = document.querySelector('#s-signup-id input[type=text]')?.value.trim();
+    const pw = document.getElementById('signupPw')?.value.trim();
+    const pwc = document.getElementById('signupPwConfirm')?.value.trim();
+    if (!id || !pw || !pwc) { showToast('모든 항목을 입력해 주세요'); return; }
+    if (pw !== pwc) { showToast('비밀번호가 일치하지 않아요'); return; }
+    go('phone');
+  },
   'go-social-kakao': ()=>showSocialLogin('kakao'),
   'go-social-naver': ()=>showSocialLogin('naver'),
   'go-social-toss':  ()=>showSocialLogin('toss'),
   'go-terms-content':   ()=>go('terms-content'),
   'go-privacy-content': ()=>go('privacy-content'),
-  'go-signup':       ()=>go('signup'),
-  'send-sms':        ()=>{ document.getElementById('otpPanel').classList.add('vis'); document.getElementById('otpField').focus(); startOTPTimer(); },
+  'go-signup':       ()=>{ go('login'); setTimeout(()=>showLoginTab('signup'), 50); },
+  'send-sms': ()=>{
+    const ph = (document.getElementById('phField')?.value||'').replace(/-/g,'');
+    if (ph.length < 10) { showToast('올바른 휴대폰 번호를 입력해 주세요'); return; }
+    document.getElementById('otpPanel').classList.add('vis');
+    document.getElementById('otpField').focus();
+    startOTPTimer();
+  },
+  'resend-sms': ()=>{ startOTPTimer(); showToast('인증번호를 재전송했습니다'); },
   'go-coupon-intro': ()=>go('coupon-intro'),
   'go-loading':      ()=>go('loading'),
   'go-integration':  ()=>go('integration'),
@@ -4722,10 +5141,28 @@ const ACT = {
   'go-wallet-setup': ()=>go('wallet-setup'),
   'go-login':        ()=>go('login'),
   'go-terms':        ()=>go('terms'),
-  'go-signup-info':  ()=>go('signup-info'),
-  'go-signup-id':    ()=>go('signup-id'),
+  'go-signup-info':  ()=>{ go('signup-info'); setTimeout(initBirthDropdowns, 50); },
+  'go-signup-id': ()=>{
+    const name = document.getElementById('siName')?.value.trim();
+    const phone = (document.getElementById('siPhone')?.value||'').replace(/-/g,'');
+    const emailId = document.getElementById('emailId')?.value.trim();
+    const birthY = document.getElementById('birthY')?.value.trim();
+    if (!name) { showToast('이름을 입력해 주세요'); return; }
+    if (!birthY || birthY.length < 4) { showToast('생년월일을 입력해 주세요'); return; }
+    if (phone.length < 10) { showToast('올바른 휴대폰 번호를 입력해 주세요'); return; }
+    if (!emailId) { showToast('이메일을 입력해 주세요'); return; }
+    go('signup-id');
+  },
   'go-more-connect': ()=>go('more-connect'),
-  'go-signup-complete': ()=>go('signup-complete'),
+  'go-integration-full': ()=>go('more-connect'),
+  'go-signup-complete': ()=>{
+    go('signup-complete');
+    clearTimeout(S._signupTimer);
+    S._signupTimer = setTimeout(()=>{
+      go('home');
+      setTimeout(showNotiPopup, 400);
+    }, 2500);
+  },
   'go-noti-consent': ()=>go('noti-consent'),
   'nav-noti-alert':  ()=>{ showAppPage('noti-alert'); updateSidebar(''); setTimeout(initNearbyMap, 150); },
   'noti-download':   ()=>{ showToast('쿠폰함에 저장되었어요! 결제 시 자동으로 적용됩니다 ✓'); setTimeout(()=>{ showAppPage('wallet'); updateSidebar('wallet'); applyWalletFilter(wCat,wSort); },1200); },
@@ -4760,19 +5197,22 @@ const ACT = {
         dlBtn.setAttribute('data-action', 'download-cpn');
       }
     }
-    const linkWrap = document.getElementById('detOnlineLink');
-    const linkBtn  = document.getElementById('detOnlineLinkBtn');
-    const linkText = document.getElementById('detOnlineLinkText');
-    const brcSec   = document.getElementById('detBrcSection');
+    const linkWrap    = document.getElementById('detOnlineLink');
+    const linkBtn     = document.getElementById('detOnlineLinkBtn');
+    const linkText    = document.getElementById('detOnlineLinkText');
+    const brcSec      = document.getElementById('detBrcSection');
+    const nearbySec   = document.getElementById('detNearbySection');
     if ((ch === 'online' || ch === 'both') && COUPON_URLS[id]) {
       if (linkWrap) linkWrap.style.display = '';
       if (linkBtn)  linkBtn.href = COUPON_URLS[id].url;
       if (linkText) linkText.textContent = COUPON_URLS[id].name + ' 바로 가기';
-      // 온라인 전용은 바코드 숨김 / 온·오프라인은 바코드 유지
-      if (brcSec)   brcSec.style.display = ch === 'online' ? 'none' : '';
+      // 온라인 전용: 바코드·주변사용처 숨김 / 온·오프라인: 둘 다 유지
+      if (brcSec)    brcSec.style.display    = ch === 'online' ? 'none' : '';
+      if (nearbySec) nearbySec.style.display = ch === 'online' ? 'none' : '';
     } else {
-      if (linkWrap) linkWrap.style.display = 'none';
-      if (brcSec)   brcSec.style.display = '';
+      if (linkWrap)  linkWrap.style.display  = 'none';
+      if (brcSec)    brcSec.style.display    = '';
+      if (nearbySec) nearbySec.style.display = '';
     }
     go('detail');
     if (ch !== 'online') setTimeout(showBrcPopup, 120);
@@ -4867,13 +5307,6 @@ document.addEventListener('click', e=>{
 
 /* ============================================================ INIT ============================================================ */
 document.addEventListener('DOMContentLoaded', ()=>{
-  // 프로그레스 바 시작 (다음 프레임에서 transition 발동)
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      const bar = document.getElementById('splashProgress');
-      if (bar) bar.style.width = '100%';
-    });
-  });
   // 3초 후 로그인 화면으로 자동 이동
   setTimeout(()=>{ go('login'); }, 3000);
   initCarousel();
@@ -5110,8 +5543,8 @@ function showMypageSub(id) {
   document.querySelectorAll('[data-action="mypage-tab"]').forEach(t => {
     t.classList.toggle('on', t.dataset.tab === id);
   });
-  // 알림설정 탭: 브랜드 칩 초기화
-  if (id === 'noti') setTimeout(initBrandNoti, 0);
+  // 알림설정 탭: 카테고리·브랜드 초기화
+  if (id === 'noti') setTimeout(() => selectNotiCat('mart'), 50);
 }
 function highlightMypageMenu(action) {
   document.querySelectorAll('.mypage-menu-item').forEach(el =>
@@ -5127,6 +5560,18 @@ function showToast(msg) {
 </script>
 <div class="toast" id="toast"></div>
 
+<!-- ── 바코드 확대 모달 ── -->
+<div id="brcZoomModal" onclick="if(event.target===this)closeBrcZoom()">
+  <div class="brc-zoom-box">
+    <div class="brc-zoom-label" id="brcZoomLabel">바코드</div>
+    <svg id="brcZoomSvg" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"
+      style="width:100%;height:160px;display:block"></svg>
+    <div class="brc-zoom-num" id="brcZoomNum"></div>
+    <div class="brc-zoom-hint">스캔 불가 시 위 번호를 직원에게 알려주세요</div>
+    <button class="brc-zoom-close" onclick="closeBrcZoom()">닫기</button>
+  </div>
+</div>
+
 <!-- ── 연결 해제 확인 모달 ── -->
 <div id="disconnectModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center">
   <div style="background:white;border-radius:20px;padding:32px 28px 24px;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);text-align:center">
@@ -5141,5 +5586,22 @@ function showToast(msg) {
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- 알림설정 팝업 -->
+<div id="notiPopup" class="noti-popup-overlay" style="display:none">
+  <div class="noti-popup-card">
+    <div class="noti-popup-icon">🔔</div>
+    <div class="noti-popup-title">맞춤 혜택 알림을<br>받아보시겠어요?</div>
+    <div class="noti-popup-benefits">
+      <div class="noti-popup-benefit-row"><span class="noti-popup-check">✓</span> 내 주변 할인 소식 실시간 알림</div>
+      <div class="noti-popup-benefit-row"><span class="noti-popup-check">✓</span> 쿠폰 만료 전 미리 알려드려요</div>
+      <div class="noti-popup-benefit-row"><span class="noti-popup-check">✓</span> 자주 가는 브랜드 신규 혜택</div>
+    </div>
+    <div class="noti-popup-btns">
+      <button class="btn-primary" style="font-size:17px" onclick="closeNotiPopup('on')">알림 켜기</button>
+      <button class="btn-ghost" style="font-size:15px" onclick="closeNotiPopup('later')">나중에 설정하기</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
