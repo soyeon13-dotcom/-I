@@ -433,14 +433,9 @@ body   { font-family: var(--font); background: #ffffff; color: var(--gray-900); 
   font-size:10px; font-weight:700; padding:2px 6px; border-radius:50px; line-height:1.4;
 }
 .hdr-nav-item.on .hdr-nav-badge { background:rgba(255,255,255,.3); }
-.hdr-search {
-  flex:1; max-width:480px; display:flex; align-items:center; gap:10px;
-  background:var(--gray-100); border:2px solid var(--gray-200); border-radius:10px;
-  padding:0 18px; height:46px;
-}
-.hdr-search input { flex:1; font-size:15px; color:var(--gray-900); background:transparent; }
-.hdr-search input::placeholder { color:var(--gray-400); }
-.hdr-search-lbl { font-size:14px; color:var(--gray-400); font-weight:600; }
+.hdr-search { display:none; }
+/* 홈 배경 */
+#p-home { background:#ffffff; }
 .hdr-right { margin-left:auto; display:flex; align-items:center; gap:16px; }
 .hdr-bell-wrap { position:relative; }
 .hdr-bell-btn {
@@ -1527,16 +1522,24 @@ input[type=range].disc-range::-moz-range-thumb {
 /* ── 카테고리 칩 ── */
 .home-cat-section { margin-bottom:20px; }
 .home-sec-label { font-size:15px; font-weight:800; color:var(--gray-900); margin-bottom:12px; }
-.home-cat-chips { display:flex; gap:10px; flex-wrap:wrap; }
+.home-cat-chips { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
 .home-cat-chip {
-  display:flex; flex-direction:column; align-items:center; gap:5px;
-  padding:12px 14px; border-radius:16px; border:2px solid var(--gray-200);
-  background:white; font-size:12px; font-weight:700; color:var(--gray-600);
-  cursor:pointer; transition:all .15s; min-width:60px;
+  display:flex; align-items:center; justify-content:center;
+  padding:10px 20px; border-radius:50px; border:2px solid var(--gray-200);
+  background:white; font-size:13px; font-weight:700; color:var(--gray-600);
+  cursor:pointer; transition:all .15s;
 }
 .home-cat-chip:hover { border-color:var(--primary); }
-.home-cat-chip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
-.hcc-icon { font-size:20px; }
+.home-cat-chip.sel { border-color:var(--primary); background:var(--primary); color:white; }
+/* ── 브랜드 칩 행 ── */
+.home-brand-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.home-brand-chip {
+  padding:7px 16px; border-radius:50px; border:1.5px solid var(--gray-200);
+  background:white; font-size:13px; font-weight:700; color:var(--gray-600);
+  cursor:pointer; transition:all .15s; white-space:nowrap;
+}
+.home-brand-chip:hover { border-color:var(--primary); color:var(--primary); }
+.home-brand-chip.sel { background:var(--primary); color:white; border-color:var(--primary); }
 /* ── 필터 칩 / 위치 칩 ── */
 .home-filter-row { display:flex; gap:8px; margin-bottom:10px; }
 .home-filter-chip { padding:7px 16px; border-radius:50px; border:1.5px solid var(--gray-200); font-size:13px; font-weight:700; color:var(--gray-500); cursor:pointer; background:white; transition:all .15s; }
@@ -2856,6 +2859,7 @@ input[type=range].disc-range::-moz-range-thumb {
     <div class="hdr-logo" data-action="nav-home">USE</div>
     <nav class="hdr-nav">
       <div class="hdr-nav-item on" data-action="nav-home">홈</div>
+      <div class="hdr-nav-item" data-action="nav-noti-alert">지도</div>
     </nav>
     <div class="hdr-search">
       <span class="hdr-search-lbl">🔍</span>
@@ -3027,6 +3031,7 @@ input[type=range].disc-range::-moz-range-thumb {
     <nav class="sidebar">
       <div class="sb-section-lbl">메뉴</div>
       <div class="sb-item on" data-action="nav-home">홈</div>
+      <div class="sb-item" data-action="nav-noti-alert">지도</div>
       <div class="sb-item" data-action="nav-wallet">내 쿠폰함<span class="sb-badge">47</span></div>
       <div class="sb-sav-card" style="margin-top:24px">
         <div class="sb-sav-lbl">이번 달 절약</div>
@@ -3040,24 +3045,8 @@ input[type=range].disc-range::-moz-range-thumb {
       <!-- ── HOME ── -->
       <div id="p-home" class="app-page active">
 
-        <!-- ① 대형 검색창 -->
-        <div class="home-big-search-wrap">
-          <div class="home-big-search">
-            <span class="hbs-icon">🎤</span>
-            <input class="hbs-input" type="text" id="homeBigSearch" placeholder="브랜드, 카테고리 검색..."
-              oninput="_applyHomeFilter()" onkeydown="if(event.key==='Enter')_applyHomeFilter()">
-            <span class="hbs-icon">📷</span>
-            <button class="hbs-btn" onclick="_applyHomeFilter()">🔍</button>
-          </div>
-        </div>
-
-        <!-- ② 해시태그 칩 -->
-        <div class="home-hashtag-row">
-          <div class="home-hashtag-chip" onclick="setHomeSvcCat('mart',this)">#마트</div>
-          <div class="home-hashtag-chip" onclick="setHomeSvcCat('convenience',this)">#편의점</div>
-          <div class="home-hashtag-chip" onclick="setHomeSvcCat('delivery',this)">#배달</div>
-          <div class="home-hashtag-chip" onclick="setHomeSvcCat('cafe',this)">#카페</div>
-        </div>
+        <!-- 숨겨진 검색 input (JS 호환용) -->
+        <input type="hidden" id="homeBigSearch" value="">
 
         <!-- ③ 오늘의 추천 쿠폰 캐러셀 -->
         <div class="home-rec-section">
@@ -3111,30 +3100,19 @@ input[type=range].disc-range::-moz-range-thumb {
 
         <!-- ④ 카테고리 칩 -->
         <div class="home-cat-section">
-          <div class="home-sec-label">카테고리</div>
           <div class="home-cat-chips" id="homeCatChips">
-            <div class="home-cat-chip sel" data-svc="all"         onclick="setHomeSvcCat('all',this)"><span class="hcc-icon">🛒</span><span>전체</span></div>
-            <div class="home-cat-chip"     data-svc="mart"        onclick="setHomeSvcCat('mart',this)"><span class="hcc-icon">🏪</span><span>마트</span></div>
-            <div class="home-cat-chip"     data-svc="convenience" onclick="setHomeSvcCat('convenience',this)"><span class="hcc-icon">🏬</span><span>편의점</span></div>
-            <div class="home-cat-chip"     data-svc="delivery"    onclick="setHomeSvcCat('delivery',this)"><span class="hcc-icon">🛵</span><span>배달</span></div>
-            <div class="home-cat-chip"     data-svc="cafe"        onclick="setHomeSvcCat('cafe',this)"><span class="hcc-icon">☕</span><span>카페</span></div>
-            <div class="home-cat-chip"     data-svc="fashion"     onclick="setHomeSvcCat('fashion',this)"><span class="hcc-icon">👗</span><span>패션</span></div>
-            <div class="home-cat-chip"     data-svc="travel"      onclick="setHomeSvcCat('travel',this)"><span class="hcc-icon">✈️</span><span>여행</span></div>
+            <div class="home-cat-chip sel" data-svc="all"         onclick="setHomeSvcCat('all',this)">전체</div>
+            <div class="home-cat-chip"     data-svc="mart"        onclick="setHomeSvcCat('mart',this)">마트</div>
+            <div class="home-cat-chip"     data-svc="convenience" onclick="setHomeSvcCat('convenience',this)">편의점</div>
+            <div class="home-cat-chip"     data-svc="delivery"    onclick="setHomeSvcCat('delivery',this)">배달</div>
+            <div class="home-cat-chip"     data-svc="cafe"        onclick="setHomeSvcCat('cafe',this)">카페</div>
+            <div class="home-cat-chip"     data-svc="fashion"     onclick="setHomeSvcCat('fashion',this)">패션</div>
+            <div class="home-cat-chip"     data-svc="travel"      onclick="setHomeSvcCat('travel',this)">여행</div>
           </div>
         </div>
 
-        <!-- ⑤ 필터 칩 + 위치 칩 -->
-        <div class="home-filter-row">
-          <div class="home-filter-chip sel" onclick="setHomeSort('all',this)">전체</div>
-          <div class="home-filter-chip"     onclick="setHomeSort('popular',this)">인기</div>
-        </div>
-        <div class="home-loc-row">
-          <div class="home-loc-chip sel">강남</div>
-          <div class="home-loc-chip">전체</div>
-          <div class="home-loc-chip" style="background:var(--primary-lt);color:var(--primary)">이마트</div>
-          <div class="home-loc-chip">서대문구</div>
-          <div class="home-loc-chip">홍대</div>
-        </div>
+        <!-- ⑤ 브랜드 칩 행 (카테고리별 동적) -->
+        <div class="home-brand-row" id="homeBrandRow"></div>
 
         <!-- ⑥ 채널 세그먼트 컨트롤 + 쿠폰 그리드 -->
         <!-- 채널 세그먼트 컨트롤 -->
@@ -4763,12 +4741,13 @@ function showAppPage(id, skipHistory) {
     if (bigInp) bigInp.value = '';
     _homeCh = 'all';
     _homeSvc = 'all';
+    _homeBrand = 'all';
     _recIdx = 0;
     const recTrack = document.getElementById('homeRecTrack');
     if (recTrack) recTrack.style.transform = 'translateX(0)';
     document.querySelectorAll('.hct-btn').forEach(b => b.classList.toggle('on', b.dataset.cat === 'all'));
     document.querySelectorAll('#homeCatChips .home-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.svc === 'all'));
-    document.querySelectorAll('.home-hashtag-chip').forEach(c => c.classList.remove('sel'));
+    renderHomeBrandRow('all');
     // pill 위치는 레이아웃 계산 후 이동
     requestAnimationFrame(() => {
       const firstBtn = document.querySelector('#homeCatTabs .hct-btn.on');
@@ -4780,9 +4759,13 @@ function showAppPage(id, skipHistory) {
 }
 function updateSidebar(id) {
   document.querySelectorAll('.hdr-nav-item').forEach(i=>i.classList.remove('on'));
-  const map={home:0,wallet:1};
-  const items=document.querySelectorAll('.hdr-nav-item');
-  if (map[id]!==undefined&&items[map[id]]) items[map[id]].classList.add('on');
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));
+  const hdrMap = {home:0,'noti-alert':1};
+  const hdrItems = document.querySelectorAll('.hdr-nav-item');
+  if (hdrMap[id]!==undefined && hdrItems[hdrMap[id]]) hdrItems[hdrMap[id]].classList.add('on');
+  const sbMap = {home:0,'noti-alert':1,wallet:2};
+  const sbItems = document.querySelectorAll('.sb-item');
+  if (sbMap[id]!==undefined && sbItems[sbMap[id]]) sbItems[sbMap[id]].classList.add('on');
 }
 
 /* ── 홈 세그먼트 pill 위치 이동 ── */
@@ -4816,19 +4799,21 @@ function homeSearch(kw) {
 }
 
 function _applyHomeFilter() {
-  const kw = (document.getElementById('homeBigSearch')?.value || document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+  const kw = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
   const noResult = document.getElementById('homeNoResult');
   let anyVisible = false;
 
   document.querySelectorAll('#homeCpnGrid .home-cpn-card').forEach(card => {
-    const cat = card.dataset.cat || '';
-    const svc = card.dataset.svc || '';
+    const cat   = card.dataset.cat || '';
+    const svc   = card.dataset.svc || '';
+    const cid   = card.dataset.id  || '';
     const brand = (card.querySelector('.hcc-brand')?.textContent || '').toLowerCase();
     const title = (card.querySelector('.hcc-title')?.textContent || '').toLowerCase();
-    const matchCh  = _homeCh  === 'all' || cat === _homeCh;
-    const matchSvc = _homeSvc === 'all' || svc === _homeSvc;
-    const matchKw  = !kw || brand.includes(kw) || title.includes(kw);
-    const show = matchCh && matchSvc && matchKw;
+    const matchCh    = _homeCh    === 'all' || cat === _homeCh;
+    const matchSvc   = _homeSvc   === 'all' || svc === _homeSvc;
+    const matchBrand = _homeBrand === 'all' || cid === _homeBrand;
+    const matchKw    = !kw || brand.includes(kw) || title.includes(kw);
+    const show = matchCh && matchSvc && matchBrand && matchKw;
     card.style.display = show ? '' : 'none';
     if (show) anyVisible = true;
   });
@@ -5585,22 +5570,41 @@ function handleDownload(btn) {
   }, 1200);
 }
 
-/* ── 홈 서비스 카테고리 필터 ── */
+/* ── 홈 카테고리별 브랜드 데이터 ── */
+const HOME_BRANDS = {
+  all:         [{label:'이마트',id:'emart'},{label:'GS25',id:'gs25'},{label:'롯데마트',id:'lottemart'},{label:'배달의민족',id:'baemin'},{label:'요기요',id:'yogiyo'},{label:'스타벅스',id:'starbucks'},{label:'올리브영',id:'oliveyoung'},{label:'쿠팡',id:'coupang'}],
+  mart:        [{label:'이마트',id:'emart'},{label:'롯데마트',id:'lottemart'},{label:'홈플러스',id:'homeplus'},{label:'이마트24',id:'emart24'}],
+  convenience: [{label:'GS25',id:'gs25'},{label:'CU',id:'cu'},{label:'세븐일레븐',id:'seven'},{label:'이마트24',id:'emart24'},{label:'미니스톱',id:'ministop'}],
+  delivery:    [{label:'배달의민족',id:'baemin'},{label:'요기요',id:'yogiyo'},{label:'쿠팡이츠',id:'coupangeats'},{label:'위메프오',id:'wemakeprice'}],
+  cafe:        [{label:'스타벅스',id:'starbucks'},{label:'투썸플레이스',id:'twosome'},{label:'이디야',id:'ediya'},{label:'메가커피',id:'mega'},{label:'컴포즈',id:'compose'}],
+  fashion:     [{label:'올리브영',id:'oliveyoung'},{label:'무신사',id:'musinsa'},{label:'나이키',id:'nike'},{label:'유니클로',id:'uniqlo'}],
+  travel:      [{label:'야놀자',id:'yanolja'},{label:'여기어때',id:'yeogi'},{label:'제주항공',id:'jeju'},{label:'하나투어',id:'hanatour'}],
+};
+
 let _homeSvc = 'all';
+let _homeBrand = 'all';
+
+function renderHomeBrandRow(svc) {
+  const row = document.getElementById('homeBrandRow');
+  if (!row) return;
+  const brands = HOME_BRANDS[svc] || HOME_BRANDS.all;
+  row.innerHTML = `<div class="home-brand-chip sel" data-bid="all" onclick="setHomeBrand('all',this)">전체</div>` +
+    brands.map(b => `<div class="home-brand-chip" data-bid="${b.id}" onclick="setHomeBrand('${b.id}',this)">${b.label}</div>`).join('');
+  _homeBrand = 'all';
+}
 
 function setHomeSvcCat(svc, el) {
   _homeSvc = svc;
+  _homeBrand = 'all';
   document.querySelectorAll('#homeCatChips .home-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.svc === svc));
-  document.querySelectorAll('.home-hashtag-chip').forEach(c => {
-    const m = c.getAttribute('onclick')?.match(/'([^']+)'/);
-    c.classList.toggle('sel', m && m[1] === svc);
-  });
+  renderHomeBrandRow(svc);
   _applyHomeFilter();
 }
 
-function setHomeSort(sort, el) {
-  document.querySelectorAll('.home-filter-chip').forEach(c => c.classList.remove('sel'));
-  if (el) el.classList.add('sel');
+function setHomeBrand(bid, el) {
+  _homeBrand = bid;
+  document.querySelectorAll('#homeBrandRow .home-brand-chip').forEach(c => c.classList.toggle('sel', c.dataset.bid === bid));
+  _applyHomeFilter();
 }
 
 /* ── 오늘의 추천 쿠폰 캐러셀 ── */
