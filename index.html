@@ -45,7 +45,7 @@
   --warning: #B8690A;
 
   --bg:      #FFFFFF;
-  --surface: #F5F5F5;
+  --surface: #ffffff;
   --border:  #EBEBEB;
 
   --sidebar-w: 0px;
@@ -485,10 +485,11 @@ body   { font-family: var(--font); background: #ffffff; color: var(--gray-900); 
   display:flex; align-items:center; justify-content:center;
   font-size:14px;
 }
-.nsl-icon-gps    { background:#DBEAFE; }
-.nsl-icon-expire { background:#FEE2E2; }
-.nsl-icon-new    { background:#DCFCE7; }
-.nsl-icon-rec    { background:#FEF9C3; }
+.nsl-icon-mart   { background:#DBEAFE; }
+.nsl-icon-conv   { background:#DCFCE7; }
+.nsl-icon-del    { background:#FEE2E2; }
+.nsl-icon-cafe   { background:#FEF9C3; }
+.nsl-icon-fashion{ background:#F3E8FF; }
 .nsl-label { font-size:13px; font-weight:800; color:var(--gray-700); flex:1; }
 .nsl-badge {
   font-size:11px; font-weight:700; color:white;
@@ -2877,136 +2878,114 @@ input[type=range].disc-range::-moz-range-thumb {
         <!-- 드롭다운 패널 -->
         <div class="noti-dropdown" id="notiDropdown">
           <div class="noti-drop-header">
-            <div><span class="noti-drop-title">알림</span><span style="font-size:12px;color:var(--gray-400);font-weight:600;margin-left:8px">4개 읽지 않음</span></div>
+            <div><span class="noti-drop-title">알림</span><span style="font-size:12px;color:var(--gray-400);font-weight:600;margin-left:8px">7개의 새 쿠폰 알림</span></div>
             <span class="noti-drop-clear" onclick="clearNotiAll()">모두 읽음</span>
           </div>
           <div class="noti-drop-body" id="notiDropBody">
 
-            <!-- ① 내 주변 쿠폰 -->
+            <!-- ① 마트 -->
             <div class="noti-section-lbl">
-              <div class="nsl-icon nsl-icon-gps">📍</div>
-              <span class="nsl-label">내 주변 쿠폰</span>
+              <div class="nsl-icon nsl-icon-mart">🏪</div>
+              <span class="nsl-label">마트</span>
               <span class="nsl-badge">2</span>
             </div>
-            <div class="noti-item unread" onclick="closeNotiDrop(); setTimeout(()=>ACT['nav-noti-alert']?.(),50)">
+            <div class="noti-item unread" onclick="closeNotiDrop(); setTimeout(()=>ACT['go-detail']?.({target:{dataset:{id:'emart'}}}),50)">
               <div class="noti-item-icon" style="background:linear-gradient(135deg,#f5a623,#e8870a);color:white;font-size:12px;font-weight:900">이마트</div>
               <div class="noti-item-body">
-                <div class="noti-item-title">이마트 영등포점 0.3km 근처</div>
-                <div class="noti-item-sub">전 매장 30% 할인 · <strong style="color:var(--danger)">오늘 만료</strong></div>
+                <div class="noti-item-title">이마트 30% 할인 — <strong style="color:var(--danger)">오늘 만료</strong></div>
+                <div class="noti-item-sub">전 매장 쇼핑 3만원 이상 · 영등포점 0.3km</div>
               </div>
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
                 <div class="noti-item-time">방금 전</div>
                 <div class="noti-unread-dot"></div>
               </div>
             </div>
-            <div class="noti-item unread" onclick="closeNotiDrop(); setTimeout(()=>ACT['nav-noti-alert']?.(),50)">
-              <div class="noti-item-icon" style="background:linear-gradient(135deg,#00b050,#007a30);color:white;font-size:12px;font-weight:900">GS25</div>
+            <div class="noti-item unread" onclick="closeNotiDrop(); setTimeout(()=>ACT['go-detail']?.({target:{dataset:{id:'lottemart'}}}),50)">
+              <div class="noti-item-icon" style="background:linear-gradient(135deg,#cc0000,#990000);color:white;font-size:11px;font-weight:900">롯데</div>
               <div class="noti-item-body">
-                <div class="noti-item-title">GS25 영등포역점 0.6km 근처</div>
-                <div class="noti-item-sub">도시락 20% 할인 · D-14</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-                <div class="noti-item-time">5분 전</div>
-                <div class="noti-unread-dot"></div>
-              </div>
-            </div>
-            <div class="noti-item" onclick="closeNotiDrop(); setTimeout(()=>ACT['nav-noti-alert']?.(),50)">
-              <div class="noti-item-icon" style="background:linear-gradient(135deg,#00704a,#1e8449);color:white;font-size:11px;font-weight:900">SBX</div>
-              <div class="noti-item-body">
-                <div class="noti-item-title">스타벅스 영등포점 0.8km 근처</div>
-                <div class="noti-item-sub">음료 1+1 증정 쿠폰 · D-7</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-                <div class="noti-item-time">23분 전</div>
-              </div>
-            </div>
-
-            <!-- ② 만료 임박 -->
-            <div class="noti-section-lbl">
-              <div class="nsl-icon nsl-icon-expire">⏰</div>
-              <span class="nsl-label">만료 임박</span>
-              <span class="nsl-badge nsl-badge-red">1</span>
-            </div>
-            <div class="noti-item unread" onclick="closeNotiDrop(); setTimeout(()=>ACT['go-detail']?.({target:{dataset:{id:'emart'}}}),50)">
-              <div class="noti-item-icon" style="background:linear-gradient(135deg,#f5a623,#e8870a);color:white;font-size:12px;font-weight:900">이마트</div>
-              <div class="noti-item-body">
-                <div class="noti-item-title">이마트 30% 할인 — 오늘 자정 만료!</div>
-                <div class="noti-item-sub">지금 바로 사용하지 않으면 소멸돼요</div>
+                <div class="noti-item-title">롯데마트 신선식품 25% 할인</div>
+                <div class="noti-item-sub">2만원 이상 · D-5</div>
               </div>
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
                 <div class="noti-item-time">1시간 전</div>
                 <div class="noti-unread-dot"></div>
               </div>
             </div>
+
+            <!-- ② 편의점 -->
+            <div class="noti-section-lbl">
+              <div class="nsl-icon nsl-icon-conv">🏬</div>
+              <span class="nsl-label">편의점</span>
+              <span class="nsl-badge">1</span>
+            </div>
+            <div class="noti-item unread" onclick="closeNotiDrop(); setTimeout(()=>ACT['nav-noti-alert']?.(),50)">
+              <div class="noti-item-icon" style="background:linear-gradient(135deg,#00b050,#007a30);color:white;font-size:12px;font-weight:900">GS25</div>
+              <div class="noti-item-body">
+                <div class="noti-item-title">GS25 도시락 1+1 행사</div>
+                <div class="noti-item-sub">이번 주말까지 · 내 주변 150m</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                <div class="noti-item-time">30분 전</div>
+                <div class="noti-unread-dot"></div>
+              </div>
+            </div>
+
+            <!-- ③ 배달 -->
+            <div class="noti-section-lbl">
+              <div class="nsl-icon nsl-icon-del">🛵</div>
+              <span class="nsl-label">배달</span>
+              <span class="nsl-badge">2</span>
+            </div>
             <div class="noti-item" onclick="closeNotiDrop()">
               <div class="noti-item-icon" style="background:linear-gradient(135deg,#00c3e3,#0077cc);color:white;font-size:11px;font-weight:900">배민</div>
               <div class="noti-item-body">
                 <div class="noti-item-title">배달의민족 3,000원 할인 — D-2</div>
-                <div class="noti-item-sub">이틀 뒤 만료 예정 · 미리 사용해두세요</div>
+                <div class="noti-item-sub">15,000원 이상 · 이틀 뒤 만료</div>
               </div>
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-                <div class="noti-item-time">오전 9:00</div>
+                <div class="noti-item-time">2시간 전</div>
               </div>
             </div>
             <div class="noti-item" onclick="closeNotiDrop()">
               <div class="noti-item-icon" style="background:linear-gradient(135deg,#ff6b35,#ee4d2d);color:white;font-size:11px;font-weight:900">요기요</div>
               <div class="noti-item-body">
-                <div class="noti-item-title">요기요 12% 할인 — D-2</div>
-                <div class="noti-item-sub">이틀 뒤 만료 예정 · 첫 주문 즉시 사용 가능</div>
+                <div class="noti-item-title">요기요 첫 주문 2,000원 할인</div>
+                <div class="noti-item-sub">신규 가입자 · 기간 한정</div>
               </div>
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-                <div class="noti-item-time">오전 9:00</div>
+                <div class="noti-item-time">어제</div>
               </div>
             </div>
 
-            <!-- ③ 신규 쿠폰 -->
+            <!-- ④ 카페 -->
             <div class="noti-section-lbl">
-              <div class="nsl-icon nsl-icon-new">🎁</div>
-              <span class="nsl-label">신규 쿠폰</span>
+              <div class="nsl-icon nsl-icon-cafe">☕</div>
+              <span class="nsl-label">카페</span>
               <span class="nsl-badge">1</span>
             </div>
             <div class="noti-item unread" onclick="closeNotiDrop(); setTimeout(()=>ACT['go-detail']?.({target:{dataset:{id:'starbucks'}}}),50)">
               <div class="noti-item-icon" style="background:linear-gradient(135deg,#00704a,#1e8449);color:white;font-size:11px;font-weight:900">SBX</div>
               <div class="noti-item-body">
                 <div class="noti-item-title">스타벅스 음료 1+1 신규 쿠폰 도착</div>
-                <div class="noti-item-sub">KT 멤버십 연동 혜택 · D-30</div>
+                <div class="noti-item-sub">KT 멤버십 연동 혜택 · D-7</div>
               </div>
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-                <div class="noti-item-time">오늘</div>
+                <div class="noti-item-time">어제</div>
                 <div class="noti-unread-dot"></div>
               </div>
+            </div>
+
+            <!-- ⑤ 패션·뷰티 -->
+            <div class="noti-section-lbl">
+              <div class="nsl-icon nsl-icon-fashion">👗</div>
+              <span class="nsl-label">패션·뷰티</span>
+              <span class="nsl-badge">1</span>
             </div>
             <div class="noti-item" onclick="closeNotiDrop()">
               <div class="noti-item-icon" style="background:linear-gradient(135deg,#e91e8c,#c2185b);color:white;font-size:11px;font-weight:900">올영</div>
               <div class="noti-item-body">
                 <div class="noti-item-title">올리브영 5,000원 할인 쿠폰 도착</div>
-                <div class="noti-item-sub">이마트 멤버십 연동 혜택 · D-30</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-                <div class="noti-item-time">어제</div>
-              </div>
-            </div>
-
-            <!-- ④ 맞춤 추천 -->
-            <div class="noti-section-lbl">
-              <div class="nsl-icon nsl-icon-rec">💡</div>
-              <span class="nsl-label">맞춤 추천</span>
-            </div>
-            <div class="noti-item" onclick="closeNotiDrop(); setTimeout(()=>ACT['go-detail']?.({target:{dataset:{id:'lottemart'}}}),50)">
-              <div class="noti-item-icon" style="background:linear-gradient(135deg,#cc0000,#990000);color:white;font-size:11px;font-weight:900">롯데</div>
-              <div class="noti-item-body">
-                <div class="noti-item-title">롯데마트 신선식품 25% 추천</div>
-                <div class="noti-item-sub">최근 마트 쿠폰 자주 사용 → 비슷한 혜택 추천</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-                <div class="noti-item-time">어제</div>
-              </div>
-            </div>
-            <div class="noti-item" onclick="closeNotiDrop()">
-              <div class="noti-item-icon" style="background:linear-gradient(135deg,#1a1a1a,#555);color:white;font-size:10px;font-weight:900">무신사</div>
-              <div class="noti-item-body">
-                <div class="noti-item-title">무신사 20% 할인 — 비슷한 사용자 즐겨찾기</div>
-                <div class="noti-item-sub">패션 카테고리 관심 기반 추천 · D-20</div>
+                <div class="noti-item-sub">20,000원 이상 · D-30</div>
               </div>
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
                 <div class="noti-item-time">2일 전</div>
