@@ -3785,7 +3785,10 @@ input[type=range].disc-range::-moz-range-thumb {
       <div id="p-mypage" class="app-page">
         <!-- 상단 프로필 배너 -->
         <div style="display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;background:var(--primary);border-radius:16px;padding:28px 32px;color:white;margin-bottom:24px">
-          <div style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;cursor:pointer" title="프로필 사진 변경" data-action="nav-mypage-profile">미</div>
+          <div style="position:relative;width:72px;height:72px;flex-shrink:0">
+            <div style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700">미</div>
+            <button onclick="showMypageSub('profile')" style="position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:white;border:2px solid var(--primary);color:var(--primary);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0" title="프로필 편집">✎</button>
+          </div>
           <div>
             <div style="font-size:22px;font-weight:700;margin-bottom:4px">안녕하세요, 김미경 님!</div>
             <div style="font-size:14px;opacity:.75">010-****-5678 · 가입일 2025.01.15</div>
@@ -3812,7 +3815,6 @@ input[type=range].disc-range::-moz-range-thumb {
         <div style="display:flex;gap:0;border-bottom:2px solid var(--gray-200);margin-bottom:24px">
           <div class="mps-tab on" data-action="mypage-tab" data-tab="noti">알림 설정</div>
           <div class="mps-tab" data-action="mypage-tab" data-tab="info">기본 정보</div>
-          <div class="mps-tab" data-action="mypage-tab" data-tab="profile">프로필 편집</div>
           <div class="mps-tab" data-action="mypage-tab" data-tab="connect">연동 관리</div>
         </div>
 
@@ -3918,21 +3920,21 @@ input[type=range].disc-range::-moz-range-thumb {
             </div>
 
             <!-- 서브페이지 C: 프로필 편집 -->
-            <div id="mps-profile" class="mps">
+            <div id="mps-profile" class="mps" style="display:none">
               <div class="mps-card">
                 <div class="mps-title">프로필 편집</div>
+                <!-- 아바타 -->
                 <div style="text-align:center;margin-bottom:28px">
-                  <div style="width:96px;height:96px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:700;color:white;margin:0 auto 12px;cursor:pointer;border:4px solid var(--primary-lt)" title="사진 변경">미</div>
-                  <div style="font-size:14px;color:var(--primary);font-weight:700;cursor:pointer">프로필 사진 변경</div>
+                  <div style="position:relative;width:96px;margin:0 auto 12px">
+                    <div style="width:96px;height:96px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:700;color:white;border:4px solid var(--primary-lt)">미</div>
+                    <button style="position:absolute;bottom:2px;right:2px;width:26px;height:26px;border-radius:50%;background:white;border:2px solid var(--primary);color:var(--primary);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0">✎</button>
+                  </div>
                 </div>
+                <!-- 입력 필드: 이름 / 이메일 / 성별 / 생년월일 -->
                 <div style="display:flex;flex-direction:column;gap:14px">
                   <div>
                     <label style="font-size:14px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:6px">이름</label>
                     <div class="field-wrap" style="margin-bottom:0"><input type="text" value="김미경" style="font-size:16px"></div>
-                  </div>
-                  <div>
-                    <label style="font-size:14px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:6px">닉네임</label>
-                    <div class="field-wrap" style="margin-bottom:0"><input type="text" value="미경" style="font-size:16px"></div>
                   </div>
                   <div>
                     <label style="font-size:14px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:6px">이메일</label>
@@ -3940,10 +3942,7 @@ input[type=range].disc-range::-moz-range-thumb {
                   </div>
                   <div>
                     <label style="font-size:14px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:6px">성별</label>
-                    <div style="display:flex;gap:10px">
-                      <label style="flex:1;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;border:2px solid var(--gray-200);cursor:pointer;font-size:15px;font-weight:700"><input type="radio" name="editGender" style="accent-color:var(--primary)"> 남성</label>
-                      <label style="flex:1;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;border:2px solid var(--primary);background:var(--primary-lt);cursor:pointer;font-size:15px;font-weight:700;color:var(--primary)"><input type="radio" name="editGender" checked style="accent-color:var(--primary)"> 여성</label>
-                    </div>
+                    <div class="field-wrap" style="margin-bottom:0"><input type="text" value="여성" style="font-size:16px"></div>
                   </div>
                   <div>
                     <label style="font-size:14px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:6px">생년월일</label>
