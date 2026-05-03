@@ -1499,6 +1499,29 @@ input[type=range].disc-range::-moz-range-thumb {
 .home-hashtag-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
 .home-hashtag-chip { padding:8px 16px; border-radius:50px; background:var(--gray-100); font-size:14px; font-weight:700; color:var(--gray-700); cursor:pointer; transition:all .15s; }
 .home-hashtag-chip:hover,.home-hashtag-chip.sel { background:var(--primary-lt); color:var(--primary); }
+/* ── 홈 검색창 ── */
+.home-search-bar {
+  display:flex; align-items:center; gap:8px;
+  background:white; border:2px solid var(--gray-200); border-radius:50px;
+  padding:8px 12px 8px 18px; margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+  transition:border-color .2s;
+}
+.home-search-bar:focus-within { border-color:var(--primary); }
+.hsb-icon-left { font-size:16px; flex-shrink:0; color:var(--gray-400); }
+.hsb-input {
+  flex:1; border:none; outline:none;
+  font-size:14px; font-weight:500; color:var(--gray-900); background:transparent;
+}
+.hsb-input::placeholder { color:var(--gray-400); }
+.hsb-icon-btn {
+  width:34px; height:34px; border-radius:50%; border:none;
+  background:var(--gray-100); cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:background .15s;
+}
+.hsb-icon-btn:hover { background:var(--primary-lt); }
+
 /* ── 추천 쿠폰 캐러셀 ── */
 .home-rec-section { margin-bottom:28px; }
 .home-rec-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
@@ -1533,7 +1556,7 @@ input[type=range].disc-range::-moz-range-thumb {
 .home-cat-chip:hover { border-color:var(--primary); }
 .home-cat-chip.sel { border-color:var(--primary); background:var(--primary); color:white; }
 /* ── 브랜드 칩 행 ── */
-.home-brand-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.home-brand-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; justify-content:center; }
 .home-brand-chip {
   padding:7px 16px; border-radius:50px; border:1.5px solid var(--gray-200);
   background:white; font-size:13px; font-weight:700; color:var(--gray-600);
@@ -1552,7 +1575,8 @@ input[type=range].disc-range::-moz-range-thumb {
 
 .home-channel-tabs {
   position:relative; display:flex; align-items:stretch;
-  background:var(--gray-200); border-radius:14px;
+  background:#ffffff; border-radius:14px;
+  border:2px solid var(--primary);
   padding:4px; margin-bottom:20px; gap:0;
   width:fit-content; margin-left:auto; margin-right:auto;
 }
@@ -1969,20 +1993,20 @@ input[type=range].disc-range::-moz-range-thumb {
    HOME — 사용 가능 쿠폰 바둑판 그리드
    ============================================================ */
 .home-cpn-grid {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;
+  display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:24px;
 }
 .home-cpn-card {
-  background:white; border-radius:14px; padding:18px 16px;
-  border:2px solid var(--gray-200); cursor:pointer;
-  transition:all .15s; display:flex; flex-direction:column; gap:8px;
-  min-height:230px; position:relative;
+  background:white; border-radius:12px; padding:12px 12px;
+  border:1.5px solid var(--gray-200); cursor:pointer;
+  transition:all .15s; display:flex; flex-direction:column; gap:6px;
+  min-height:unset; position:relative; box-sizing:border-box;
 }
 .home-cpn-card:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(15,65,166,.1); transform:translateY(-2px); }
 .home-cpn-card[style*="display:none"] { display:none !important; }
-.hcc-brand { font-size:12px; font-weight:700; color:var(--gray-500); }
-.hcc-disc  { font-size:30px; font-weight:700; color:var(--primary); line-height:1.1; }
-.hcc-title { font-size:13px; font-weight:700; color:var(--gray-800); line-height:1.4; word-break:keep-all; flex:1; }
-.hcc-exp   { font-size:11px; font-weight:700; }
+.hcc-brand { font-size:11px; font-weight:700; color:var(--gray-500); }
+.hcc-disc  { font-size:22px; font-weight:700; color:var(--primary); line-height:1.1; }
+.hcc-title { font-size:12px; font-weight:700; color:var(--gray-800); line-height:1.4; word-break:keep-all; flex:1; }
+.hcc-exp   { font-size:10px; font-weight:700; }
 .hcc-exp-red { color:var(--danger); }
 .hcc-exp-org { color:var(--warning); }
 .hcc-exp-gry { color:var(--gray-400); }
@@ -1997,6 +2021,15 @@ input[type=range].disc-range::-moz-range-thumb {
   margin-top:auto; transition:all .15s;
 }
 .hcc-use:hover { background:var(--primary); color:white; }
+
+/* 홈 카드 내 다운로드 버튼 — 4열 그리드용 컴팩트 */
+.home-cpn-card .pill-dl-btn {
+  height:34px; font-size:11px; gap:6px; padding:0 10px 0 4px;
+}
+.home-cpn-card .pill-dl-btn .pdb-icon-wrap {
+  width:24px; height:24px; font-size:12px;
+}
+.home-cpn-card .pdb-spinner { width:11px; height:11px; }
 
 /* ── 홈 쿠폰 섹션 ── */
 .home-sec { margin-bottom:28px; transition:order .3s; }
@@ -3024,8 +3057,16 @@ input[type=range].disc-range::-moz-range-thumb {
       <!-- ── HOME ── -->
       <div id="p-home" class="app-page active">
 
-        <!-- 숨겨진 검색 input (JS 호환용) -->
-        <input type="hidden" id="homeBigSearch" value="">
+        <!-- 검색창 -->
+        <div class="home-search-bar">
+          <span class="hsb-icon-left">🔍</span>
+          <input class="hsb-input" type="text" id="homeBigSearch"
+            placeholder="브랜드, 카테고리 검색..."
+            oninput="_applyHomeFilter()"
+            onkeydown="if(event.key==='Enter')_applyHomeFilter()">
+          <button class="hsb-icon-btn" title="음성 검색" onclick="alert('음성 인식 기능')">🎙️</button>
+          <button class="hsb-icon-btn" title="카메라 검색" onclick="alert('카메라 인식 기능')">📷</button>
+        </div>
 
         <!-- ③ 오늘의 추천 쿠폰 캐러셀 -->
         <div class="home-rec-section">
