@@ -3063,7 +3063,8 @@ input[type=range].disc-range::-moz-range-thumb {
           <input class="hsb-input" type="text" id="homeBigSearch"
             placeholder="브랜드, 카테고리 검색..."
             oninput="_applyHomeFilter()"
-            onkeydown="if(event.key==='Enter')_applyHomeFilter()">
+            onkeydown="if(event.key==='Enter'&&this.value.trim())doSearch(this.value.trim())">
+          <button class="hsb-icon-btn" title="검색" onclick="const v=document.getElementById('homeBigSearch').value.trim();if(v)doSearch(v)">🔍</button>
           <button class="hsb-icon-btn" title="음성 검색" onclick="alert('음성 인식 기능')">🎙️</button>
           <button class="hsb-icon-btn" title="카메라 검색" onclick="alert('카메라 인식 기능')">📷</button>
         </div>
@@ -4779,7 +4780,10 @@ function homeSearch(kw) {
 }
 
 function _applyHomeFilter() {
-  const kw = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+  const kw = (
+    document.getElementById('homeBigSearch')?.value ||
+    document.getElementById('searchInput')?.value || ''
+  ).trim().toLowerCase();
   const noResult = document.getElementById('homeNoResult');
   let anyVisible = false;
 
@@ -4918,17 +4922,26 @@ function doSearch(kw) {
   if (badge) badge.textContent = '"' + S.searchKw + '"';
   const kwLow = S.searchKw.toLowerCase();
 
-  /* 지갑 카드 검색 */
-  const walletMatched = [...document.querySelectorAll('#walletGrid .cpn-card')]
-    .filter(c => c.textContent.toLowerCase().includes(kwLow));
-  const walletIds = new Set(walletMatched.map(c => c.dataset.id));
-
-  /* 홈 카드 검색 (지갑 결과와 중복 제거) */
+  /* 홈 카드 검색 — 브랜드명·쿠폰제목 기준 */
   const homeMatched = [...document.querySelectorAll('#homeSections .home-cpn-card')]
-    .filter(c => c.textContent.toLowerCase().includes(kwLow) && !walletIds.has(c.dataset.id))
+    .filter(c => {
+      const brand = (c.querySelector('.hcc-brand')?.textContent || '').toLowerCase();
+      const title = (c.querySelector('.hcc-title')?.textContent || '').toLowerCase();
+      return brand.includes(kwLow) || title.includes(kwLow);
+    })
     .map(c => homeToCpnCard(c));
+  const homeIds = new Set(homeMatched.map(c => c.dataset.id));
 
-  srcAllCards = [...walletMatched, ...homeMatched];
+  /* 지갑 카드 검색 — 브랜드명·쿠폰제목 기준, 홈 결과와 중복 제거 */
+  const walletMatched = [...document.querySelectorAll('#walletGrid .cpn-card')]
+    .filter(c => {
+      if (homeIds.has(c.dataset.id)) return false;
+      const brand = (c.querySelector('.cpn-brand')?.textContent || '').toLowerCase();
+      const title = (c.querySelector('.cpn-title')?.textContent || '').toLowerCase();
+      return brand.includes(kwLow) || title.includes(kwLow);
+    });
+
+  srcAllCards = [...homeMatched, ...walletMatched];
   // 카테고리 탭 초기화 (전체 on)
   document.querySelectorAll('[data-action="src-filter"]').forEach(b => b.classList.toggle('on', b.dataset.val === 'all'));
   document.querySelectorAll('[data-action="src-tab"]').forEach(b => b.classList.toggle('on', b.dataset.status === 'all'));
