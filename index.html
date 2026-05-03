@@ -3073,8 +3073,8 @@ input[type=range].disc-range::-moz-range-thumb {
           <div class="home-rec-header">
             <span class="home-rec-title">오늘의 추천 쿠폰</span>
             <div class="home-rec-nav">
-              <button class="hrn-btn" onclick="scrollRecCar(-1)">‹</button>
-              <button class="hrn-btn" onclick="scrollRecCar(1)">›</button>
+              <button class="hrn-btn" onclick="scrollRecCarManual(-1)">‹</button>
+              <button class="hrn-btn" onclick="scrollRecCarManual(1)">›</button>
             </div>
           </div>
           <div class="home-rec-track-wrap">
@@ -4734,6 +4734,9 @@ function showSocialLogin(provider) {
   go('social-login');
 }
 function showAppPage(id, skipHistory) {
+  // 홈이 아닌 페이지로 이동할 때 추천 캐러셀 자동 타이머 정지
+  if (id !== 'home') stopRecAuto();
+
   // 바코드 팝업·brightness 필터 항상 초기화 (어느 경로로 나가든 잔류 방지)
   const _popup = document.getElementById('brcInstantPopup');
   if (_popup) _popup.classList.remove('show');
@@ -4765,6 +4768,7 @@ function showAppPage(id, skipHistory) {
     _recIdx = 0;
     const recTrack = document.getElementById('homeRecTrack');
     if (recTrack) recTrack.style.transform = 'translateX(0)';
+    startRecAuto();
     document.querySelectorAll('.hct-btn').forEach(b => b.classList.toggle('on', b.dataset.cat === 'all'));
     document.querySelectorAll('#homeCatChips .home-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.svc === 'all'));
     renderHomeBrandRow('all');
@@ -5629,14 +5633,33 @@ function setHomeBrand(bid, el) {
 
 /* ── 오늘의 추천 쿠폰 캐러셀 ── */
 let _recIdx = 0;
+let _recTimer = null;
+
 function scrollRecCar(dir) {
   const track = document.getElementById('homeRecTrack');
   if (!track) return;
   const cards = track.querySelectorAll('.home-rec-card');
-  const max = Math.max(0, cards.length - 2);
-  _recIdx = Math.max(0, Math.min(max, _recIdx + dir));
+  const max = Math.max(0, cards.length - 1);
+  _recIdx = dir === null
+    ? (_recIdx >= max ? 0 : _recIdx + 1)   // 자동: 끝에서 처음으로 순환
+    : Math.max(0, Math.min(max, _recIdx + dir));
   const cardW = (cards[0]?.offsetWidth || 190) + 14;
   track.style.transform = `translateX(-${_recIdx * cardW}px)`;
+}
+
+function startRecAuto() {
+  stopRecAuto();
+  _recTimer = setInterval(() => scrollRecCar(null), 3000);
+}
+
+function stopRecAuto() {
+  if (_recTimer) { clearInterval(_recTimer); _recTimer = null; }
+}
+
+// 수동 버튼 클릭 시 타이머 리셋
+function scrollRecCarManual(dir) {
+  scrollRecCar(dir);
+  startRecAuto();   // 클릭 후 3초부터 다시 자동 전환
 }
 
 /* ============================================================ EVENT DELEGATION ============================================================ */
