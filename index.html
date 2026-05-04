@@ -1721,6 +1721,142 @@ input[type=range].disc-range::-moz-range-thumb {
 .map-user-pin { font-size:22px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.3)); }
 
 /* ============================================================
+   5단계 온보딩 플로우
+   ============================================================ */
+/* 전체 컨테이너 */
+.ob-flow { position:relative; width:100%; flex:1; overflow:hidden; display:flex; flex-direction:column; }
+.ob-step {
+  position:absolute; inset:0;
+  display:none; flex-direction:column;
+  padding:0 28px 24px; overflow-y:auto;
+  background:white;
+}
+.ob-step.ob-active { display:flex; }
+
+/* 상단 nav */
+.ob-flow-nav {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 0 16px; flex-shrink:0;
+}
+.ob-flow-back {
+  width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-size:24px; color:var(--gray-600); cursor:pointer; transition:background .15s;
+}
+.ob-flow-back:hover { background:var(--gray-100); }
+.ob-flow-skip { font-size:14px; font-weight:600; color:var(--gray-400); cursor:pointer; padding:8px 12px; border-radius:8px; transition:background .15s; }
+.ob-flow-skip:hover { background:var(--gray-100); color:var(--gray-600); }
+
+/* 타이틀 / 서브 */
+.ob-flow-title { font-size:26px; font-weight:800; color:var(--gray-900); line-height:1.3; margin-bottom:8px; }
+.ob-flow-sub   { font-size:15px; color:var(--gray-500); font-weight:500; margin-bottom:32px; }
+
+/* 하단 5분할 인디케이터 */
+.ob-indicator { display:flex; gap:6px; padding:16px 28px 20px; flex-shrink:0; background:white; }
+.ob-ind-seg { flex:1; height:4px; border-radius:2px; background:var(--gray-200); transition:background .35s; }
+.ob-ind-seg.ob-ind-done   { background:var(--primary); }
+.ob-ind-seg.ob-ind-active { background:var(--primary); }
+
+/* ── Step1: 성별 ── */
+.ob-gender-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; flex:1; margin-bottom:24px; }
+.ob-gender-card {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+  border-radius:20px; border:2px solid var(--gray-200); background:white; cursor:pointer;
+  font-size:16px; font-weight:700; color:var(--gray-700); transition:all .2s; min-height:160px;
+}
+.ob-gender-card .ob-gicon { font-size:52px; }
+.ob-gender-card:hover { border-color:var(--primary); }
+.ob-gender-card.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+
+/* ── Step2: 카테고리 ── */
+.ob-cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:auto; }
+.ob-cat-card {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  padding:22px 8px; border-radius:16px; border:2px solid var(--gray-200);
+  background:white; cursor:pointer; font-size:14px; font-weight:700; color:var(--gray-700); transition:all .2s;
+}
+.ob-cat-card .ob-cicon { font-size:30px; }
+.ob-cat-card.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+.ob-cat-card:hover:not(.sel) { border-color:var(--gray-300); transform:translateY(-2px); }
+
+/* ── Step3: 브랜드 ── */
+.ob-brand-search-wrap { position:relative; margin-bottom:16px; flex-shrink:0; }
+.ob-brand-search {
+  width:100%; height:46px; padding:0 44px 0 16px; border:2px solid var(--gray-200);
+  border-radius:12px; font-size:15px; outline:none; transition:border-color .2s;
+  background:var(--gray-50,#f8f9fb); color:var(--gray-900); box-sizing:border-box;
+}
+.ob-brand-search:focus { border-color:var(--primary); background:white; }
+.ob-brand-search-clear {
+  position:absolute; right:14px; top:50%; transform:translateY(-50%);
+  font-size:18px; color:var(--gray-400); cursor:pointer;
+  width:24px; height:24px; align-items:center; justify-content:center; display:none;
+}
+.ob-brand-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:18px 6px;
+  overflow-y:auto; flex:1;
+}
+.ob-brand-item {
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  cursor:pointer; position:relative;
+  opacity:0; animation:obFadeIn .2s ease both;
+}
+@keyframes obFadeIn { from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)} }
+.ob-brand-logo-wrap { position:relative; width:54px; height:54px; }
+.ob-brand-logo {
+  width:54px; height:54px; border-radius:15px;
+  display:flex; align-items:center; justify-content:center;
+  color:white; font-size:11px; font-weight:900; line-height:1.2; text-align:center;
+  border:2.5px solid transparent; transition:border-color .15s;
+}
+.ob-brand-item.sel .ob-brand-logo { border-color:var(--primary); }
+.ob-brand-check {
+  position:absolute; top:-5px; right:-5px; width:20px; height:20px; border-radius:50%;
+  background:var(--primary); color:white; font-size:11px; font-weight:800;
+  display:none; align-items:center; justify-content:center; border:2px solid white;
+}
+.ob-brand-item.sel .ob-brand-check { display:flex; }
+.ob-brand-name { font-size:11px; font-weight:700; color:var(--gray-700); text-align:center; white-space:nowrap; overflow:hidden; max-width:60px; text-overflow:ellipsis; }
+@keyframes obBounce { 0%{transform:scale(1)} 40%{transform:scale(.88)} 100%{transform:scale(1)} }
+.ob-brand-logo-wrap.ob-bounce { animation:obBounce .28s cubic-bezier(.34,1.56,.64,1); }
+
+/* ── Step4: 원형 슬라이더 ── */
+.ob-circ-wrap {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  flex:1; padding:16px 0;
+}
+.ob-circ-svg { touch-action:none; cursor:pointer; user-select:none; -webkit-user-select:none; }
+.ob-circ-hint { font-size:14px; color:var(--gray-500); font-weight:500; margin-top:18px; text-align:center; }
+
+/* ── Step5: 알림 채널 ── */
+.ob-notif-grid { display:flex; flex-direction:column; gap:14px; flex:1; }
+.ob-notif-card {
+  display:flex; align-items:center; gap:18px;
+  padding:22px 22px; border-radius:16px; border:2px solid var(--gray-200);
+  background:white; cursor:pointer; transition:all .2s;
+}
+.ob-notif-card.sel { border-color:var(--primary); background:var(--primary-lt); }
+.ob-notif-icon {
+  width:48px; height:48px; border-radius:14px; background:var(--gray-100);
+  display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;
+}
+.ob-notif-card.sel .ob-notif-icon { background:rgba(15,65,166,.12); }
+.ob-notif-title { font-size:16px; font-weight:700; color:var(--gray-900); margin-bottom:3px; }
+.ob-notif-sub   { font-size:13px; color:var(--gray-500); font-weight:500; }
+
+/* ── Step6: 완료 로딩 ── */
+.ob-complete-wrap {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  flex:1; gap:28px;
+}
+.ob-spinner {
+  width:60px; height:60px; border-radius:50%;
+  border:4px solid var(--gray-200); border-top-color:var(--primary);
+  animation:obSpin .8s linear infinite;
+}
+@keyframes obSpin { to{transform:rotate(360deg)} }
+.ob-complete-txt { font-size:18px; font-weight:700; color:var(--gray-700); text-align:center; line-height:1.6; }
+
+/* ============================================================
    BARCODE 전체화면
    ============================================================ */
 .brc-fullscreen-card {
@@ -2032,10 +2168,21 @@ input[type=range].disc-range::-moz-range-thumb {
 .home-cpn-card {
   background:white; border-radius:12px; padding:12px 12px;
   border:1.5px solid var(--gray-200); cursor:pointer;
-  transition:all .15s; display:flex; flex-direction:column; gap:6px;
+  transition:transform .25s cubic-bezier(.4,0,.2,1),
+             box-shadow .25s cubic-bezier(.4,0,.2,1),
+             border-color .2s ease;
+  display:flex; flex-direction:column; gap:6px;
   min-height:unset; position:relative; box-sizing:border-box;
+  box-shadow:0 1px 3px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
 }
-.home-cpn-card:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(15,65,166,.1); transform:translateY(-2px); }
+.home-cpn-card:hover {
+  border-color:var(--primary);
+  transform:translateY(-5px);
+  box-shadow:
+    0 4px 8px rgba(15,65,166,.08),
+    0 12px 24px rgba(15,65,166,.12),
+    0 24px 40px rgba(15,65,166,.07);
+}
 .home-cpn-card[style*="display:none"] { display:none !important; }
 .hcc-brand { font-size:11px; font-weight:700; color:var(--gray-500); }
 .hcc-disc  { font-size:22px; font-weight:700; color:var(--primary); line-height:1.1; }
@@ -2389,6 +2536,151 @@ input[type=range].disc-range::-moz-range-thumb {
 </div>
 
 <!-- ==================== CATEGORY ==================== -->
+<!-- ==================== 5단계 온보딩 플로우 ==================== -->
+<div class="screen" id="s-onboarding" style="padding:0">
+  <div style="display:flex;flex-direction:column;height:100%;background:white">
+
+    <!-- ─ 플로우 영역 ─ -->
+    <div class="ob-flow" id="obFlow">
+
+      <!-- Step 1: 성별 -->
+      <div class="ob-step ob-active" id="ob-step-1">
+        <div class="ob-flow-nav">
+          <div class="ob-flow-back" onclick="obBack()">‹</div>
+          <div class="ob-flow-skip" onclick="obSkip()">건너뛰기</div>
+        </div>
+        <div class="ob-flow-title">어떤 성별이신가요?</div>
+        <div class="ob-flow-sub">맞춤 쿠폰 추천을 위해 알려주세요</div>
+        <div class="ob-gender-grid">
+          <div class="ob-gender-card" onclick="obSelectGender(this)">
+            <span class="ob-gicon">👨</span><span>남성</span>
+          </div>
+          <div class="ob-gender-card" onclick="obSelectGender(this)">
+            <span class="ob-gicon">👩</span><span>여성</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: 카테고리 -->
+      <div class="ob-step" id="ob-step-2">
+        <div class="ob-flow-nav">
+          <div class="ob-flow-back" onclick="obBack()">‹</div>
+          <div class="ob-flow-skip" onclick="obSkip()">건너뛰기</div>
+        </div>
+        <div class="ob-flow-title">관심 카테고리를<br>선택해 주세요</div>
+        <div class="ob-flow-sub">여러 개 선택 가능해요</div>
+        <div class="ob-cat-grid">
+          <div class="ob-cat-card sel" onclick="obToggleCat(this)"><span class="ob-cicon">🏪</span>마트</div>
+          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">🛵</span>배달</div>
+          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">☕</span>카페</div>
+          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">🛒</span>쇼핑</div>
+          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">👗</span>패션</div>
+          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">✈️</span>여행</div>
+          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">🎬</span>영화</div>
+          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">💊</span>건강</div>
+          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">📱</span>가전</div>
+        </div>
+        <button class="btn-primary" style="margin-top:20px;flex-shrink:0" onclick="obNext()">다음</button>
+      </div>
+
+      <!-- Step 3: 브랜드 -->
+      <div class="ob-step" id="ob-step-3">
+        <div class="ob-flow-nav">
+          <div class="ob-flow-back" onclick="obBack()">‹</div>
+          <div class="ob-flow-skip" onclick="obSkip()">건너뛰기</div>
+        </div>
+        <div class="ob-flow-title">좋아하는 브랜드를<br>3개 이상 선택해 주세요</div>
+        <div class="ob-brand-search-wrap">
+          <input class="ob-brand-search" id="obBrandSearch" type="text" placeholder="브랜드 검색..."
+            oninput="obFilterBrand(this.value)"
+            onblur="setTimeout(()=>obBrandFocused(false),150)"
+            onfocus="obBrandFocused(true)">
+          <span class="ob-brand-search-clear" id="obBrandClear" onclick="obClearBrandSearch()">✕</span>
+        </div>
+        <div class="ob-brand-grid" id="obBrandGrid"></div>
+        <div style="padding:14px 0 0;flex-shrink:0">
+          <button class="btn-primary" id="obBrandNextBtn"
+            style="background:var(--gray-300);border-color:var(--gray-300);cursor:not-allowed"
+            onclick="if(!this.disabled)obNext()">다음 (0개 선택)</button>
+        </div>
+      </div>
+
+      <!-- Step 4: 원형 할인율 슬라이더 -->
+      <div class="ob-step" id="ob-step-4">
+        <div class="ob-flow-nav">
+          <div class="ob-flow-back" onclick="obBack()">‹</div>
+          <div class="ob-flow-skip" onclick="obSkip()">건너뛰기</div>
+        </div>
+        <div class="ob-flow-title">어느 정도 할인이면<br>알림 받을까요?</div>
+        <div class="ob-circ-wrap">
+          <svg id="obCircSvg" class="ob-circ-svg" viewBox="0 0 260 260" width="230" height="230">
+            <path id="obCircTrack" fill="none" stroke="#E5E7EB" stroke-width="16" stroke-linecap="round"/>
+            <path id="obCircFill"  fill="none" stroke="#0F41A6" stroke-width="16" stroke-linecap="round"/>
+            <circle id="obCircHandle" r="14" fill="white" stroke="#0F41A6" stroke-width="3"
+              style="filter:drop-shadow(0 2px 6px rgba(15,65,166,.35))"/>
+            <text x="130" y="122" text-anchor="middle" font-size="56" font-weight="800"
+              fill="#0F41A6" font-family="inherit" id="obCircValText">30</text>
+            <text x="130" y="152" text-anchor="middle" font-size="22" font-weight="700"
+              fill="#0F41A6" font-family="inherit">%</text>
+          </svg>
+          <div class="ob-circ-hint">이 기준 이상의 쿠폰만 알려드려요</div>
+        </div>
+        <button class="btn-primary" style="flex-shrink:0" onclick="obNext()">다음</button>
+      </div>
+
+      <!-- Step 5: 알림 채널 -->
+      <div class="ob-step" id="ob-step-5">
+        <div class="ob-flow-nav">
+          <div class="ob-flow-back" onclick="obBack()">‹</div>
+          <span></span>
+        </div>
+        <div class="ob-flow-title">알림은 어디로<br>받으실 건가요?</div>
+        <div class="ob-flow-sub">알림 수신 방법을 선택해 주세요</div>
+        <div class="ob-notif-grid">
+          <div class="ob-notif-card" onclick="obSelectNotif(this)">
+            <div class="ob-notif-icon">🔔</div>
+            <div>
+              <div class="ob-notif-title">앱 알림</div>
+              <div class="ob-notif-sub">브라우저 푸시 알림으로 받기</div>
+            </div>
+          </div>
+          <div class="ob-notif-card" onclick="obSelectNotif(this)">
+            <div class="ob-notif-icon">💬</div>
+            <div>
+              <div class="ob-notif-title">문자 알림</div>
+              <div class="ob-notif-sub">SMS 문자로 받기</div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" id="obNotifNextBtn" disabled
+          style="margin-top:24px;flex-shrink:0;background:var(--gray-300);border-color:var(--gray-300);cursor:not-allowed"
+          onclick="if(!this.disabled)obComplete()">완료</button>
+      </div>
+
+      <!-- Step 6: 완료 로딩 (indicator 숨김) -->
+      <div class="ob-step" id="ob-step-6">
+        <div class="ob-complete-wrap">
+          <div class="ob-spinner"></div>
+          <div class="ob-complete-txt">
+            알림 설정을 완료하고 있어요<br>
+            <span style="color:var(--gray-400);font-size:14px;font-weight:500">잠시만 기다려 주세요</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /ob-flow -->
+
+    <!-- 하단 5분할 인디케이터 -->
+    <div class="ob-indicator" id="obIndicator">
+      <div class="ob-ind-seg ob-ind-active"></div>
+      <div class="ob-ind-seg"></div>
+      <div class="ob-ind-seg"></div>
+      <div class="ob-ind-seg"></div>
+      <div class="ob-ind-seg"></div>
+    </div>
+  </div>
+</div>
+
 <div class="screen" id="s-category">
   <div class="ob-page">
     <div class="ob-card xwide">
@@ -2775,7 +3067,7 @@ input[type=range].disc-range::-moz-range-thumb {
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto">
-        <button class="btn-primary" data-action="go-category" style="font-size:18px">알림 설정하기</button>
+        <button class="btn-primary" data-action="go-onboarding" style="font-size:18px">알림 설정하기</button>
         <button class="btn-ghost" data-action="go-signup-complete" style="font-size:16px">나중에 하기</button>
       </div>
     </div>
@@ -3500,23 +3792,8 @@ input[type=range].disc-range::-moz-range-thumb {
           <span class="pnav-title">쿠폰 상세</span>
         </div>
 
-
-        <!-- 온라인 쿠폰 전용 링크 버튼 (온라인만 표시) -->
-        <div id="detOnlineLink" style="display:none;margin-bottom:16px">
-          <a id="detOnlineLinkBtn" href="#" target="_blank"
-            style="display:flex;align-items:center;justify-content:center;gap:10px;
-                   width:100%;min-height:58px;border-radius:14px;
-                   background:var(--primary);color:white;
-                   font-size:17px;font-weight:700;text-decoration:none;
-                   box-shadow:0 4px 16px rgba(15,65,166,.25);transition:background .15s">
-            <span>🌐</span>
-            <span id="detOnlineLinkText">사이트 바로 가기</span>
-            <span style="font-size:14px;opacity:.75;margin-left:4px">→</span>
-          </a>
-        </div>
-
-        <!-- ① 바코드 최상단 전체폭 노출 -->
-        <div class="det-brc-section" id="detBrcSection" style="margin-bottom:24px">
+        <!-- ① 바코드 (최상단) -->
+        <div class="det-brc-section" id="detBrcSection" style="margin-bottom:20px">
           <div class="det-brc-label">계산대에서 이 화면을 보여주세요</div>
           <div class="det-brc-sub">바코드 스캔 또는 숫자 번호 직원 입력 모두 가능합니다</div>
           <svg class="det-brc-svg" id="detBrcSvg" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg" onclick="openBrcZoom('detBrcSvg','1234 5678 9012 3456','쿠폰 바코드')" title="클릭하면 크게 볼 수 있어요"></svg>
@@ -3524,63 +3801,53 @@ input[type=range].disc-range::-moz-range-thumb {
           <div class="det-brc-manual">🖨 스캔 불가 시 위 16자리 번호를 알려주세요</div>
         </div>
 
-        <!-- ② 본문 레이아웃 (좌: 할인률+주변사용처 / 우: 액션+쿠폰정보) -->
-        <div class="det-layout">
+        <!-- ② 할인률 히어로 카드 -->
+        <div class="det-hero-card" style="margin-bottom:20px">
+          <div class="det-hero-brand">이마트</div>
+          <div class="det-hero-disc">30%</div>
+          <div class="det-hero-cond">3만원 이상 결제 시 자동 적용</div>
+          <div class="det-hero-badge">오늘 자정 만료</div>
+        </div>
 
-          <!-- 좌측 50% : 할인률 카드 + 주변 사용처 -->
-          <div style="display:flex;flex-direction:column;gap:20px">
-            <div class="det-hero-card">
-              <div class="det-hero-brand">이마트</div>
-              <div class="det-hero-disc">30%</div>
-              <div class="det-hero-cond">3만원 이상 결제 시 자동 적용</div>
-              <div class="det-hero-badge">오늘 자정 만료</div>
-            </div>
-            <div class="nearby-section" id="detNearbySection">
-              <div class="panel-title" style="font-size:18px;font-weight:700;margin-bottom:8px">주변 사용처</div>
-              <div style="font-size:13px;color:var(--gray-500);margin-bottom:14px">📍 GPS 기반 · 가까운 순 정렬</div>
-              <div style="display:flex;gap:8px;margin-bottom:16px">
-                <input type="text" placeholder="지점명 또는 주소 검색..." id="nearbySearch"
-                  style="flex:1;min-width:0;padding:10px 14px;border:2px solid var(--gray-200);border-radius:8px;font-size:15px;font-family:var(--font);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--gray-200)'">
-                <button onclick="filterNearby()" style="flex-shrink:0;height:44px;padding:0 18px;background:var(--primary);color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap">검색</button>
-              </div>
-              <div id="nearbyList">
-                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 영등포점</div><div style="font-size:13px;color:var(--gray-500)">서울 영등포구 영중로 15</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">0.3km</span></div>
-                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 목동점</div><div style="font-size:13px;color:var(--gray-500)">서울 양천구 목동동로 257</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">1.1km</span></div>
-                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 은평점</div><div style="font-size:13px;color:var(--gray-500)">서울 은평구 연서로 365</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">2.4km</span></div>
-                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 마포점</div><div style="font-size:13px;color:var(--gray-500)">서울 마포구 월드컵북로 400</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">3.0km</span></div>
-                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 상암점</div><div style="font-size:13px;color:var(--gray-500)">서울 마포구 성암로 301</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">3.8km</span></div>
-              </div>
-            </div>
+        <!-- ③ 쿠폰 다운로드 / 공유하기 -->
+        <div style="display:flex;gap:10px;margin-bottom:20px">
+          <button class="pill-dl-btn" style="flex:1;min-height:52px;font-size:15px;border-radius:50px" onclick="handleDownload(this)">
+            <span class="pdb-icon-wrap" style="width:38px;height:38px;font-size:18px">↓</span>
+            <span class="pdb-text">쿠폰 다운로드</span>
+          </button>
+          <button class="det-share-btn">공유하기</button>
+        </div>
+
+        <!-- ④ 쿠폰 정보 -->
+        <div class="det-info-card" style="margin-bottom:20px">
+          <div class="det-sec">
+            <h3>쿠폰 정보</h3>
+            <div class="det-row"><span class="det-lbl">할인 혜택</span><span class="det-val">30% 할인 (최대 15,000원)</span></div>
+            <div class="det-row"><span class="det-lbl">최소 구매</span><span class="det-val">30,000원 이상</span></div>
+            <div class="det-row"><span class="det-lbl">사용 가능 매장</span><span class="det-val">이마트 전국 매장</span></div>
+            <div class="det-row"><span class="det-lbl">유효기간</span><span class="det-val" style="color:var(--danger)">2026.04.12 (오늘 만료)</span></div>
+            <div class="det-row"><span class="det-lbl">중복 사용</span><span class="det-val">불가</span></div>
+            <div class="det-row"><span class="det-lbl">제공</span><span class="det-val">KT 멤버십 혜택</span></div>
           </div>
+        </div>
 
-          <!-- 우측 50% : 액션 카드 + 쿠폰 정보 -->
-          <div style="display:flex;flex-direction:column;gap:20px">
-            <div class="det-action-card">
-              <div class="det-price-box">
-                <div class="det-price-lbl">예상 절감 금액</div>
-                <div class="det-price-val">최대 15,000원</div>
-              </div>
-              <div style="display:flex;gap:10px">
-                <button class="pill-dl-btn" style="flex:1;min-height:52px;font-size:15px;border-radius:50px" onclick="handleDownload(this)"><span class="pdb-icon-wrap" style="width:38px;height:38px;font-size:18px">↓</span><span class="pdb-text">쿠폰 다운로드</span></button>
-                <button class="det-share-btn">공유하기</button>
-              </div>
-            </div>
-            <div class="det-info-card">
-              <div class="det-urgency">
-                <div class="det-urg-txt">오늘 자정 만료 — 지금 바로 사용하세요</div>
-              </div>
-              <div class="det-sec">
-                <h3>쿠폰 정보</h3>
-                <div class="det-row"><span class="det-lbl">할인 혜택</span><span class="det-val">30% 할인 (최대 15,000원)</span></div>
-                <div class="det-row"><span class="det-lbl">최소 구매</span><span class="det-val">30,000원 이상</span></div>
-                <div class="det-row"><span class="det-lbl">사용 가능 매장</span><span class="det-val">이마트 전국 매장</span></div>
-                <div class="det-row"><span class="det-lbl">유효기간</span><span class="det-val" style="color:var(--danger)">2026.04.12 (오늘 만료)</span></div>
-                <div class="det-row"><span class="det-lbl">중복 사용</span><span class="det-val">불가</span></div>
-                <div class="det-row"><span class="det-lbl">제공</span><span class="det-val">KT 멤버십 혜택</span></div>
-              </div>
-            </div>
+        <!-- ⑥ 주변 사용처 -->
+        <div class="nearby-section" id="detNearbySection">
+          <div class="panel-title" style="font-size:18px;font-weight:700;margin-bottom:8px">주변 사용처</div>
+          <div style="font-size:13px;color:var(--gray-500);margin-bottom:14px">📍 GPS 기반 · 가까운 순 정렬</div>
+          <div style="display:flex;gap:8px;margin-bottom:16px">
+            <input type="text" placeholder="지점명 또는 주소 검색..." id="nearbySearch"
+              style="flex:1;min-width:0;padding:10px 14px;border:2px solid var(--gray-200);border-radius:8px;font-size:15px;font-family:var(--font);outline:none;transition:border-color .15s"
+              onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--gray-200)'">
+            <button onclick="filterNearby()" style="flex-shrink:0;height:44px;padding:0 18px;background:var(--primary);color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap">검색</button>
           </div>
-
+          <div id="nearbyList">
+            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 영등포점</div><div style="font-size:13px;color:var(--gray-500)">서울 영등포구 영중로 15</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">0.3km</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 목동점</div><div style="font-size:13px;color:var(--gray-500)">서울 양천구 목동동로 257</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">1.1km</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 은평점</div><div style="font-size:13px;color:var(--gray-500)">서울 은평구 연서로 365</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">2.4km</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 마포점</div><div style="font-size:13px;color:var(--gray-500)">서울 마포구 월드컵북로 400</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">3.0km</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 상암점</div><div style="font-size:13px;color:var(--gray-500)">서울 마포구 성암로 301</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">3.8km</span></div>
+          </div>
         </div>
       </div>
 
@@ -4907,6 +5174,229 @@ function filterNearbyList(kw) {
 }
 function sortNearbyList(val) { /* prototype — UI only */ }
 
+/* ================================================================
+   5단계 온보딩 플로우
+   ================================================================ */
+let _obCurStep = 1;
+const OB_BRANDS = [
+  { name:'이마트',     bg:'linear-gradient(135deg,#f5a623,#e8870a)' },
+  { name:'롯데마트',   bg:'linear-gradient(135deg,#cc0000,#990000)' },
+  { name:'홈플러스',   bg:'linear-gradient(135deg,#004ea2,#0077cc)' },
+  { name:'코스트코',   bg:'linear-gradient(135deg,#e8001d,#c20016)' },
+  { name:'GS더프레시', bg:'linear-gradient(135deg,#0066b3,#3399ff)' },
+  { name:'GS25',       bg:'linear-gradient(135deg,#0066b3,#1e90ff)' },
+  { name:'CU',         bg:'linear-gradient(135deg,#7c3aed,#5b21b6)' },
+  { name:'세븐일레븐', bg:'linear-gradient(135deg,#e8001d,#ff4400)' },
+  { name:'이마트24',   bg:'linear-gradient(135deg,#f5a623,#f0820a)' },
+  { name:'배달의민족', bg:'linear-gradient(135deg,#00c3e3,#0077cc)' },
+  { name:'요기요',     bg:'linear-gradient(135deg,#ff3250,#cc0022)' },
+  { name:'쿠팡이츠',  bg:'linear-gradient(135deg,#ef4444,#dc2626)' },
+  { name:'스타벅스',  bg:'linear-gradient(135deg,#00704a,#1e8449)' },
+  { name:'투썸플레이스', bg:'linear-gradient(135deg,#8b5e3c,#c49a6c)' },
+  { name:'메가커피',  bg:'linear-gradient(135deg,#fbbf24,#f59e0b)' },
+  { name:'빽다방',    bg:'linear-gradient(135deg,#4ade80,#16a34a)' },
+  { name:'이디야',    bg:'linear-gradient(135deg,#1d4ed8,#2563eb)' },
+  { name:'올리브영',  bg:'linear-gradient(135deg,#e91e8c,#c2185b)' },
+  { name:'무신사',    bg:'linear-gradient(135deg,#1a1a1a,#555)' },
+  { name:'지그재그',  bg:'linear-gradient(135deg,#ff4785,#e91e8c)' },
+  { name:'쿠팡',      bg:'linear-gradient(135deg,#ef4444,#fca5a5)' },
+  { name:'11번가',    bg:'linear-gradient(135deg,#ff6600,#e85c00)' },
+  { name:'G마켓',     bg:'linear-gradient(135deg,#ff0000,#cc0000)' },
+  { name:'SSG',       bg:'linear-gradient(135deg,#cc0000,#990000)' },
+  { name:'CGV',       bg:'linear-gradient(135deg,#e8001d,#ff4400)' },
+  { name:'롯데시네마', bg:'linear-gradient(135deg,#cc0000,#990000)' },
+  { name:'메가박스',  bg:'linear-gradient(135deg,#111,#444)' },
+  { name:'야놀자',    bg:'linear-gradient(135deg,#ff5a5f,#e8001d)' },
+  { name:'여기어때',  bg:'linear-gradient(135deg,#00c73c,#009e2e)' },
+  { name:'KT멤버십',  bg:'linear-gradient(135deg,#e8001d,#ff4d6d)' },
+];
+let _obSelBrands = new Set();
+
+/* ─ 브랜드 그리드 렌더링 ─ */
+function obRenderBrands(filter) {
+  const grid = document.getElementById('obBrandGrid');
+  if (!grid) return;
+  const list = filter
+    ? OB_BRANDS.filter(b => b.name.includes(filter))
+    : OB_BRANDS;
+  grid.innerHTML = list.map((b, i) => `
+    <div class="ob-brand-item${_obSelBrands.has(b.name) ? ' sel' : ''}"
+      onclick="obToggleBrand(this,'${b.name}')"
+      style="animation-delay:${i * 0.025}s">
+      <div class="ob-brand-logo-wrap">
+        <div class="ob-brand-logo" style="background:${b.bg}">${b.name.slice(0,3)}</div>
+        <div class="ob-brand-check">✓</div>
+      </div>
+      <div class="ob-brand-name">${b.name}</div>
+    </div>`).join('');
+}
+function obToggleBrand(el, name) {
+  if (_obSelBrands.has(name)) _obSelBrands.delete(name);
+  else _obSelBrands.add(name);
+  el.classList.toggle('sel', _obSelBrands.has(name));
+  const wrap = el.querySelector('.ob-brand-logo-wrap');
+  wrap.classList.remove('ob-bounce');
+  void wrap.offsetWidth;
+  wrap.classList.add('ob-bounce');
+  obUpdateBrandBtn();
+}
+function obUpdateBrandBtn() {
+  const btn = document.getElementById('obBrandNextBtn');
+  if (!btn) return;
+  const n = _obSelBrands.size;
+  const ok = n >= 3;
+  btn.disabled = !ok;
+  btn.style.background   = ok ? '' : 'var(--gray-300)';
+  btn.style.borderColor  = ok ? '' : 'var(--gray-300)';
+  btn.style.cursor       = ok ? 'pointer' : 'not-allowed';
+  btn.textContent = ok ? `다음 (${n}개 선택)` : `다음 (${n}개 선택 · 3개 이상 필요)`;
+}
+function obFilterBrand(v) {
+  const clr = document.getElementById('obBrandClear');
+  if (clr) clr.style.display = v ? 'flex' : 'none';
+  obRenderBrands(v);
+}
+function obClearBrandSearch() {
+  const inp = document.getElementById('obBrandSearch');
+  const clr = document.getElementById('obBrandClear');
+  if (inp) inp.value = '';
+  if (clr) clr.style.display = 'none';
+  obRenderBrands('');
+}
+function obBrandFocused(on) {
+  const grid = document.getElementById('obBrandGrid');
+  if (grid) grid.style.opacity = on ? '0.55' : '1';
+}
+
+/* ─ 성별 선택 (자동 다음) ─ */
+function obSelectGender(el) {
+  document.querySelectorAll('.ob-gender-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  setTimeout(() => obGoStep(2), 300);
+}
+/* ─ 카테고리 토글 ─ */
+function obToggleCat(el) { el.classList.toggle('sel'); }
+/* ─ 알림 채널 선택 ─ */
+function obSelectNotif(el) {
+  document.querySelectorAll('.ob-notif-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  const btn = document.getElementById('obNotifNextBtn');
+  if (btn) { btn.disabled = false; btn.style.background = ''; btn.style.borderColor = ''; btn.style.cursor = 'pointer'; }
+}
+
+/* ─ 단계 이동 (슬라이드 전환) ─ */
+function obGoStep(n, back) {
+  if (n > 5) { obComplete(); return; }
+  if (n < 1) return;
+  const cur = document.getElementById('ob-step-' + _obCurStep);
+  const nxt = document.getElementById('ob-step-' + n);
+  if (!cur || !nxt) return;
+  /* 진입 위치 세팅 (transition 없이) */
+  nxt.style.transition = 'none';
+  nxt.style.transform  = back ? 'translateX(-100%)' : 'translateX(100%)';
+  nxt.style.display    = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const ease = 'transform .38s cubic-bezier(0,.0,.2,1)';
+    cur.style.transition = ease;
+    nxt.style.transition = ease;
+    cur.style.transform  = back ? 'translateX(100%)' : 'translateX(-100%)';
+    nxt.style.transform  = 'translateX(0)';
+  }));
+  setTimeout(() => {
+    cur.style.display    = 'none';
+    cur.style.transform  = '';
+    cur.style.transition = '';
+    _obCurStep = n;
+    if (n === 3) { obRenderBrands(''); obUpdateBrandBtn(); }
+    if (n === 4) initObCircSlider();
+  }, 400);
+  /* 인디케이터 업데이트 */
+  document.querySelectorAll('#obIndicator .ob-ind-seg').forEach((s, i) => {
+    s.classList.remove('ob-ind-done', 'ob-ind-active');
+    if (i < n - 1) s.classList.add('ob-ind-done');
+    else if (i === n - 1) s.classList.add('ob-ind-active');
+  });
+}
+function obNext() { obGoStep(_obCurStep + 1); }
+function obBack() {
+  if (_obCurStep <= 1) { go('noti-consent'); return; }
+  obGoStep(_obCurStep - 1, true);
+}
+function obSkip() { obGoStep(_obCurStep + 1); }
+
+/* ─ 완료 로딩 ─ */
+function obComplete() {
+  const cur = document.getElementById('ob-step-' + _obCurStep);
+  const nxt = document.getElementById('ob-step-6');
+  if (cur && nxt) {
+    nxt.style.transition = 'none'; nxt.style.transform = 'translateX(100%)'; nxt.style.display = 'flex';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const ease = 'transform .38s cubic-bezier(0,.0,.2,1)';
+      cur.style.transition = ease; nxt.style.transition = ease;
+      cur.style.transform = 'translateX(-100%)'; nxt.style.transform = 'translateX(0)';
+    }));
+  }
+  document.getElementById('obIndicator').style.display = 'none';
+  document.querySelectorAll('#obIndicator .ob-ind-seg').forEach(s => {
+    s.classList.add('ob-ind-done'); s.classList.remove('ob-ind-active');
+  });
+  setTimeout(() => go('home'), 2200);
+}
+
+/* ─ 원형 슬라이더 ─ */
+let _obCircVal = 30;
+let _obCircDrag = false;
+function initObCircSlider() {
+  const svg = document.getElementById('obCircSvg');
+  if (!svg || svg.dataset.obInit) return;
+  svg.dataset.obInit = '1';
+  const cx = 130, cy = 130, r = 100;
+  const S_DEG = 135, RANGE = 270;
+  const toRad = d => d * Math.PI / 180;
+  const pt = deg => ({ x: cx + r * Math.cos(toRad(deg)), y: cy + r * Math.sin(toRad(deg)) });
+  const arcD = (f, t, big) => {
+    const s = pt(f), e = pt(t);
+    return `M ${s.x.toFixed(1)} ${s.y.toFixed(1)} A ${r} ${r} 0 ${big} 1 ${e.x.toFixed(1)} ${e.y.toFixed(1)}`;
+  };
+  document.getElementById('obCircTrack').setAttribute('d', arcD(135, 45, 1));
+  function render(v) {
+    _obCircVal = v;
+    const delta = RANGE * v / 100;
+    const endDeg = (S_DEG + delta) % 360;
+    const big = delta > 180 ? 1 : 0;
+    const fill = document.getElementById('obCircFill');
+    if (v === 0) fill.setAttribute('d', '');
+    else if (v >= 100) fill.setAttribute('d', arcD(135, 134.5, 1));
+    else fill.setAttribute('d', arcD(135, endDeg, big));
+    const hp = pt(S_DEG + delta);
+    document.getElementById('obCircHandle').setAttribute('cx', hp.x.toFixed(1));
+    document.getElementById('obCircHandle').setAttribute('cy', hp.y.toFixed(1));
+    document.getElementById('obCircValText').textContent = v;
+  }
+  render(_obCircVal);
+  function angleFrom(e) {
+    const rect = svg.getBoundingClientRect();
+    const sc = rect.width / 260;
+    const cx2 = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const cy2 = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    let deg = Math.atan2(cy2 / sc - cy, cx2 / sc - cx) * 180 / Math.PI;
+    if (deg < 0) deg += 360;
+    return deg;
+  }
+  function valFrom(deg) {
+    let delta = deg - S_DEG;
+    if (delta < 0) delta += 360;
+    if (delta > RANGE) delta = delta > RANGE + (360 - RANGE) / 2 ? 0 : RANGE;
+    return Math.round(delta / RANGE * 100 / 5) * 5;
+  }
+  svg.addEventListener('mousedown',  e => { _obCircDrag = true; render(valFrom(angleFrom(e))); });
+  svg.addEventListener('touchstart', e => { _obCircDrag = true; render(valFrom(angleFrom(e))); }, { passive:true });
+  document.addEventListener('mousemove',  e => { if (_obCircDrag) render(valFrom(angleFrom(e))); });
+  document.addEventListener('touchmove',  e => { if (_obCircDrag) render(valFrom(angleFrom(e))); }, { passive:true });
+  document.addEventListener('mouseup',    () => { _obCircDrag = false; });
+  document.addEventListener('touchend',   () => { _obCircDrag = false; });
+}
+
 /* ── 대한민국 행정구역 데이터 ── */
 const KOREA_DISTRICTS = {
   '서울': ['전체','종로구','중구','용산구','성동구','광진구','동대문구','중랑구','성북구','강북구','도봉구','노원구','은평구','서대문구','마포구','양천구','강서구','구로구','금천구','영등포구','동작구','관악구','서초구','강남구','송파구','강동구'],
@@ -5776,6 +6266,7 @@ const ACT = {
   'go-loading':      ()=>go('loading'),
   'go-integration':  ()=>go('integration'),
   'go-category':     ()=>go('category'),
+  'go-onboarding':   ()=>{ _obCurStep=1; _obSelBrands=new Set(); document.querySelectorAll('#obFlow .ob-step').forEach((s,i)=>{ s.style.display=i===0?'flex':'none'; s.style.transform=''; s.style.transition=''; }); document.getElementById('obIndicator').style.display=''; document.querySelectorAll('#obIndicator .ob-ind-seg').forEach((s,i)=>{ s.classList.remove('ob-ind-done','ob-ind-active'); if(i===0)s.classList.add('ob-ind-active'); }); go('onboarding'); },
   'go-brand':        ()=>go('brand'),
   'go-discount':     ()=>go('discount'),
   'go-notification': ()=>go('notification'),
