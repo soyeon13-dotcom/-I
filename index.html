@@ -1299,6 +1299,8 @@ input[type=range].disc-range::-moz-range-thumb {
 }
 .svc-sel-card:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(15,65,166,.12); transform:translateY(-2px); }
 .svc-sel-card.connected { border-color:var(--success); background:#F0FBF4; }
+.svc-sel-card.sel { border-color:var(--primary); background:var(--primary-lt); box-shadow:0 4px 16px rgba(15,65,166,.12); }
+.svc-sel-card.sel .svc-sel-card-name { color:var(--primary); }
 .svc-sel-card-icon {
   width:44px; height:44px; border-radius:12px;
   display:flex; align-items:center; justify-content:center;
@@ -4054,6 +4056,8 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="page-nav" style="margin-bottom:12px">
           <button class="pnav-back" data-action="go-back">‹ 뒤로</button>
           <span class="pnav-title">연동할 서비스 선택</span>
+          <button id="svcNextBtn" onclick="goSvcNext()" disabled
+            style="padding:8px 20px;border-radius:20px;border:none;font-size:14px;font-weight:700;font-family:var(--font);background:var(--gray-300);color:white;cursor:not-allowed;transition:all .2s">다음</button>
         </div>
         <div class="page-sub" style="margin-bottom:24px">연동할 서비스를 선택하면 쿠폰과 포인트를 자동으로 수집·관리해드려요</div>
 
@@ -5661,6 +5665,19 @@ function drawDetBRC() {
 /* ============================================================ DOWNLOAD BTN ============================================================ */
 const downloadedCpns = new Set();
 
+function goSvcNext() {
+  const selected = [...document.querySelectorAll('#p-connect-svc-select .svc-sel-card.sel')];
+  if (selected.length === 0) return;
+  const count = selected.length;
+  const titleEl = document.getElementById('connectPageTitle');
+  if (titleEl) titleEl.textContent = count === 1
+    ? (selected[0].dataset.svcName || selected[0].dataset.svc) + ' 연동'
+    : count + '개 서비스 연동';
+  const subEl = document.querySelector('#p-connect .page-sub');
+  if (subEl) subEl.textContent = '연동 방식을 선택하세요. 자동 연동을 추천드려요.';
+  showAppPage('connect');
+}
+
 function handleDownload(btn) {
   if (btn.classList.contains('loading') || btn.classList.contains('done')) return;
   const id = btn.closest('[data-id]')?.dataset.id || S.currentCpnId || '';
@@ -5911,13 +5928,14 @@ const ACT = {
   'select-svc':          (e)=>{
     const card = e.target.closest('[data-svc]');
     if (!card) return;
-    S.connectSvc = card.dataset.svc;
-    S.connectSvcName = card.dataset.svcName || card.dataset.svc;
-    const titleEl = document.getElementById('connectPageTitle');
-    if (titleEl) titleEl.textContent = S.connectSvcName + ' 연동';
-    const subEl = document.querySelector('#p-connect .page-sub');
-    if (subEl) subEl.textContent = S.connectSvcName + ' 연동 방식을 선택하세요. 자동 연동을 추천드려요.';
-    showAppPage('connect');
+    card.classList.toggle('sel');
+    const count = document.querySelectorAll('#p-connect-svc-select .svc-sel-card.sel').length;
+    const btn = document.getElementById('svcNextBtn');
+    if (btn) {
+      btn.disabled = count === 0;
+      btn.style.background = count > 0 ? 'var(--primary)' : 'var(--gray-300)';
+      btn.style.cursor = count > 0 ? 'pointer' : 'not-allowed';
+    }
   },
   'connect-method':      (e)=>{ const card=e.target.closest('[data-method]'); S.connectMethod=card.dataset.method; document.querySelectorAll('.auth-method-card').forEach(c=>c.classList.remove('sel')); card.classList.add('sel'); showAppPage('connect-manual-form'); updateConnectForm(); },
   'start-auth':          (e)=>{ const from=e.target.closest('[data-from]')?.dataset.from||'easy'; S.connectFrom=from; showAppPage('connect-auth'); runAuthAnimation(); },
