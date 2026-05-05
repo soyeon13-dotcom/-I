@@ -1612,6 +1612,18 @@ input[type=range].disc-range::-moz-range-thumb {
 .hrc-brand { font-size:11px; font-weight:700; color:rgba(255,255,255,.7); margin-top:8px; }
 .hrc-title { font-size:13px; font-weight:700; color:white; line-height:1.3; }
 .hrc-cond { font-size:11px; color:rgba(255,255,255,.6); margin-top:2px; }
+/* 마감임박 카드 — 노란 배경에 어두운 텍스트 */
+.hrc-expire .hrc-d-badge { background:rgba(0,0,0,.14); color:#3d2700; }
+.hrc-expire .hrc-disc,
+.hrc-expire .hrc-title  { color:#3d2700; }
+.hrc-expire .hrc-brand  { color:rgba(61,39,0,.72); }
+.hrc-expire .hrc-cond   { color:rgba(61,39,0,.58); }
+.hrc-expire-label {
+  position:absolute; top:12px; left:12px;
+  background:rgba(0,0,0,.12); color:#3d2700;
+  font-size:10px; font-weight:800; padding:3px 8px;
+  border-radius:50px; letter-spacing:.3px;
+}
 /* ── 카테고리 칩 ── */
 .home-cat-section { margin-bottom:20px; }
 .home-sec-label { font-size:15px; font-weight:800; color:var(--gray-900); margin-bottom:12px; }
@@ -3012,7 +3024,7 @@ input[type=range].disc-range::-moz-range-thumb {
     <nav class="hdr-nav">
       <div class="hdr-nav-item on" data-action="nav-home">홈</div>
       <div class="hdr-nav-item" data-action="nav-noti-alert">지도</div>
-      <div class="hdr-nav-item" data-action="nav-barcode">바코드</div>
+      <div class="hdr-nav-item" data-action="nav-points-hub">포인트</div>
     </nav>
     <div class="hdr-search">
       <span class="hdr-search-lbl">🔍</span>
@@ -3227,35 +3239,38 @@ input[type=range].disc-range::-moz-range-thumb {
           </div>
           <div class="home-rec-track-wrap">
             <div class="home-rec-track" id="homeRecTrack">
-              <div class="home-rec-card" style="background:linear-gradient(135deg,#f5a623,#e8870a)" data-action="go-detail" data-id="emart">
+              <!-- 마감임박 카드 — 노랑 -->
+              <div class="home-rec-card hrc-expire" style="background:linear-gradient(135deg,#FBBF24,#D97706)" data-action="go-detail" data-id="emart">
+                <div class="hrc-expire-label">⏰ 마감임박</div>
                 <div class="hrc-d-badge">D-1</div>
                 <div class="hrc-disc">30%</div>
                 <div class="hrc-brand">이마트</div>
                 <div class="hrc-title">전 매장 쇼핑 할인</div>
                 <div class="hrc-cond">3만원 이상</div>
               </div>
-              <div class="home-rec-card" style="background:linear-gradient(135deg,#00c3e3,#0077cc)" data-action="go-detail" data-id="baemin">
+              <!-- 일반 카드 — 메인컬러 -->
+              <div class="home-rec-card" style="background:linear-gradient(135deg,#1a56db,#0F41A6)" data-action="go-detail" data-id="baemin">
                 <div class="hrc-d-badge">D-2</div>
                 <div class="hrc-disc">3,000원</div>
                 <div class="hrc-brand">배달의민족</div>
                 <div class="hrc-title">배달 주문 할인</div>
                 <div class="hrc-cond">15,000원 이상</div>
               </div>
-              <div class="home-rec-card" style="background:linear-gradient(135deg,#00704a,#1e8449)" data-action="go-detail" data-id="starbucks">
+              <div class="home-rec-card" style="background:linear-gradient(135deg,#0F41A6,#0A2F7A)" data-action="go-detail" data-id="starbucks">
                 <div class="hrc-d-badge">D-7</div>
                 <div class="hrc-disc">1+1</div>
                 <div class="hrc-brand">스타벅스</div>
                 <div class="hrc-title">음료 1+1 증정</div>
                 <div class="hrc-cond">조건 없음</div>
               </div>
-              <div class="home-rec-card" style="background:linear-gradient(135deg,#e91e8c,#c2185b)" data-action="go-detail" data-id="oliveyoung">
+              <div class="home-rec-card" style="background:linear-gradient(135deg,#2563EB,#0F41A6)" data-action="go-detail" data-id="oliveyoung">
                 <div class="hrc-d-badge">D-30</div>
                 <div class="hrc-disc">5,000원</div>
                 <div class="hrc-brand">올리브영</div>
                 <div class="hrc-title">전 상품 5,000원 할인</div>
                 <div class="hrc-cond">20,000원 이상</div>
               </div>
-              <div class="home-rec-card" style="background:linear-gradient(135deg,#cc0000,#990000)" data-action="go-detail" data-id="lottemart">
+              <div class="home-rec-card" style="background:linear-gradient(135deg,#1a56db,#0A2F7A)" data-action="go-detail" data-id="lottemart">
                 <div class="hrc-d-badge">D-5</div>
                 <div class="hrc-disc">25%</div>
                 <div class="hrc-brand">롯데마트</div>
@@ -4945,7 +4960,7 @@ function showAppPage(id, skipHistory) {
 function updateSidebar(id) {
   document.querySelectorAll('.hdr-nav-item').forEach(i=>i.classList.remove('on'));
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));
-  const hdrMap = {home:0,'noti-alert':1,barcode:2};
+  const hdrMap = {home:0,'noti-alert':1,'points-hub':2};
   const hdrItems = document.querySelectorAll('.hdr-nav-item');
   if (hdrMap[id]!==undefined && hdrItems[hdrMap[id]]) hdrItems[hdrMap[id]].classList.add('on');
   const sbMap = {home:0,'noti-alert':1,wallet:2};
@@ -6145,7 +6160,7 @@ const ACT = {
   'go-back':         ()=>goBack(),
   'skip-to-login':   ()=>go('login'),
   'nav-home':        ()=>{ showAppPage('home'); updateSidebar('home'); },
-  'nav-points-hub':  ()=>{ showAppPage('points-hub'); updateSidebar(''); },
+  'nav-points-hub':  ()=>{ showAppPage('points-hub'); updateSidebar('points-hub'); },
   'pts-det-back':    ()=>goBack(),
   'nav-download':    ()=>{ showAppPage('download'); updateSidebar('download'); },
   'nav-wallet':      ()=>{ showAppPage('wallet'); updateSidebar('wallet'); applyWalletTab('downloaded'); },
