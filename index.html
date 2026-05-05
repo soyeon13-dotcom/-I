@@ -1524,22 +1524,54 @@ input[type=range].disc-range::-moz-range-thumb {
 }
 .hsb-icon-btn:hover { background:var(--primary-lt); }
 
-/* ── 추천 쿠폰 캐러셀 ── */
+/* ── 추천 쿠폰 캐러셀 (Center Focus) ── */
 .home-rec-section { margin-bottom:28px; }
 .home-rec-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
 .home-rec-title { font-size:17px; font-weight:800; color:var(--gray-900); }
 .home-rec-nav { display:flex; gap:6px; }
 .hrn-btn { width:32px; height:32px; border-radius:50%; border:1.5px solid var(--gray-200); background:white; font-size:20px; font-weight:700; color:var(--gray-600); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; line-height:1; }
 .hrn-btn:hover { border-color:var(--primary); color:var(--primary); }
-.home-rec-track-wrap { overflow:hidden; }
-.home-rec-track { display:flex; gap:14px; transition:transform .35s cubic-bezier(.4,0,.2,1); }
-.home-rec-card {
-  flex-shrink:0; width:190px; border-radius:18px; padding:18px 16px 16px;
-  display:flex; flex-direction:column; gap:3px; cursor:pointer;
-  position:relative; overflow:hidden; transition:transform .2s;
-  min-height:140px;
+/* 래퍼: 수직 여백으로 scale-up 클리핑 방지, overflow-x hidden */
+.home-rec-track-wrap {
+  overflow:hidden;
+  padding:28px 0; margin:-28px 0;
+  cursor:grab; user-select:none; touch-action:pan-y;
 }
-.home-rec-card:hover { transform:translateY(-3px); }
+.home-rec-track-wrap:active { cursor:grabbing; }
+/* 트랙: padding으로 카드 0을 중앙 정렬 */
+.home-rec-track {
+  display:flex; gap:14px; align-items:center;
+  padding:0 calc(50% - 85px);
+  transition:transform .42s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+}
+/* 카드 기본: inactive (far) 상태 */
+.home-rec-card {
+  flex-shrink:0; width:170px; border-radius:20px; padding:20px 16px 18px;
+  display:flex; flex-direction:column; gap:3px; cursor:pointer;
+  position:relative; overflow:hidden; min-height:152px;
+  transform-origin:center center;
+  transition:transform .42s cubic-bezier(.4,0,.2,1),
+             opacity .42s ease, box-shadow .42s ease, filter .42s ease;
+  transform:scale(0.72); opacity:0.28; filter:blur(1.5px);
+  pointer-events:none;
+}
+/* Active — 중앙 카드 */
+.home-rec-card.rec-active {
+  transform:scale(1.07); opacity:1; filter:none;
+  box-shadow:0 18px 52px rgba(0,0,0,.34);
+  pointer-events:auto; z-index:3;
+}
+/* Adjacent — 좌/우 인접 카드 */
+.home-rec-card.rec-adj {
+  transform:scale(0.84); opacity:0.68; filter:blur(.4px);
+  pointer-events:auto; z-index:2;
+}
+/* Far — 2칸 이상 떨어진 카드 */
+.home-rec-card.rec-far {
+  transform:scale(0.7); opacity:0.22; filter:blur(1.5px);
+  pointer-events:none; z-index:1;
+}
 .hrc-d-badge { position:absolute; top:12px; right:12px; background:rgba(255,255,255,.28); color:white; font-size:11px; font-weight:700; padding:3px 8px; border-radius:50px; backdrop-filter:blur(4px); }
 .hrc-disc { font-size:34px; font-weight:700; color:white; line-height:1; letter-spacing:-1px; margin-top:6px; }
 .hrc-brand { font-size:11px; font-weight:700; color:rgba(255,255,255,.7); margin-top:8px; }
@@ -4831,10 +4863,7 @@ function showAppPage(id, skipHistory) {
     _homeCh = 'all';
     _homeSvc = 'all';
     _homeBrand = 'all';
-    _recIdx = 0;
-    const recTrack = document.getElementById('homeRecTrack');
-    if (recTrack) recTrack.style.transform = 'translateX(0)';
-    startRecAuto();
+    initRecCarousel();
     document.querySelectorAll('.hct-btn').forEach(b => b.classList.toggle('on', b.dataset.cat === 'all'));
     document.querySelectorAll('#homeCatChips .home-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.svc === 'all'));
     renderHomeBrandRow('all');
@@ -5773,35 +5802,137 @@ function setHomeBrand(bid, el) {
   _applyHomeFilter();
 }
 
-/* ── 오늘의 추천 쿠폰 캐러셀 ── */
-let _recIdx = 0;
+/* ── 오늘의 추천 쿠폰 — Center Focus Carousel ── */
+let _recIdx   = 0;
 let _recTimer = null;
+let _recLocked = false;
+let _recInited = false;
+const _REC_CW   = 170;              // card width (px)
+const _REC_G    = 14;               // gap (px)
+const _REC_STEP = _REC_CW + _REC_G; // 184px per slot
 
-function scrollRecCar(dir) {
+function updateRecCarousel(newIdx, instant) {
+  if (_recLocked && !instant) return;
   const track = document.getElementById('homeRecTrack');
   if (!track) return;
-  const cards = track.querySelectorAll('.home-rec-card');
-  const max = Math.max(0, cards.length - 1);
-  _recIdx = dir === null
-    ? (_recIdx >= max ? 0 : _recIdx + 1)   // 자동: 끝에서 처음으로 순환
-    : Math.max(0, Math.min(max, _recIdx + dir));
-  const cardW = (cards[0]?.offsetWidth || 190) + 14;
-  track.style.transform = `translateX(-${_recIdx * cardW}px)`;
+  const cards = [...track.querySelectorAll('.home-rec-card')];
+  const n = cards.length;
+  if (n < 2) return; // fallback: 카드 수 부족 시 일반 슬라이드 유지
+
+  _recIdx = ((newIdx % n) + n) % n;
+
+  // 각 카드에 상태 클래스 적용
+  cards.forEach((card, i) => {
+    const dist = Math.min(Math.abs(i - _recIdx), n - Math.abs(i - _recIdx));
+    card.classList.remove('rec-active', 'rec-adj', 'rec-far');
+    if      (dist === 0) card.classList.add('rec-active');
+    else if (dist === 1) card.classList.add('rec-adj');
+    else                 card.classList.add('rec-far');
+  });
+
+  // 트랙 이동 (instant = 애니메이션 없이 즉시)
+  if (instant) track.style.transition = 'none';
+  track.style.transform = `translateX(${-_recIdx * _REC_STEP}px)`;
+  if (instant) requestAnimationFrame(() => { track.style.transition = ''; });
+
+  // 빠른 연속 조작 lock
+  if (!instant) {
+    _recLocked = true;
+    setTimeout(() => { _recLocked = false; }, 450);
+  }
+}
+
+function scrollRecCar(dir) {
+  const n = document.querySelectorAll('#homeRecTrack .home-rec-card').length;
+  if (dir === null) {
+    // 자동 슬라이드: 끝에서 첫 카드로 순간 이동 후 다음으로
+    if (_recIdx === n - 1) { updateRecCarousel(0, true); return; }
+    updateRecCarousel(_recIdx + 1);
+  } else {
+    const next = _recIdx + dir;
+    if (next < 0 || next >= n) return; // 끝 도달 시 클램프
+    updateRecCarousel(next);
+  }
 }
 
 function startRecAuto() {
   stopRecAuto();
-  _recTimer = setInterval(() => scrollRecCar(null), 3000);
+  _recTimer = setInterval(() => scrollRecCar(null), 3500);
 }
-
 function stopRecAuto() {
   if (_recTimer) { clearInterval(_recTimer); _recTimer = null; }
 }
-
-// 수동 버튼 클릭 시 타이머 리셋
 function scrollRecCarManual(dir) {
+  stopRecAuto();
   scrollRecCar(dir);
-  startRecAuto();   // 클릭 후 3초부터 다시 자동 전환
+  startRecAuto();
+}
+
+function initRecCarousel() {
+  const wrap  = document.querySelector('.home-rec-track-wrap');
+  const track = document.getElementById('homeRecTrack');
+  if (!wrap || !track) return;
+
+  updateRecCarousel(0, true); // 초기 상태 (애니메이션 없이)
+  startRecAuto();
+
+  if (_recInited) return; // 이벤트 리스너는 최초 1회만
+  _recInited = true;
+
+  // ① Hover: 자동 슬라이드 일시정지
+  wrap.addEventListener('mouseenter', stopRecAuto);
+  wrap.addEventListener('mouseleave', () => { if (!_recTimer) startRecAuto(); });
+
+  // ② Drag / Swipe
+  let _dragX    = null;
+  let _wasDrag  = false;
+  let _justDrag = false; // click 시 drag 판별용
+
+  wrap.addEventListener('pointerdown', e => {
+    _dragX   = e.clientX;
+    _wasDrag = false;
+    track.style.transition = 'none';
+    try { wrap.setPointerCapture(e.pointerId); } catch(_) {}
+    stopRecAuto();
+  });
+
+  wrap.addEventListener('pointermove', e => {
+    if (_dragX === null) return;
+    const dx = e.clientX - _dragX;
+    if (Math.abs(dx) > 8) _wasDrag = true;
+    if (_wasDrag) {
+      track.style.transform = `translateX(${-_recIdx * _REC_STEP + dx}px)`;
+    }
+  });
+
+  const endDrag = e => {
+    if (_dragX === null) return;
+    const dx = e.clientX - _dragX;
+    _justDrag = _wasDrag;
+    _dragX = null; _wasDrag = false;
+    track.style.transition = '';
+    if (_justDrag && Math.abs(dx) > 50) {
+      updateRecCarousel(_recIdx + (dx < 0 ? 1 : -1));
+    } else {
+      updateRecCarousel(_recIdx, true); // 스냅백
+    }
+    startRecAuto();
+  };
+  wrap.addEventListener('pointerup',     endDrag);
+  wrap.addEventListener('pointercancel', endDrag);
+
+  // ③ 인접 카드 클릭 → 중앙 이동 (active 카드는 go-detail 그대로)
+  wrap.addEventListener('click', e => {
+    if (_justDrag) { _justDrag = false; e.stopPropagation(); return; }
+    const card = e.target.closest('.home-rec-card');
+    if (!card || card.classList.contains('rec-active')) return;
+    if (card.classList.contains('rec-adj')) {
+      e.stopPropagation(); // ACT go-detail 방지
+      const cards = [...track.querySelectorAll('.home-rec-card')];
+      const idx = cards.indexOf(card);
+      scrollRecCarManual(idx > _recIdx ? 1 : -1);
+    }
+  });
 }
 
 /* ============================================================ EVENT DELEGATION ============================================================ */
