@@ -1299,8 +1299,6 @@ input[type=range].disc-range::-moz-range-thumb {
 }
 .svc-sel-card:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(15,65,166,.12); transform:translateY(-2px); }
 .svc-sel-card.connected { border-color:var(--success); background:#F0FBF4; }
-.svc-sel-card.sel { border-color:var(--primary); background:var(--primary-lt); box-shadow:0 4px 16px rgba(15,65,166,.12); }
-.svc-sel-card.sel .svc-sel-card-name { color:var(--primary); }
 .svc-sel-card-icon {
   width:44px; height:44px; border-radius:12px;
   display:flex; align-items:center; justify-content:center;
@@ -1501,60 +1499,28 @@ input[type=range].disc-range::-moz-range-thumb {
 .home-hashtag-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
 .home-hashtag-chip { padding:8px 16px; border-radius:50px; background:var(--gray-100); font-size:14px; font-weight:700; color:var(--gray-700); cursor:pointer; transition:all .15s; }
 .home-hashtag-chip:hover,.home-hashtag-chip.sel { background:var(--primary-lt); color:var(--primary); }
-/* ── 홈 검색 섹션 (Rolling Title + Bar + Trending) ── */
-.hsb-wrap { margin-bottom:20px; }
-/* Rolling Title */
-.hsb-rolling-title {
-  font-size:15px; font-weight:700; color:var(--gray-700);
-  margin-bottom:12px; display:flex; align-items:center; flex-wrap:wrap; gap:4px; line-height:1.5;
-}
-.hsb-rolling-kw-wrap {
-  display:inline-flex; overflow:hidden;
-  height:1.45em; align-items:flex-start; vertical-align:bottom;
-}
-.hsb-rolling-kw { display:inline-block; color:var(--primary); font-weight:800; white-space:nowrap; }
-@keyframes hsbRollOut { from{transform:translateY(0);opacity:1} to{transform:translateY(-110%);opacity:0} }
-@keyframes hsbRollIn  { from{transform:translateY(110%);opacity:0} to{transform:translateY(0);opacity:1} }
-/* Search Bar */
-.hsb-bar {
-  display:flex; align-items:center;
+/* ── 홈 검색창 ── */
+.home-search-bar {
+  display:flex; align-items:center; gap:8px;
   background:white; border:2px solid var(--gray-200); border-radius:50px;
-  padding:6px 8px 6px 6px; margin-bottom:12px;
+  padding:8px 12px 8px 18px; margin-bottom:20px;
   box-shadow:0 2px 10px rgba(0,0,0,.06);
-  transition:border-color .2s, box-shadow .2s;
+  transition:border-color .2s;
 }
-.hsb-bar:focus-within { border-color:var(--primary); box-shadow:0 4px 20px rgba(15,65,166,.12); }
-.hsb-cat-sel {
-  border:none; outline:none; background:transparent;
-  font-family:var(--font); font-size:13px; font-weight:700;
-  color:var(--gray-700); cursor:pointer; padding:0 4px 0 10px; flex-shrink:0;
-}
-.hsb-bar-div { width:1px; height:20px; background:var(--gray-300); flex-shrink:0; margin:0 8px; }
+.home-search-bar:focus-within { border-color:var(--primary); }
+.hsb-icon-left { font-size:16px; flex-shrink:0; color:var(--gray-400); }
 .hsb-input {
-  flex:1; border:none; outline:none; min-width:0;
-  font-size:14px; font-weight:500; color:var(--gray-900); background:transparent; padding:6px 4px;
+  flex:1; border:none; outline:none;
+  font-size:14px; font-weight:500; color:var(--gray-900); background:transparent;
 }
 .hsb-input::placeholder { color:var(--gray-400); }
-.hsb-search-btn {
-  width:38px; height:38px; border-radius:50%; background:var(--primary);
-  color:white; border:none; cursor:pointer; font-size:16px;
-  display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  transition:transform .15s, background .15s;
+.hsb-icon-btn {
+  width:34px; height:34px; border-radius:50%; border:none;
+  background:var(--gray-100); cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:background .15s;
 }
-.hsb-search-btn:hover { transform:scale(1.08); background:var(--primary-dk); }
-/* Trending Tags */
-.hsb-trending-wrap { display:flex; align-items:center; gap:10px; opacity:.7; transition:opacity .2s; }
-.hsb-wrap:focus-within .hsb-trending-wrap { opacity:1; }
-.hsb-trending-lbl { font-size:12px; font-weight:700; color:var(--gray-500); white-space:nowrap; flex-shrink:0; }
-.hsb-trending-row { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; }
-.hsb-trending-row::-webkit-scrollbar { display:none; }
-.hsb-trend-tag {
-  padding:6px 13px; border-radius:50px; background:var(--gray-100);
-  font-size:12px; font-weight:700; color:var(--gray-700);
-  cursor:pointer; white-space:nowrap; flex-shrink:0;
-  transition:background .15s, color .15s;
-}
-.hsb-trend-tag:hover { background:var(--primary-lt); color:var(--primary); }
+.hsb-icon-btn:hover { background:var(--primary-lt); }
 
 /* ── 추천 쿠폰 캐러셀 ── */
 .home-rec-section { margin-bottom:28px; }
@@ -1753,142 +1719,6 @@ input[type=range].disc-range::-moz-range-thumb {
   border:2px solid white; cursor:pointer;
 }
 .map-user-pin { font-size:22px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.3)); }
-
-/* ============================================================
-   5단계 온보딩 플로우
-   ============================================================ */
-/* 전체 컨테이너 */
-.ob-flow { position:relative; width:100%; flex:1; overflow:hidden; display:flex; flex-direction:column; }
-.ob-step {
-  position:absolute; inset:0;
-  display:none; flex-direction:column;
-  padding:0 28px 24px; overflow-y:auto;
-  background:white;
-}
-.ob-step.ob-active { display:flex; }
-
-/* 상단 nav */
-.ob-flow-nav {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:22px 0 16px; flex-shrink:0;
-}
-.ob-flow-back {
-  width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center;
-  font-size:24px; color:var(--gray-600); cursor:pointer; transition:background .15s;
-}
-.ob-flow-back:hover { background:var(--gray-100); }
-.ob-flow-skip { font-size:14px; font-weight:600; color:var(--gray-400); cursor:pointer; padding:8px 12px; border-radius:8px; transition:background .15s; }
-.ob-flow-skip:hover { background:var(--gray-100); color:var(--gray-600); }
-
-/* 타이틀 / 서브 */
-.ob-flow-title { font-size:26px; font-weight:800; color:var(--gray-900); line-height:1.3; margin-bottom:8px; }
-.ob-flow-sub   { font-size:15px; color:var(--gray-500); font-weight:500; margin-bottom:32px; }
-
-/* 하단 5분할 인디케이터 */
-.ob-indicator { display:flex; gap:6px; padding:16px 28px 20px; flex-shrink:0; background:white; }
-.ob-ind-seg { flex:1; height:4px; border-radius:2px; background:var(--gray-200); transition:background .35s; }
-.ob-ind-seg.ob-ind-done   { background:var(--primary); }
-.ob-ind-seg.ob-ind-active { background:var(--primary); }
-
-/* ── Step1: 성별 ── */
-.ob-gender-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; flex:1; margin-bottom:24px; }
-.ob-gender-card {
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
-  border-radius:20px; border:2px solid var(--gray-200); background:white; cursor:pointer;
-  font-size:16px; font-weight:700; color:var(--gray-700); transition:all .2s; min-height:160px;
-}
-.ob-gender-card .ob-gicon { font-size:52px; }
-.ob-gender-card:hover { border-color:var(--primary); }
-.ob-gender-card.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
-
-/* ── Step2: 카테고리 ── */
-.ob-cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:auto; }
-.ob-cat-card {
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
-  padding:22px 8px; border-radius:16px; border:2px solid var(--gray-200);
-  background:white; cursor:pointer; font-size:14px; font-weight:700; color:var(--gray-700); transition:all .2s;
-}
-.ob-cat-card .ob-cicon { font-size:30px; }
-.ob-cat-card.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
-.ob-cat-card:hover:not(.sel) { border-color:var(--gray-300); transform:translateY(-2px); }
-
-/* ── Step3: 브랜드 ── */
-.ob-brand-search-wrap { position:relative; margin-bottom:16px; flex-shrink:0; }
-.ob-brand-search {
-  width:100%; height:46px; padding:0 44px 0 16px; border:2px solid var(--gray-200);
-  border-radius:12px; font-size:15px; outline:none; transition:border-color .2s;
-  background:var(--gray-50,#f8f9fb); color:var(--gray-900); box-sizing:border-box;
-}
-.ob-brand-search:focus { border-color:var(--primary); background:white; }
-.ob-brand-search-clear {
-  position:absolute; right:14px; top:50%; transform:translateY(-50%);
-  font-size:18px; color:var(--gray-400); cursor:pointer;
-  width:24px; height:24px; align-items:center; justify-content:center; display:none;
-}
-.ob-brand-grid {
-  display:grid; grid-template-columns:repeat(5,1fr); gap:18px 6px;
-  overflow-y:auto; flex:1;
-}
-.ob-brand-item {
-  display:flex; flex-direction:column; align-items:center; gap:7px;
-  cursor:pointer; position:relative;
-  opacity:0; animation:obFadeIn .2s ease both;
-}
-@keyframes obFadeIn { from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)} }
-.ob-brand-logo-wrap { position:relative; width:54px; height:54px; }
-.ob-brand-logo {
-  width:54px; height:54px; border-radius:15px;
-  display:flex; align-items:center; justify-content:center;
-  color:white; font-size:11px; font-weight:900; line-height:1.2; text-align:center;
-  border:2.5px solid transparent; transition:border-color .15s;
-}
-.ob-brand-item.sel .ob-brand-logo { border-color:var(--primary); }
-.ob-brand-check {
-  position:absolute; top:-5px; right:-5px; width:20px; height:20px; border-radius:50%;
-  background:var(--primary); color:white; font-size:11px; font-weight:800;
-  display:none; align-items:center; justify-content:center; border:2px solid white;
-}
-.ob-brand-item.sel .ob-brand-check { display:flex; }
-.ob-brand-name { font-size:11px; font-weight:700; color:var(--gray-700); text-align:center; white-space:nowrap; overflow:hidden; max-width:60px; text-overflow:ellipsis; }
-@keyframes obBounce { 0%{transform:scale(1)} 40%{transform:scale(.88)} 100%{transform:scale(1)} }
-.ob-brand-logo-wrap.ob-bounce { animation:obBounce .28s cubic-bezier(.34,1.56,.64,1); }
-
-/* ── Step4: 원형 슬라이더 ── */
-.ob-circ-wrap {
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  flex:1; padding:16px 0;
-}
-.ob-circ-svg { touch-action:none; cursor:pointer; user-select:none; -webkit-user-select:none; }
-.ob-circ-hint { font-size:14px; color:var(--gray-500); font-weight:500; margin-top:18px; text-align:center; }
-
-/* ── Step5: 알림 채널 ── */
-.ob-notif-grid { display:flex; flex-direction:column; gap:14px; flex:1; }
-.ob-notif-card {
-  display:flex; align-items:center; gap:18px;
-  padding:22px 22px; border-radius:16px; border:2px solid var(--gray-200);
-  background:white; cursor:pointer; transition:all .2s;
-}
-.ob-notif-card.sel { border-color:var(--primary); background:var(--primary-lt); }
-.ob-notif-icon {
-  width:48px; height:48px; border-radius:14px; background:var(--gray-100);
-  display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;
-}
-.ob-notif-card.sel .ob-notif-icon { background:rgba(15,65,166,.12); }
-.ob-notif-title { font-size:16px; font-weight:700; color:var(--gray-900); margin-bottom:3px; }
-.ob-notif-sub   { font-size:13px; color:var(--gray-500); font-weight:500; }
-
-/* ── Step6: 완료 로딩 ── */
-.ob-complete-wrap {
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  flex:1; gap:28px;
-}
-.ob-spinner {
-  width:60px; height:60px; border-radius:50%;
-  border:4px solid var(--gray-200); border-top-color:var(--primary);
-  animation:obSpin .8s linear infinite;
-}
-@keyframes obSpin { to{transform:rotate(360deg)} }
-.ob-complete-txt { font-size:18px; font-weight:700; color:var(--gray-700); text-align:center; line-height:1.6; }
 
 /* ============================================================
    BARCODE 전체화면
@@ -2202,21 +2032,10 @@ input[type=range].disc-range::-moz-range-thumb {
 .home-cpn-card {
   background:white; border-radius:12px; padding:12px 12px;
   border:1.5px solid var(--gray-200); cursor:pointer;
-  transition:transform .25s cubic-bezier(.4,0,.2,1),
-             box-shadow .25s cubic-bezier(.4,0,.2,1),
-             border-color .2s ease;
-  display:flex; flex-direction:column; gap:6px;
+  transition:all .15s; display:flex; flex-direction:column; gap:6px;
   min-height:unset; position:relative; box-sizing:border-box;
-  box-shadow:0 1px 3px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
 }
-.home-cpn-card:hover {
-  border-color:var(--primary);
-  transform:translateY(-5px);
-  box-shadow:
-    0 4px 8px rgba(15,65,166,.08),
-    0 12px 24px rgba(15,65,166,.12),
-    0 24px 40px rgba(15,65,166,.07);
-}
+.home-cpn-card:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(15,65,166,.1); transform:translateY(-2px); }
 .home-cpn-card[style*="display:none"] { display:none !important; }
 .hcc-brand { font-size:11px; font-weight:700; color:var(--gray-500); }
 .hcc-disc  { font-size:22px; font-weight:700; color:var(--primary); line-height:1.1; }
@@ -2570,151 +2389,6 @@ input[type=range].disc-range::-moz-range-thumb {
 </div>
 
 <!-- ==================== CATEGORY ==================== -->
-<!-- ==================== 5단계 온보딩 플로우 ==================== -->
-<div class="screen" id="s-onboarding" style="padding:0">
-  <div style="display:flex;flex-direction:column;height:100%;background:white">
-
-    <!-- ─ 플로우 영역 ─ -->
-    <div class="ob-flow" id="obFlow">
-
-      <!-- Step 1: 성별 -->
-      <div class="ob-step ob-active" id="ob-step-1">
-        <div class="ob-flow-nav">
-          <div class="ob-flow-back" onclick="obBack()">‹</div>
-          <div class="ob-flow-skip" onclick="obSkip()">건너뛰기</div>
-        </div>
-        <div class="ob-flow-title">어떤 성별이신가요?</div>
-        <div class="ob-flow-sub">맞춤 쿠폰 추천을 위해 알려주세요</div>
-        <div class="ob-gender-grid">
-          <div class="ob-gender-card" onclick="obSelectGender(this)">
-            <span class="ob-gicon">👨</span><span>남성</span>
-          </div>
-          <div class="ob-gender-card" onclick="obSelectGender(this)">
-            <span class="ob-gicon">👩</span><span>여성</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 2: 카테고리 -->
-      <div class="ob-step" id="ob-step-2">
-        <div class="ob-flow-nav">
-          <div class="ob-flow-back" onclick="obBack()">‹</div>
-          <div class="ob-flow-skip" onclick="obSkip()">건너뛰기</div>
-        </div>
-        <div class="ob-flow-title">관심 카테고리를<br>선택해 주세요</div>
-        <div class="ob-flow-sub">여러 개 선택 가능해요</div>
-        <div class="ob-cat-grid">
-          <div class="ob-cat-card sel" onclick="obToggleCat(this)"><span class="ob-cicon">🏪</span>마트</div>
-          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">🛵</span>배달</div>
-          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">☕</span>카페</div>
-          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">🛒</span>쇼핑</div>
-          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">👗</span>패션</div>
-          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">✈️</span>여행</div>
-          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">🎬</span>영화</div>
-          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">💊</span>건강</div>
-          <div class="ob-cat-card" onclick="obToggleCat(this)"><span class="ob-cicon">📱</span>가전</div>
-        </div>
-        <button class="btn-primary" style="margin-top:20px;flex-shrink:0" onclick="obNext()">다음</button>
-      </div>
-
-      <!-- Step 3: 브랜드 -->
-      <div class="ob-step" id="ob-step-3">
-        <div class="ob-flow-nav">
-          <div class="ob-flow-back" onclick="obBack()">‹</div>
-          <div class="ob-flow-skip" onclick="obSkip()">건너뛰기</div>
-        </div>
-        <div class="ob-flow-title">좋아하는 브랜드를<br>3개 이상 선택해 주세요</div>
-        <div class="ob-brand-search-wrap">
-          <input class="ob-brand-search" id="obBrandSearch" type="text" placeholder="브랜드 검색..."
-            oninput="obFilterBrand(this.value)"
-            onblur="setTimeout(()=>obBrandFocused(false),150)"
-            onfocus="obBrandFocused(true)">
-          <span class="ob-brand-search-clear" id="obBrandClear" onclick="obClearBrandSearch()">✕</span>
-        </div>
-        <div class="ob-brand-grid" id="obBrandGrid"></div>
-        <div style="padding:14px 0 0;flex-shrink:0">
-          <button class="btn-primary" id="obBrandNextBtn"
-            style="background:var(--gray-300);border-color:var(--gray-300);cursor:not-allowed"
-            onclick="if(!this.disabled)obNext()">다음 (0개 선택)</button>
-        </div>
-      </div>
-
-      <!-- Step 4: 원형 할인율 슬라이더 -->
-      <div class="ob-step" id="ob-step-4">
-        <div class="ob-flow-nav">
-          <div class="ob-flow-back" onclick="obBack()">‹</div>
-          <div class="ob-flow-skip" onclick="obSkip()">건너뛰기</div>
-        </div>
-        <div class="ob-flow-title">어느 정도 할인이면<br>알림 받을까요?</div>
-        <div class="ob-circ-wrap">
-          <svg id="obCircSvg" class="ob-circ-svg" viewBox="0 0 260 260" width="230" height="230">
-            <path id="obCircTrack" fill="none" stroke="#E5E7EB" stroke-width="16" stroke-linecap="round"/>
-            <path id="obCircFill"  fill="none" stroke="#0F41A6" stroke-width="16" stroke-linecap="round"/>
-            <circle id="obCircHandle" r="14" fill="white" stroke="#0F41A6" stroke-width="3"
-              style="filter:drop-shadow(0 2px 6px rgba(15,65,166,.35))"/>
-            <text x="130" y="122" text-anchor="middle" font-size="56" font-weight="800"
-              fill="#0F41A6" font-family="inherit" id="obCircValText">30</text>
-            <text x="130" y="152" text-anchor="middle" font-size="22" font-weight="700"
-              fill="#0F41A6" font-family="inherit">%</text>
-          </svg>
-          <div class="ob-circ-hint">이 기준 이상의 쿠폰만 알려드려요</div>
-        </div>
-        <button class="btn-primary" style="flex-shrink:0" onclick="obNext()">다음</button>
-      </div>
-
-      <!-- Step 5: 알림 채널 -->
-      <div class="ob-step" id="ob-step-5">
-        <div class="ob-flow-nav">
-          <div class="ob-flow-back" onclick="obBack()">‹</div>
-          <span></span>
-        </div>
-        <div class="ob-flow-title">알림은 어디로<br>받으실 건가요?</div>
-        <div class="ob-flow-sub">알림 수신 방법을 선택해 주세요</div>
-        <div class="ob-notif-grid">
-          <div class="ob-notif-card" onclick="obSelectNotif(this)">
-            <div class="ob-notif-icon">🔔</div>
-            <div>
-              <div class="ob-notif-title">앱 알림</div>
-              <div class="ob-notif-sub">브라우저 푸시 알림으로 받기</div>
-            </div>
-          </div>
-          <div class="ob-notif-card" onclick="obSelectNotif(this)">
-            <div class="ob-notif-icon">💬</div>
-            <div>
-              <div class="ob-notif-title">문자 알림</div>
-              <div class="ob-notif-sub">SMS 문자로 받기</div>
-            </div>
-          </div>
-        </div>
-        <button class="btn-primary" id="obNotifNextBtn" disabled
-          style="margin-top:24px;flex-shrink:0;background:var(--gray-300);border-color:var(--gray-300);cursor:not-allowed"
-          onclick="if(!this.disabled)obComplete()">완료</button>
-      </div>
-
-      <!-- Step 6: 완료 로딩 (indicator 숨김) -->
-      <div class="ob-step" id="ob-step-6">
-        <div class="ob-complete-wrap">
-          <div class="ob-spinner"></div>
-          <div class="ob-complete-txt">
-            알림 설정을 완료하고 있어요<br>
-            <span style="color:var(--gray-400);font-size:14px;font-weight:500">잠시만 기다려 주세요</span>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /ob-flow -->
-
-    <!-- 하단 5분할 인디케이터 -->
-    <div class="ob-indicator" id="obIndicator">
-      <div class="ob-ind-seg ob-ind-active"></div>
-      <div class="ob-ind-seg"></div>
-      <div class="ob-ind-seg"></div>
-      <div class="ob-ind-seg"></div>
-      <div class="ob-ind-seg"></div>
-    </div>
-  </div>
-</div>
-
 <div class="screen" id="s-category">
   <div class="ob-page">
     <div class="ob-card xwide">
@@ -3101,7 +2775,7 @@ input[type=range].disc-range::-moz-range-thumb {
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto">
-        <button class="btn-primary" data-action="go-onboarding" style="font-size:18px">알림 설정하기</button>
+        <button class="btn-primary" data-action="go-category" style="font-size:18px">알림 설정하기</button>
         <button class="btn-ghost" data-action="go-signup-complete" style="font-size:16px">나중에 하기</button>
       </div>
     </div>
@@ -3115,7 +2789,6 @@ input[type=range].disc-range::-moz-range-thumb {
       <div class="ob-back" data-action="go-back">‹ 뒤로</div>
       <div id="social-login-logo" style="width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto 20px;color:white;background:#FEE500"></div>
       <h2 class="ob-h2" style="text-align:center" id="social-login-title">카카오 로그인</h2>
-      <div id="social-login-sub" style="text-align:center;font-size:14px;color:var(--gray-500);margin:-12px 0 20px;font-weight:500">카카오 계정으로 USE에 로그인하세요</div>
       <div style="background:var(--gray-100);border-radius:14px;padding:24px;margin-bottom:24px">
         <div style="display:flex;flex-direction:column;gap:14px">
           <div>
@@ -3132,7 +2805,7 @@ input[type=range].disc-range::-moz-range-thumb {
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <button id="social-login-btn" class="btn-accent" data-action="go-signup-complete" style="font-size:18px;font-weight:700;color:#3A1D00">카카오 계정으로 로그인</button>
+        <button id="social-login-btn" class="btn-accent" data-action="go-noti-consent" style="font-size:18px;font-weight:700;color:#3A1D00">카카오 계정으로 로그인</button>
         <div style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:4px">
           로그인 시 USE 서비스와 계정이 연동됩니다
         </div>
@@ -3418,42 +3091,16 @@ input[type=range].disc-range::-moz-range-thumb {
       <!-- ── HOME ── -->
       <div id="p-home" class="app-page active">
 
-        <!-- 검색 섹션 -->
-        <div class="hsb-wrap" id="hsbWrap">
-          <!-- ① Rolling Title -->
-          <div class="hsb-rolling-title">오늘 어떤&nbsp;<span class="hsb-rolling-kw-wrap"><span class="hsb-rolling-kw" id="hsbRollingKw">카페 쿠폰</span></span>을 찾으시나요?</div>
-          <!-- ② Search Bar -->
-          <div class="hsb-bar">
-            <select class="hsb-cat-sel" id="hsbCatSel" onchange="setHomeSvcCat(this.value,null)">
-              <option value="all">전체</option>
-              <option value="mart">마트</option>
-              <option value="convenience">편의점</option>
-              <option value="delivery">배달</option>
-              <option value="cafe">카페</option>
-              <option value="fashion">패션</option>
-              <option value="travel">여행</option>
-            </select>
-            <div class="hsb-bar-div"></div>
-            <input class="hsb-input" type="text" id="homeBigSearch"
-              placeholder="브랜드, 카테고리 검색..."
-              oninput="_applyHomeFilter()"
-              onkeydown="if(event.key==='Enter'&&this.value.trim())doSearch(this.value.trim())">
-            <button class="hsb-search-btn" onclick="const v=document.getElementById('homeBigSearch').value.trim();if(v)doSearch(v)">🔍</button>
-          </div>
-          <!-- ③ Trending Tags -->
-          <div class="hsb-trending-wrap" id="hsbTrendingWrap">
-            <span class="hsb-trending-lbl">인기 검색어</span>
-            <div class="hsb-trending-row">
-              <span class="hsb-trend-tag" onclick="doSearch('스타벅스')">스타벅스</span>
-              <span class="hsb-trend-tag" onclick="doSearch('치킨 20%')">치킨 20%</span>
-              <span class="hsb-trend-tag" onclick="doSearch('생활용품')">생활용품</span>
-              <span class="hsb-trend-tag" onclick="doSearch('마트 할인')">마트 할인</span>
-              <span class="hsb-trend-tag" onclick="doSearch('커피')">커피</span>
-              <span class="hsb-trend-tag" onclick="doSearch('배달비 무료')">배달비 무료</span>
-              <span class="hsb-trend-tag" onclick="doSearch('이마트')">이마트</span>
-              <span class="hsb-trend-tag" onclick="doSearch('GS25')">GS25</span>
-            </div>
-          </div>
+        <!-- 검색창 -->
+        <div class="home-search-bar">
+          <span class="hsb-icon-left">🔍</span>
+          <input class="hsb-input" type="text" id="homeBigSearch"
+            placeholder="브랜드, 카테고리 검색..."
+            oninput="_applyHomeFilter()"
+            onkeydown="if(event.key==='Enter'&&this.value.trim())doSearch(this.value.trim())">
+          <button class="hsb-icon-btn" title="검색" onclick="const v=document.getElementById('homeBigSearch').value.trim();if(v)doSearch(v)">🔍</button>
+          <button class="hsb-icon-btn" title="음성 검색" onclick="alert('음성 인식 기능')">🎙️</button>
+          <button class="hsb-icon-btn" title="카메라 검색" onclick="alert('카메라 인식 기능')">📷</button>
         </div>
 
         <!-- ③ 오늘의 추천 쿠폰 캐러셀 -->
@@ -3853,8 +3500,23 @@ input[type=range].disc-range::-moz-range-thumb {
           <span class="pnav-title">쿠폰 상세</span>
         </div>
 
-        <!-- ① 바코드 (최상단) -->
-        <div class="det-brc-section" id="detBrcSection" style="margin-bottom:20px">
+
+        <!-- 온라인 쿠폰 전용 링크 버튼 (온라인만 표시) -->
+        <div id="detOnlineLink" style="display:none;margin-bottom:16px">
+          <a id="detOnlineLinkBtn" href="#" target="_blank"
+            style="display:flex;align-items:center;justify-content:center;gap:10px;
+                   width:100%;min-height:58px;border-radius:14px;
+                   background:var(--primary);color:white;
+                   font-size:17px;font-weight:700;text-decoration:none;
+                   box-shadow:0 4px 16px rgba(15,65,166,.25);transition:background .15s">
+            <span>🌐</span>
+            <span id="detOnlineLinkText">사이트 바로 가기</span>
+            <span style="font-size:14px;opacity:.75;margin-left:4px">→</span>
+          </a>
+        </div>
+
+        <!-- ① 바코드 최상단 전체폭 노출 -->
+        <div class="det-brc-section" id="detBrcSection" style="margin-bottom:24px">
           <div class="det-brc-label">계산대에서 이 화면을 보여주세요</div>
           <div class="det-brc-sub">바코드 스캔 또는 숫자 번호 직원 입력 모두 가능합니다</div>
           <svg class="det-brc-svg" id="detBrcSvg" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg" onclick="openBrcZoom('detBrcSvg','1234 5678 9012 3456','쿠폰 바코드')" title="클릭하면 크게 볼 수 있어요"></svg>
@@ -3862,53 +3524,63 @@ input[type=range].disc-range::-moz-range-thumb {
           <div class="det-brc-manual">🖨 스캔 불가 시 위 16자리 번호를 알려주세요</div>
         </div>
 
-        <!-- ② 할인률 히어로 카드 -->
-        <div class="det-hero-card" style="margin-bottom:20px">
-          <div class="det-hero-brand">이마트</div>
-          <div class="det-hero-disc">30%</div>
-          <div class="det-hero-cond">3만원 이상 결제 시 자동 적용</div>
-          <div class="det-hero-badge">오늘 자정 만료</div>
-        </div>
+        <!-- ② 본문 레이아웃 (좌: 할인률+주변사용처 / 우: 액션+쿠폰정보) -->
+        <div class="det-layout">
 
-        <!-- ③ 쿠폰 다운로드 / 공유하기 -->
-        <div style="display:flex;gap:10px;margin-bottom:20px">
-          <button class="pill-dl-btn" style="flex:1;min-height:52px;font-size:15px;border-radius:50px" onclick="handleDownload(this)">
-            <span class="pdb-icon-wrap" style="width:38px;height:38px;font-size:18px">↓</span>
-            <span class="pdb-text">쿠폰 다운로드</span>
-          </button>
-          <button class="det-share-btn">공유하기</button>
-        </div>
+          <!-- 좌측 50% : 할인률 카드 + 주변 사용처 -->
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div class="det-hero-card">
+              <div class="det-hero-brand">이마트</div>
+              <div class="det-hero-disc">30%</div>
+              <div class="det-hero-cond">3만원 이상 결제 시 자동 적용</div>
+              <div class="det-hero-badge">오늘 자정 만료</div>
+            </div>
+            <div class="nearby-section" id="detNearbySection">
+              <div class="panel-title" style="font-size:18px;font-weight:700;margin-bottom:8px">주변 사용처</div>
+              <div style="font-size:13px;color:var(--gray-500);margin-bottom:14px">📍 GPS 기반 · 가까운 순 정렬</div>
+              <div style="display:flex;gap:8px;margin-bottom:16px">
+                <input type="text" placeholder="지점명 또는 주소 검색..." id="nearbySearch"
+                  style="flex:1;min-width:0;padding:10px 14px;border:2px solid var(--gray-200);border-radius:8px;font-size:15px;font-family:var(--font);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--gray-200)'">
+                <button onclick="filterNearby()" style="flex-shrink:0;height:44px;padding:0 18px;background:var(--primary);color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap">검색</button>
+              </div>
+              <div id="nearbyList">
+                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 영등포점</div><div style="font-size:13px;color:var(--gray-500)">서울 영등포구 영중로 15</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">0.3km</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 목동점</div><div style="font-size:13px;color:var(--gray-500)">서울 양천구 목동동로 257</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">1.1km</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 은평점</div><div style="font-size:13px;color:var(--gray-500)">서울 은평구 연서로 365</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">2.4km</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 마포점</div><div style="font-size:13px;color:var(--gray-500)">서울 마포구 월드컵북로 400</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">3.0km</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 상암점</div><div style="font-size:13px;color:var(--gray-500)">서울 마포구 성암로 301</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">3.8km</span></div>
+              </div>
+            </div>
+          </div>
 
-        <!-- ④ 쿠폰 정보 -->
-        <div class="det-info-card" style="margin-bottom:20px">
-          <div class="det-sec">
-            <h3>쿠폰 정보</h3>
-            <div class="det-row"><span class="det-lbl">할인 혜택</span><span class="det-val">30% 할인 (최대 15,000원)</span></div>
-            <div class="det-row"><span class="det-lbl">최소 구매</span><span class="det-val">30,000원 이상</span></div>
-            <div class="det-row"><span class="det-lbl">사용 가능 매장</span><span class="det-val">이마트 전국 매장</span></div>
-            <div class="det-row"><span class="det-lbl">유효기간</span><span class="det-val" style="color:var(--danger)">2026.04.12 (오늘 만료)</span></div>
-            <div class="det-row"><span class="det-lbl">중복 사용</span><span class="det-val">불가</span></div>
-            <div class="det-row"><span class="det-lbl">제공</span><span class="det-val">KT 멤버십 혜택</span></div>
+          <!-- 우측 50% : 액션 카드 + 쿠폰 정보 -->
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div class="det-action-card">
+              <div class="det-price-box">
+                <div class="det-price-lbl">예상 절감 금액</div>
+                <div class="det-price-val">최대 15,000원</div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <button class="pill-dl-btn" style="flex:1;min-height:52px;font-size:15px;border-radius:50px" onclick="handleDownload(this)"><span class="pdb-icon-wrap" style="width:38px;height:38px;font-size:18px">↓</span><span class="pdb-text">쿠폰 다운로드</span></button>
+                <button class="det-share-btn">공유하기</button>
+              </div>
+            </div>
+            <div class="det-info-card">
+              <div class="det-urgency">
+                <div class="det-urg-txt">오늘 자정 만료 — 지금 바로 사용하세요</div>
+              </div>
+              <div class="det-sec">
+                <h3>쿠폰 정보</h3>
+                <div class="det-row"><span class="det-lbl">할인 혜택</span><span class="det-val">30% 할인 (최대 15,000원)</span></div>
+                <div class="det-row"><span class="det-lbl">최소 구매</span><span class="det-val">30,000원 이상</span></div>
+                <div class="det-row"><span class="det-lbl">사용 가능 매장</span><span class="det-val">이마트 전국 매장</span></div>
+                <div class="det-row"><span class="det-lbl">유효기간</span><span class="det-val" style="color:var(--danger)">2026.04.12 (오늘 만료)</span></div>
+                <div class="det-row"><span class="det-lbl">중복 사용</span><span class="det-val">불가</span></div>
+                <div class="det-row"><span class="det-lbl">제공</span><span class="det-val">KT 멤버십 혜택</span></div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- ⑥ 주변 사용처 -->
-        <div class="nearby-section" id="detNearbySection">
-          <div class="panel-title" style="font-size:18px;font-weight:700;margin-bottom:8px">주변 사용처</div>
-          <div style="font-size:13px;color:var(--gray-500);margin-bottom:14px">📍 GPS 기반 · 가까운 순 정렬</div>
-          <div style="display:flex;gap:8px;margin-bottom:16px">
-            <input type="text" placeholder="지점명 또는 주소 검색..." id="nearbySearch"
-              style="flex:1;min-width:0;padding:10px 14px;border:2px solid var(--gray-200);border-radius:8px;font-size:15px;font-family:var(--font);outline:none;transition:border-color .15s"
-              onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--gray-200)'">
-            <button onclick="filterNearby()" style="flex-shrink:0;height:44px;padding:0 18px;background:var(--primary);color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap">검색</button>
-          </div>
-          <div id="nearbyList">
-            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 영등포점</div><div style="font-size:13px;color:var(--gray-500)">서울 영등포구 영중로 15</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">0.3km</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 목동점</div><div style="font-size:13px;color:var(--gray-500)">서울 양천구 목동동로 257</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">1.1km</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 은평점</div><div style="font-size:13px;color:var(--gray-500)">서울 은평구 연서로 365</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">2.4km</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 마포점</div><div style="font-size:13px;color:var(--gray-500)">서울 마포구 월드컵북로 400</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">3.0km</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">이마트 상암점</div><div style="font-size:13px;color:var(--gray-500)">서울 마포구 성암로 301</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">3.8km</span></div>
-          </div>
         </div>
       </div>
 
@@ -4382,15 +4054,8 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="page-nav" style="margin-bottom:12px">
           <button class="pnav-back" data-action="go-back">‹ 뒤로</button>
           <span class="pnav-title">연동할 서비스 선택</span>
-          <button id="svcNextBtn" onclick="goSvcNext()" disabled
-            style="padding:8px 20px;border-radius:20px;border:none;font-size:14px;font-weight:700;font-family:var(--font);background:var(--gray-300);color:white;cursor:not-allowed;transition:all .2s">다음</button>
         </div>
-        <div class="page-sub" style="margin-bottom:16px">연동할 서비스를 선택하시면 쿠폰과 포인트를 자동으로 수집·관리하실 수 있어요</div>
-        <!-- 개인정보 안내 — 상단 배치 -->
-        <div style="display:flex;align-items:center;gap:10px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:12px 16px;margin-bottom:20px">
-          <span style="font-size:16px;flex-shrink:0">🔒</span>
-          <div style="font-size:12px;color:#166534;font-weight:600;line-height:1.5">수집하신 정보는 암호화로 안전하게 처리되며, 쿠폰 데이터 외에는 접근하지 않아요</div>
-        </div>
+        <div class="page-sub" style="margin-bottom:24px">연동할 서비스를 선택하면 쿠폰과 포인트를 자동으로 수집·관리해드려요</div>
 
           <!-- 통신사 -->
           <div class="svc-sel-section">
@@ -4612,25 +4277,25 @@ input[type=range].disc-range::-moz-range-thumb {
             <span class="pnav-title">연동 방식 선택</span>
           </div>
           <div class="page-title" id="connectPageTitle">서비스 연동</div>
-          <div class="page-sub">연동 방식을 선택하시면 쿠폰과 포인트를 자동으로 수집하실 수 있어요.</div>
-          <!-- 개인정보 안내 — 상단 배치 -->
-          <div style="display:flex;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#f0fdf4,#e8f5e9);border:1.5px solid #86efac;border-radius:14px;padding:18px 20px;margin-bottom:20px">
-            <span style="font-size:22px;flex-shrink:0">🔒</span>
-            <div>
-              <div style="font-size:14px;font-weight:700;color:#166534;margin-bottom:4px">개인정보를 안전하게 보호하실 수 있어요</div>
-              <div style="font-size:12px;color:#166534;line-height:1.6;font-weight:500">입력하신 정보는 AES-256 암호화로 전송되며 서버에 저장되지 않아요<br>쿠폰 데이터만 수집하며 결제·개인정보에는 접근하지 않아요</div>
-            </div>
-          </div>
+          <div class="page-sub">연동 방식을 선택하세요. 자동 연동을 추천드려요.</div>
           <div class="connect-type-grid">
             <div class="connect-type-card" data-action="nav-connect-easy">
               <div class="connect-type-badge badge-easy">추천</div>
               <div class="connect-type-label">간편 연동</div>
-              <div class="connect-type-desc">시스템이 자동으로 서비스에 연결해드려요.<br>빠르고 간단하게 이용하실 수 있어요.</div>
+              <div class="connect-type-desc">시스템이 자동으로 서비스에 연결해요.<br>빠르고 간단하게 연동됩니다.</div>
             </div>
             <div class="connect-type-card" data-action="nav-connect-manual">
               <div class="connect-type-badge badge-manual">직접</div>
               <div class="connect-type-label">직접 연동</div>
-              <div class="connect-type-desc">인증 방식을 직접 선택하시고<br>정보를 입력해 연동하실 수 있어요.</div>
+              <div class="connect-type-desc">인증 방식을 직접 선택하고<br>정보를 입력해 연동해요.</div>
+            </div>
+          </div>
+          <!-- 보안 배지 카드형 강조 -->
+          <div style="display:flex;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#f0fdf4,#e8f5e9);border:1.5px solid #86efac;border-radius:14px;padding:18px 20px;margin:16px 0">
+            <span style="font-size:24px;flex-shrink:0">🔒</span>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:#166534;margin-bottom:4px">은행 수준 보안으로 안전하게 연동해요</div>
+              <div style="font-size:13px;color:#166534;line-height:1.5;font-weight:500">입력 정보는 AES-256 암호화로 전송 · 서버 미저장<br>쿠폰 데이터만 수집 · 결제·개인정보 접근 없음</div>
             </div>
           </div>
           <div style="font-size:14px;color:var(--gray-400);text-align:center;padding:16px 0">
@@ -5104,8 +4769,7 @@ function showSocialLogin(provider) {
   document.getElementById('social-login-logo').style.color = c.color;
   document.getElementById('social-login-logo').textContent = c.logo;
   document.getElementById('social-login-title').textContent = c.label + ' 로그인';
-  const subEl = document.getElementById('social-login-sub');
-  if (subEl) subEl.textContent = c.label + ' 계정으로 USE에 로그인하세요';
+  document.getElementById('social-login-sub').textContent = c.label + ' 계정으로 USE에 로그인하세요';
   const btn = document.getElementById('social-login-btn');
   btn.textContent = c.btnText;
   btn.style.background = c.bg;
@@ -5148,11 +4812,8 @@ function showAppPage(id, skipHistory) {
     const recTrack = document.getElementById('homeRecTrack');
     if (recTrack) recTrack.style.transform = 'translateX(0)';
     startRecAuto();
-    startRollingTitle();
     document.querySelectorAll('.hct-btn').forEach(b => b.classList.toggle('on', b.dataset.cat === 'all'));
     document.querySelectorAll('#homeCatChips .home-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.svc === 'all'));
-    const hsbSel = document.getElementById('hsbCatSel');
-    if (hsbSel) hsbSel.value = 'all';
     renderHomeBrandRow('all');
     // pill 위치는 레이아웃 계산 후 이동
     requestAnimationFrame(() => {
@@ -5245,229 +4906,6 @@ function filterNearbyList(kw) {
   });
 }
 function sortNearbyList(val) { /* prototype — UI only */ }
-
-/* ================================================================
-   5단계 온보딩 플로우
-   ================================================================ */
-let _obCurStep = 1;
-const OB_BRANDS = [
-  { name:'이마트',     bg:'linear-gradient(135deg,#f5a623,#e8870a)' },
-  { name:'롯데마트',   bg:'linear-gradient(135deg,#cc0000,#990000)' },
-  { name:'홈플러스',   bg:'linear-gradient(135deg,#004ea2,#0077cc)' },
-  { name:'코스트코',   bg:'linear-gradient(135deg,#e8001d,#c20016)' },
-  { name:'GS더프레시', bg:'linear-gradient(135deg,#0066b3,#3399ff)' },
-  { name:'GS25',       bg:'linear-gradient(135deg,#0066b3,#1e90ff)' },
-  { name:'CU',         bg:'linear-gradient(135deg,#7c3aed,#5b21b6)' },
-  { name:'세븐일레븐', bg:'linear-gradient(135deg,#e8001d,#ff4400)' },
-  { name:'이마트24',   bg:'linear-gradient(135deg,#f5a623,#f0820a)' },
-  { name:'배달의민족', bg:'linear-gradient(135deg,#00c3e3,#0077cc)' },
-  { name:'요기요',     bg:'linear-gradient(135deg,#ff3250,#cc0022)' },
-  { name:'쿠팡이츠',  bg:'linear-gradient(135deg,#ef4444,#dc2626)' },
-  { name:'스타벅스',  bg:'linear-gradient(135deg,#00704a,#1e8449)' },
-  { name:'투썸플레이스', bg:'linear-gradient(135deg,#8b5e3c,#c49a6c)' },
-  { name:'메가커피',  bg:'linear-gradient(135deg,#fbbf24,#f59e0b)' },
-  { name:'빽다방',    bg:'linear-gradient(135deg,#4ade80,#16a34a)' },
-  { name:'이디야',    bg:'linear-gradient(135deg,#1d4ed8,#2563eb)' },
-  { name:'올리브영',  bg:'linear-gradient(135deg,#e91e8c,#c2185b)' },
-  { name:'무신사',    bg:'linear-gradient(135deg,#1a1a1a,#555)' },
-  { name:'지그재그',  bg:'linear-gradient(135deg,#ff4785,#e91e8c)' },
-  { name:'쿠팡',      bg:'linear-gradient(135deg,#ef4444,#fca5a5)' },
-  { name:'11번가',    bg:'linear-gradient(135deg,#ff6600,#e85c00)' },
-  { name:'G마켓',     bg:'linear-gradient(135deg,#ff0000,#cc0000)' },
-  { name:'SSG',       bg:'linear-gradient(135deg,#cc0000,#990000)' },
-  { name:'CGV',       bg:'linear-gradient(135deg,#e8001d,#ff4400)' },
-  { name:'롯데시네마', bg:'linear-gradient(135deg,#cc0000,#990000)' },
-  { name:'메가박스',  bg:'linear-gradient(135deg,#111,#444)' },
-  { name:'야놀자',    bg:'linear-gradient(135deg,#ff5a5f,#e8001d)' },
-  { name:'여기어때',  bg:'linear-gradient(135deg,#00c73c,#009e2e)' },
-  { name:'KT멤버십',  bg:'linear-gradient(135deg,#e8001d,#ff4d6d)' },
-];
-let _obSelBrands = new Set();
-
-/* ─ 브랜드 그리드 렌더링 ─ */
-function obRenderBrands(filter) {
-  const grid = document.getElementById('obBrandGrid');
-  if (!grid) return;
-  const list = filter
-    ? OB_BRANDS.filter(b => b.name.includes(filter))
-    : OB_BRANDS;
-  grid.innerHTML = list.map((b, i) => `
-    <div class="ob-brand-item${_obSelBrands.has(b.name) ? ' sel' : ''}"
-      onclick="obToggleBrand(this,'${b.name}')"
-      style="animation-delay:${i * 0.025}s">
-      <div class="ob-brand-logo-wrap">
-        <div class="ob-brand-logo" style="background:${b.bg}">${b.name.slice(0,3)}</div>
-        <div class="ob-brand-check">✓</div>
-      </div>
-      <div class="ob-brand-name">${b.name}</div>
-    </div>`).join('');
-}
-function obToggleBrand(el, name) {
-  if (_obSelBrands.has(name)) _obSelBrands.delete(name);
-  else _obSelBrands.add(name);
-  el.classList.toggle('sel', _obSelBrands.has(name));
-  const wrap = el.querySelector('.ob-brand-logo-wrap');
-  wrap.classList.remove('ob-bounce');
-  void wrap.offsetWidth;
-  wrap.classList.add('ob-bounce');
-  obUpdateBrandBtn();
-}
-function obUpdateBrandBtn() {
-  const btn = document.getElementById('obBrandNextBtn');
-  if (!btn) return;
-  const n = _obSelBrands.size;
-  const ok = n >= 3;
-  btn.disabled = !ok;
-  btn.style.background   = ok ? '' : 'var(--gray-300)';
-  btn.style.borderColor  = ok ? '' : 'var(--gray-300)';
-  btn.style.cursor       = ok ? 'pointer' : 'not-allowed';
-  btn.textContent = ok ? `다음 (${n}개 선택)` : `다음 (${n}개 선택 · 3개 이상 필요)`;
-}
-function obFilterBrand(v) {
-  const clr = document.getElementById('obBrandClear');
-  if (clr) clr.style.display = v ? 'flex' : 'none';
-  obRenderBrands(v);
-}
-function obClearBrandSearch() {
-  const inp = document.getElementById('obBrandSearch');
-  const clr = document.getElementById('obBrandClear');
-  if (inp) inp.value = '';
-  if (clr) clr.style.display = 'none';
-  obRenderBrands('');
-}
-function obBrandFocused(on) {
-  const grid = document.getElementById('obBrandGrid');
-  if (grid) grid.style.opacity = on ? '0.55' : '1';
-}
-
-/* ─ 성별 선택 (자동 다음) ─ */
-function obSelectGender(el) {
-  document.querySelectorAll('.ob-gender-card').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-  setTimeout(() => obGoStep(2), 300);
-}
-/* ─ 카테고리 토글 ─ */
-function obToggleCat(el) { el.classList.toggle('sel'); }
-/* ─ 알림 채널 선택 ─ */
-function obSelectNotif(el) {
-  document.querySelectorAll('.ob-notif-card').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-  const btn = document.getElementById('obNotifNextBtn');
-  if (btn) { btn.disabled = false; btn.style.background = ''; btn.style.borderColor = ''; btn.style.cursor = 'pointer'; }
-}
-
-/* ─ 단계 이동 (슬라이드 전환) ─ */
-function obGoStep(n, back) {
-  if (n > 5) { obComplete(); return; }
-  if (n < 1) return;
-  const cur = document.getElementById('ob-step-' + _obCurStep);
-  const nxt = document.getElementById('ob-step-' + n);
-  if (!cur || !nxt) return;
-  /* 진입 위치 세팅 (transition 없이) */
-  nxt.style.transition = 'none';
-  nxt.style.transform  = back ? 'translateX(-100%)' : 'translateX(100%)';
-  nxt.style.display    = 'flex';
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    const ease = 'transform .38s cubic-bezier(0,.0,.2,1)';
-    cur.style.transition = ease;
-    nxt.style.transition = ease;
-    cur.style.transform  = back ? 'translateX(100%)' : 'translateX(-100%)';
-    nxt.style.transform  = 'translateX(0)';
-  }));
-  setTimeout(() => {
-    cur.style.display    = 'none';
-    cur.style.transform  = '';
-    cur.style.transition = '';
-    _obCurStep = n;
-    if (n === 3) { obRenderBrands(''); obUpdateBrandBtn(); }
-    if (n === 4) initObCircSlider();
-  }, 400);
-  /* 인디케이터 업데이트 */
-  document.querySelectorAll('#obIndicator .ob-ind-seg').forEach((s, i) => {
-    s.classList.remove('ob-ind-done', 'ob-ind-active');
-    if (i < n - 1) s.classList.add('ob-ind-done');
-    else if (i === n - 1) s.classList.add('ob-ind-active');
-  });
-}
-function obNext() { obGoStep(_obCurStep + 1); }
-function obBack() {
-  if (_obCurStep <= 1) { go('home'); setTimeout(showNotiPopup, 400); return; }
-  obGoStep(_obCurStep - 1, true);
-}
-function obSkip() { obGoStep(_obCurStep + 1); }
-
-/* ─ 완료 로딩 ─ */
-function obComplete() {
-  const cur = document.getElementById('ob-step-' + _obCurStep);
-  const nxt = document.getElementById('ob-step-6');
-  if (cur && nxt) {
-    nxt.style.transition = 'none'; nxt.style.transform = 'translateX(100%)'; nxt.style.display = 'flex';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const ease = 'transform .38s cubic-bezier(0,.0,.2,1)';
-      cur.style.transition = ease; nxt.style.transition = ease;
-      cur.style.transform = 'translateX(-100%)'; nxt.style.transform = 'translateX(0)';
-    }));
-  }
-  document.getElementById('obIndicator').style.display = 'none';
-  document.querySelectorAll('#obIndicator .ob-ind-seg').forEach(s => {
-    s.classList.add('ob-ind-done'); s.classList.remove('ob-ind-active');
-  });
-  setTimeout(() => go('home'), 2200);
-}
-
-/* ─ 원형 슬라이더 ─ */
-let _obCircVal = 30;
-let _obCircDrag = false;
-function initObCircSlider() {
-  const svg = document.getElementById('obCircSvg');
-  if (!svg || svg.dataset.obInit) return;
-  svg.dataset.obInit = '1';
-  const cx = 130, cy = 130, r = 100;
-  const S_DEG = 135, RANGE = 270;
-  const toRad = d => d * Math.PI / 180;
-  const pt = deg => ({ x: cx + r * Math.cos(toRad(deg)), y: cy + r * Math.sin(toRad(deg)) });
-  const arcD = (f, t, big) => {
-    const s = pt(f), e = pt(t);
-    return `M ${s.x.toFixed(1)} ${s.y.toFixed(1)} A ${r} ${r} 0 ${big} 1 ${e.x.toFixed(1)} ${e.y.toFixed(1)}`;
-  };
-  document.getElementById('obCircTrack').setAttribute('d', arcD(135, 45, 1));
-  function render(v) {
-    _obCircVal = v;
-    const delta = RANGE * v / 100;
-    const endDeg = (S_DEG + delta) % 360;
-    const big = delta > 180 ? 1 : 0;
-    const fill = document.getElementById('obCircFill');
-    if (v === 0) fill.setAttribute('d', '');
-    else if (v >= 100) fill.setAttribute('d', arcD(135, 134.5, 1));
-    else fill.setAttribute('d', arcD(135, endDeg, big));
-    const hp = pt(S_DEG + delta);
-    document.getElementById('obCircHandle').setAttribute('cx', hp.x.toFixed(1));
-    document.getElementById('obCircHandle').setAttribute('cy', hp.y.toFixed(1));
-    document.getElementById('obCircValText').textContent = v;
-  }
-  render(_obCircVal);
-  function angleFrom(e) {
-    const rect = svg.getBoundingClientRect();
-    const sc = rect.width / 260;
-    const cx2 = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    const cy2 = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-    let deg = Math.atan2(cy2 / sc - cy, cx2 / sc - cx) * 180 / Math.PI;
-    if (deg < 0) deg += 360;
-    return deg;
-  }
-  function valFrom(deg) {
-    let delta = deg - S_DEG;
-    if (delta < 0) delta += 360;
-    if (delta > RANGE) delta = delta > RANGE + (360 - RANGE) / 2 ? 0 : RANGE;
-    return Math.round(delta / RANGE * 100 / 5) * 5;
-  }
-  svg.addEventListener('mousedown',  e => { _obCircDrag = true; render(valFrom(angleFrom(e))); });
-  svg.addEventListener('touchstart', e => { _obCircDrag = true; render(valFrom(angleFrom(e))); }, { passive:true });
-  document.addEventListener('mousemove',  e => { if (_obCircDrag) render(valFrom(angleFrom(e))); });
-  document.addEventListener('touchmove',  e => { if (_obCircDrag) render(valFrom(angleFrom(e))); }, { passive:true });
-  document.addEventListener('mouseup',    () => { _obCircDrag = false; });
-  document.addEventListener('touchend',   () => { _obCircDrag = false; });
-}
 
 /* ── 대한민국 행정구역 데이터 ── */
 const KOREA_DISTRICTS = {
@@ -6110,7 +5548,8 @@ function closeNotiPopup(choice) {
   const el = document.getElementById('notiPopup');
   if (el) el.style.display = 'none';
   if (choice === 'on') {
-    ACT['go-onboarding']();
+    showAppPage('mypage'); updateSidebar('mypage');
+    setTimeout(()=>showMypageSub('noti'), 80);
   }
 }
 
@@ -6268,9 +5707,6 @@ function setHomeSvcCat(svc, el) {
   _homeSvc = svc;
   _homeBrand = 'all';
   document.querySelectorAll('#homeCatChips .home-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.svc === svc));
-  // 드롭다운 동기화
-  const sel = document.getElementById('hsbCatSel');
-  if (sel) sel.value = svc;
   renderHomeBrandRow(svc);
   _applyHomeFilter();
 }
@@ -6279,43 +5715,6 @@ function setHomeBrand(bid, el) {
   _homeBrand = bid;
   document.querySelectorAll('#homeBrandRow .home-brand-chip').forEach(c => c.classList.toggle('sel', c.dataset.bid === bid));
   _applyHomeFilter();
-}
-
-/* ── 홈 Rolling Title ── */
-const _ROLLING_KWS = ['카페 쿠폰', '베이커리', '마트 할인', '외식 카테고리', '편의점 혜택', '스타벅스 쿠폰'];
-let _rollingIdx = 0;
-let _rollingTimer = null;
-
-function goSvcNext() {
-  const selected = [...document.querySelectorAll('#p-connect-svc-select .svc-sel-card.sel')];
-  if (selected.length === 0) return;
-  const count = selected.length;
-  const titleEl = document.getElementById('connectPageTitle');
-  if (titleEl) titleEl.textContent = count === 1
-    ? (selected[0].dataset.svcName || selected[0].dataset.svc) + ' 연동'
-    : count + '개 서비스 연동';
-  const subEl = document.querySelector('#p-connect .page-sub');
-  if (subEl) subEl.textContent = '연동 방식을 선택하세요. 자동 연동을 추천드려요.';
-  showAppPage('connect');
-}
-
-function startRollingTitle() {
-  const el = document.getElementById('hsbRollingKw');
-  if (!el) return;
-  if (_rollingTimer) clearInterval(_rollingTimer);
-  _rollingIdx = 0;
-  el.textContent = _ROLLING_KWS[0];
-  el.style.animation = 'none';
-  _rollingTimer = setInterval(() => {
-    const kw = document.getElementById('hsbRollingKw');
-    if (!kw) { clearInterval(_rollingTimer); return; }
-    kw.style.animation = 'hsbRollOut .28s cubic-bezier(.4,0,.2,1) forwards';
-    setTimeout(() => {
-      _rollingIdx = (_rollingIdx + 1) % _ROLLING_KWS.length;
-      kw.textContent = _ROLLING_KWS[_rollingIdx];
-      kw.style.animation = 'hsbRollIn .28s cubic-bezier(0,0,.2,1) forwards';
-    }, 280);
-  }, 3000);
 }
 
 /* ── 오늘의 추천 쿠폰 캐러셀 ── */
@@ -6377,7 +5776,6 @@ const ACT = {
   'go-loading':      ()=>go('loading'),
   'go-integration':  ()=>go('integration'),
   'go-category':     ()=>go('category'),
-  'go-onboarding':   ()=>{ _obCurStep=1; _obSelBrands=new Set(); document.querySelectorAll('#obFlow .ob-step').forEach((s,i)=>{ s.style.display=i===0?'flex':'none'; s.style.transform=''; s.style.transition=''; }); document.getElementById('obIndicator').style.display=''; document.querySelectorAll('#obIndicator .ob-ind-seg').forEach((s,i)=>{ s.classList.remove('ob-ind-done','ob-ind-active'); if(i===0)s.classList.add('ob-ind-active'); }); go('onboarding'); },
   'go-brand':        ()=>go('brand'),
   'go-discount':     ()=>go('discount'),
   'go-notification': ()=>go('notification'),
@@ -6406,7 +5804,7 @@ const ACT = {
       setTimeout(showNotiPopup, 400);
     }, 2500);
   },
-  'go-noti-consent': ()=>{ go('home'); setTimeout(showNotiPopup, 400); },
+  'go-noti-consent': ()=>go('noti-consent'),
   'nav-noti-alert':  ()=>{ showAppPage('noti-alert'); updateSidebar('noti-alert'); setTimeout(initNearbyMap, 150); },
   'noti-download':   ()=>{ showToast('쿠폰함에 저장되었어요! 결제 시 자동으로 적용됩니다 ✓'); setTimeout(()=>{ showAppPage('wallet'); updateSidebar('wallet'); applyWalletFilter(wCat,wSort); },1200); },
   'go-home':         ()=>go('home'),
@@ -6513,14 +5911,13 @@ const ACT = {
   'select-svc':          (e)=>{
     const card = e.target.closest('[data-svc]');
     if (!card) return;
-    card.classList.toggle('sel');
-    const count = document.querySelectorAll('#p-connect-svc-select .svc-sel-card.sel').length;
-    const btn = document.getElementById('svcNextBtn');
-    if (btn) {
-      btn.disabled = count === 0;
-      btn.style.background = count > 0 ? 'var(--primary)' : 'var(--gray-300)';
-      btn.style.cursor = count > 0 ? 'pointer' : 'not-allowed';
-    }
+    S.connectSvc = card.dataset.svc;
+    S.connectSvcName = card.dataset.svcName || card.dataset.svc;
+    const titleEl = document.getElementById('connectPageTitle');
+    if (titleEl) titleEl.textContent = S.connectSvcName + ' 연동';
+    const subEl = document.querySelector('#p-connect .page-sub');
+    if (subEl) subEl.textContent = S.connectSvcName + ' 연동 방식을 선택하세요. 자동 연동을 추천드려요.';
+    showAppPage('connect');
   },
   'connect-method':      (e)=>{ const card=e.target.closest('[data-method]'); S.connectMethod=card.dataset.method; document.querySelectorAll('.auth-method-card').forEach(c=>c.classList.remove('sel')); card.classList.add('sel'); showAppPage('connect-manual-form'); updateConnectForm(); },
   'start-auth':          (e)=>{ const from=e.target.closest('[data-from]')?.dataset.from||'easy'; S.connectFrom=from; showAppPage('connect-auth'); runAuthAnimation(); },
