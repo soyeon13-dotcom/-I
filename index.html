@@ -3012,6 +3012,7 @@ input[type=range].disc-range::-moz-range-thumb {
     <nav class="hdr-nav">
       <div class="hdr-nav-item on" data-action="nav-home">홈</div>
       <div class="hdr-nav-item" data-action="nav-noti-alert">지도</div>
+      <div class="hdr-nav-item" data-action="nav-barcode">바코드</div>
     </nav>
     <div class="hdr-search">
       <span class="hdr-search-lbl">🔍</span>
@@ -4944,7 +4945,7 @@ function showAppPage(id, skipHistory) {
 function updateSidebar(id) {
   document.querySelectorAll('.hdr-nav-item').forEach(i=>i.classList.remove('on'));
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));
-  const hdrMap = {home:0,'noti-alert':1};
+  const hdrMap = {home:0,'noti-alert':1,barcode:2};
   const hdrItems = document.querySelectorAll('.hdr-nav-item');
   if (hdrMap[id]!==undefined && hdrItems[hdrMap[id]]) hdrItems[hdrMap[id]].classList.add('on');
   const sbMap = {home:0,'noti-alert':1,wallet:2};
@@ -6139,7 +6140,7 @@ const ACT = {
   },
   'go-barcode':      ()=>go('barcode'),
   'close-brc-popup': ()=>closeBrcPopup(),
-  'nav-barcode':     ()=>{ showAppPage('barcode'); updateSidebar(''); setTimeout(()=>{ const svg=document.getElementById('brcSvg'); if(svg){ svg.innerHTML=''; const pat=[1,0,1,1,0,1,0,0,1,1,1,0,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,0,1,1,0,1,0,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1]; const W=300, bw=W/pat.length; pat.forEach((on,i)=>{ if(!on)return; const r=document.createElementNS('http://www.w3.org/2000/svg','rect'); r.setAttribute('x',i*bw); r.setAttribute('y',0); r.setAttribute('width',bw*.72); r.setAttribute('height',100); r.setAttribute('fill','#111'); svg.appendChild(r); }); } },50); },
+  'nav-barcode':     ()=>{ showAppPage('barcode'); updateSidebar('barcode'); setTimeout(()=>{ const svg=document.getElementById('brcSvg'); if(svg){ svg.innerHTML=''; const pat=[1,0,1,1,0,1,0,0,1,1,1,0,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,0,1,1,0,1,0,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1]; const W=300, bw=W/pat.length; pat.forEach((on,i)=>{ if(!on)return; const r=document.createElementNS('http://www.w3.org/2000/svg','rect'); r.setAttribute('x',i*bw); r.setAttribute('y',0); r.setAttribute('width',bw*.72); r.setAttribute('height',100); r.setAttribute('fill','#111'); svg.appendChild(r); }); } },50); },
   'go-detail-back':  ()=>showAppPage('detail'),
   'go-back':         ()=>goBack(),
   'skip-to-login':   ()=>go('login'),
