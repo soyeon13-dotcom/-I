@@ -1569,22 +1569,22 @@ input[type=range].disc-range::-moz-range-thumb {
 /* 래퍼: 수직 여백으로 scale-up 클리핑 방지, overflow-x hidden */
 .home-rec-track-wrap {
   overflow:hidden;
-  padding:28px 0; margin:-28px 0;
+  padding:40px 0; margin:-40px 0;
   cursor:grab; user-select:none; touch-action:pan-y;
 }
 .home-rec-track-wrap:active { cursor:grabbing; }
 /* 트랙: padding으로 카드 0을 중앙 정렬 */
 .home-rec-track {
   display:flex; gap:14px; align-items:center;
-  padding:0 calc(50% - 85px);
+  padding:0 calc(50% - 127px);
   transition:transform .42s cubic-bezier(.4,0,.2,1);
   will-change:transform;
 }
-/* 카드 기본: inactive (far) 상태 */
+/* 카드 기본: inactive (far) 상태 — 1.5× 사이즈 */
 .home-rec-card {
-  flex-shrink:0; width:170px; border-radius:20px; padding:20px 16px 18px;
-  display:flex; flex-direction:column; gap:3px; cursor:pointer;
-  position:relative; overflow:hidden; min-height:152px;
+  flex-shrink:0; width:255px; border-radius:28px; padding:28px 22px 24px;
+  display:flex; flex-direction:column; gap:4px; cursor:pointer;
+  position:relative; overflow:hidden; min-height:228px;
   transform-origin:center center;
   transition:transform .42s cubic-bezier(.4,0,.2,1),
              opacity .42s ease, box-shadow .42s ease, filter .42s ease;
@@ -1610,11 +1610,11 @@ input[type=range].disc-range::-moz-range-thumb {
   transform:scale(0.7); opacity:0.22; filter:blur(1.5px);
   pointer-events:none; z-index:1;
 }
-.hrc-d-badge { position:absolute; top:12px; right:12px; background:rgba(255,255,255,.28); color:white; font-size:11px; font-weight:700; padding:3px 8px; border-radius:50px; backdrop-filter:blur(4px); }
-.hrc-disc { font-size:34px; font-weight:700; color:white; line-height:1; letter-spacing:-1px; margin-top:6px; }
-.hrc-brand { font-size:11px; font-weight:700; color:rgba(255,255,255,.7); margin-top:8px; }
-.hrc-title { font-size:13px; font-weight:700; color:white; line-height:1.3; }
-.hrc-cond { font-size:11px; color:rgba(255,255,255,.6); margin-top:2px; }
+.hrc-d-badge { position:absolute; top:16px; right:16px; background:rgba(255,255,255,.28); color:white; font-size:13px; font-weight:700; padding:4px 11px; border-radius:50px; backdrop-filter:blur(4px); }
+.hrc-disc { font-size:50px; font-weight:700; color:white; line-height:1; letter-spacing:-2px; margin-top:8px; }
+.hrc-brand { font-size:14px; font-weight:700; color:rgba(255,255,255,.7); margin-top:12px; }
+.hrc-title { font-size:17px; font-weight:700; color:white; line-height:1.3; }
+.hrc-cond { font-size:13px; color:rgba(255,255,255,.6); margin-top:3px; }
 /* 마감임박 카드 — 노란 배경에 어두운 텍스트 */
 .hrc-expire .hrc-d-badge { background:rgba(0,0,0,.14); color:#3d2700; }
 .hrc-expire .hrc-disc,
@@ -1622,9 +1622,9 @@ input[type=range].disc-range::-moz-range-thumb {
 .hrc-expire .hrc-brand  { color:rgba(61,39,0,.72); }
 .hrc-expire .hrc-cond   { color:rgba(61,39,0,.58); }
 .hrc-expire-label {
-  position:absolute; top:12px; left:12px;
+  position:absolute; top:16px; left:16px;
   background:rgba(0,0,0,.12); color:#3d2700;
-  font-size:10px; font-weight:800; padding:3px 8px;
+  font-size:12px; font-weight:800; padding:4px 10px;
   border-radius:50px; letter-spacing:.3px;
 }
 /* ── 카테고리 칩 ── */
@@ -5916,9 +5916,9 @@ let _recIdx   = 0;
 let _recTimer = null;
 let _recLocked = false;
 let _recInited = false;
-const _REC_CW   = 170;              // card width (px)
+const _REC_CW   = 255;              // card width (px) — 1.5× of original 170
 const _REC_G    = 14;               // gap (px)
-const _REC_STEP = _REC_CW + _REC_G; // 184px per slot
+const _REC_STEP = _REC_CW + _REC_G; // 269px per slot
 
 function updateRecCarousel(newIdx, instant) {
   if (_recLocked && !instant) return;
