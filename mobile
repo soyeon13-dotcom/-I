@@ -6,326 +6,10 @@
 <title>USE — 쿠폰 자동추천 서비스</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
-/* ============================
-   MOBILE OVERRIDE
-   (내용/구조/로직 유지)
-   ============================ */
-@media (max-width: 768px) {
-  :root {
-    --header-h: 56px;
-    --grid-gutter: 16px;
-  }
-
-  body {
-    overflow-x: hidden;
-  }
-
-  /* 공통 패딩 축소 */
-  .ob-page {
-    padding: 18px 16px;
-    min-height: 100dvh;
-  }
-
-  .ob-card,
-  .ob-card.wide,
-  .ob-card.xwide {
-    max-width: 100%;
-    padding: 20px 0 0;
-  }
-
-  .auth-bg .ob-card {
-    border-radius: 14px;
-    padding: 24px 18px;
-  }
-
-  .ob-h2 {
-    font-size: 24px;
-    line-height: 1.35;
-  }
-
-  .ob-sub {
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-
-  .btn-primary,
-  .btn-accent {
-    min-height: 50px;
-    font-size: 16px;
-  }
-
-  .field-wrap {
-    min-height: 52px;
-    padding: 0 14px;
-  }
-
-  .field-wrap input {
-    font-size: 16px;
-  }
-
-  /* 회원가입 스플릿 -> 단일 컬럼 */
-  .su-split {
-    grid-template-columns: 1fr;
-    min-height: auto;
-    border-radius: 12px;
-  }
-
-  .su-left {
-    display: none; /* 모바일에서는 오른쪽 폼 중심 */
-  }
-
-  .su-right {
-    padding: 24px 18px;
-  }
-
-  /* 앱 헤더 */
-  .app-header {
-    height: var(--header-h);
-    padding: 0 10px;
-    gap: 8px;
-  }
-
-  .hdr-logo {
-    font-size: 18px;
-  }
-
-  .hdr-nav {
-    gap: 4px;
-  }
-
-  .hdr-nav-item {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-
-  .hdr-right {
-    gap: 8px;
-  }
-
-  .hdr-bell-btn,
-  .hdr-mypage-btn {
-    height: 36px;
-    padding: 0 10px;
-    font-size: 12px;
-  }
-
-  .bell-badge {
-    width: 16px;
-    height: 16px;
-    font-size: 9px;
-  }
-
-  /* 메인 영역 */
-  .app-body {
-    padding-top: var(--header-h);
-    height: 100dvh;
-  }
-
-  .main-content {
-    padding: 14px 12px 20px;
-  }
-
-  .page-title {
-    font-size: 22px;
-  }
-
-  .page-sub {
-    font-size: 14px;
-    margin-bottom: 16px;
-  }
-
-  /* 홈 섹션 */
-  .home-rec-track {
-    padding: 0 calc(50% - 120px);
-  }
-
-  .home-rec-card {
-    width: 240px;
-    min-height: 200px;
-    border-radius: 20px;
-    padding: 20px 16px 16px;
-  }
-
-  .hrc-disc {
-    font-size: 40px;
-  }
-
-  .home-cpn-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .home-cpn-card {
-    padding: 10px;
-    border-radius: 10px;
-  }
-
-  .hcc-disc {
-    font-size: 18px;
-  }
-
-  .hcc-title {
-    font-size: 11px;
-  }
-
-  .home-cpn-card .pill-dl-btn {
-    height: 32px;
-    font-size: 10px;
-  }
-
-  /* 카드/그리드 공통 */
-  .cpn-grid,
-  .wallet-grid,
-  .dl-cpn-grid,
-  .pts-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .home-layout,
-  .det-layout,
-  .pts-layout,
-  .pts-det-layout,
-  .mypage-layout {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .right-panel {
-    order: 2;
-  }
-
-  /* 상세/바코드 */
-  .det-hero-card,
-  .det-info-card,
-  .det-action-card,
-  .brc-fullscreen-card {
-    padding: 18px 14px;
-    border-radius: 12px;
-  }
-
-  .det-hero-disc {
-    font-size: 42px;
-  }
-
-  .det-price-val {
-    font-size: 30px;
-  }
-
-  .det-brc-num,
-  .brc-num-large {
-    font-size: 20px;
-    letter-spacing: 3px;
-    word-break: break-all;
-  }
-
-  .det-brc-section {
-    padding: 16px 12px;
-  }
-
-  /* 지도 페이지 */
-  .nearby-split {
-    flex-direction: column;
-    height: auto;
-    min-height: 0;
-  }
-
-  .nearby-split-list {
-    max-width: 100%;
-    border-right: none;
-    border-bottom: 1.5px solid var(--gray-200);
-  }
-
-  .nearby-split-map {
-    min-height: 46dvh;
-  }
-
-  #nearbyMap {
-    min-height: 46dvh;
-  }
-
-  /* 팝업/드롭다운 */
-  .noti-dropdown {
-    width: calc(100vw - 16px);
-    right: -8px;
-    border-radius: 12px;
-  }
-
-  .brc-popup-sheet {
-    border-radius: 18px 18px 0 0;
-    max-height: 88dvh;
-  }
-
-  .brc-popup-body {
-    padding: 16px 14px 0;
-  }
-
-  /* 온보딩 선택형 그리드 */
-  .opt-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .cat-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .brand-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .svc-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* 연결 페이지 */
-  .connect-type-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .svc-sel-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* 타이포 조금 압축 */
-  .mps-title {
-    font-size: 20px;
-  }
-
-  .toggle-lbl {
-    font-size: 15px;
-  }
-
-  .toggle-sub {
-    font-size: 12px;
-  }
-
-  /* 입력행 세로 전환 */
-  .sms-row,
-  .email-row,
-  .nearby-search-row {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .sms-row .btn-sms-send,
-  .sms-row .btn-sms-resend,
-  .nearby-search-btn {
-    width: 100%;
-    min-height: 46px;
-  }
-}
 /* ============================================================
    SUIT FONT
    ============================================================ */
-@font-face { font-family:'SUIT'; src:url('../../../../炤娟/폰트/SUIT-otf/SUIT-Thin.otf') format('opentype'); font-weight:100; font-style:normal; }
-@font-face { font-family:'SUIT'; src:url('../../../../炤娟/폰트/SUIT-otf/SUIT-ExtraLight.otf') format('opentype'); font-weight:200; font-style:normal; }
-@font-face { font-family:'SUIT'; src:url('../../../../炤娟/폰트/SUIT-otf/SUIT-Light.otf') format('opentype'); font-weight:300; font-style:normal; }
-@font-face { font-family:'SUIT'; src:url('../../../../炤娟/폰트/SUIT-otf/SUIT-Regular.otf') format('opentype'); font-weight:400; font-style:normal; }
-@font-face { font-family:'SUIT'; src:url('../../../../炤娟/폰트/SUIT-otf/SUIT-Medium.otf') format('opentype'); font-weight:500; font-style:normal; }
-@font-face { font-family:'SUIT'; src:url('../../../../炤娟/폰트/SUIT-otf/SUIT-SemiBold.otf') format('opentype'); font-weight:600; font-style:normal; }
-@font-face { font-family:'SUIT'; src:url('../../../../炤娟/폰트/SUIT-otf/SUIT-Bold.otf') format('opentype'); font-weight:700; font-style:normal; }
+@import url('https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css');
 
 /* ============================================================
    DESIGN TOKENS
@@ -2574,6 +2258,367 @@ input[type=range].disc-range::-moz-range-thumb {
 .noti-popup-benefit-row + .noti-popup-benefit-row { border-top:1px solid var(--gray-200); }
 .noti-popup-check { color:var(--primary); font-size:17px; font-weight:900; flex-shrink:0; }
 .noti-popup-btns { display:flex; flex-direction:column; gap:10px; }
+
+/* ============================================================
+   MOBILE-FIRST OVERRIDE — 휴대폰 기준 (≤768px)
+   내용·구조 변경 없이 레이아웃만 최적화
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* --- 토큰 --- */
+  :root {
+    --grid-gutter: 18px;
+    --header-h: 60px;
+  }
+
+  /* --- 온보딩 --- */
+  .ob-page { padding: 28px var(--grid-gutter) 40px; }
+  .ob-card { max-width: 100%; padding: 24px 0 0; }
+  .auth-bg .ob-card { padding: 32px 24px 28px; border-radius: 16px; }
+  .ob-h2  { font-size: 24px; }
+  .ob-sub { font-size: 16px; margin-bottom: 20px; }
+  .ob-skip { top: 20px; right: 20px; font-size: 15px; }
+  .ob-back { font-size: 16px; margin-bottom: 20px; }
+
+  /* --- 버튼: Fat Finger (min 56px) --- */
+  .btn-primary, .btn-accent { min-height: 56px; font-size: 17px; }
+  .btn-secondary, .btn-outline { min-height: 56px; font-size: 16px; }
+  .btn-ghost { min-height: 52px; font-size: 16px; }
+  .det-dl-btn, .det-share-btn { min-height: 56px; font-size: 16px; }
+  .btn-save { height: 56px; font-size: 17px; }
+  .btn-app  { height: 56px; font-size: 16px; }
+  .btn-danger { height: 56px; }
+  .social-btn { min-height: 56px; font-size: 16px; }
+  .hero-use-btn    { height: 56px; font-size: 17px; }
+  .hero-detail-btn { height: 56px; font-size: 15px; }
+  .dl-btn { height: 52px; font-size: 15px; }
+  .pill-dl-btn { height: 52px; font-size: 15px; }
+  .primary-cta { height: 56px; font-size: 18px; }
+  .secondary-cta { height: 48px; font-size: 15px; }
+  .hcc-use { height: 44px; font-size: 13px; }
+
+  /* --- 입력 필드 --- */
+  .field-wrap { min-height: 56px; padding: 0 16px; margin-bottom: 12px; }
+  .field-wrap input { font-size: 17px; }
+  .field-prefix { font-size: 16px; }
+  .gender-btn { min-height: 56px; font-size: 16px; }
+  .btn-sms-send, .btn-sms-resend { min-height: 56px; font-size: 15px; }
+  .birth-input { min-height: 52px; font-size: 16px; }
+  .email-domain-wrap { min-height: 56px; }
+  .email-domain-wrap select { font-size: 16px; }
+
+  /* --- 쿠폰 소개 화면 인라인 스타일 오버라이드 --- */
+  .ob-h2 { white-space: normal !important; word-break: keep-all; }
+  #s-coupon-intro .ob-card > div[style] { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+  /* --- 온보딩 그리드 --- */
+  .opt-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+  .opt-card { padding: 22px 14px; min-height: 88px; }
+  .opt-card .opt-title { font-size: 16px; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .cat-chip { padding: 18px 8px; font-size: 14px; min-height: 64px; }
+  .brand-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .brand-chip { padding: 14px 6px; font-size: 13px; min-height: 56px; }
+  .svc-grid { grid-template-columns: 1fr; gap: 10px; }
+  .svc-card { padding: 14px 16px; }
+  .conn-btn { padding: 10px 16px; font-size: 14px; min-height: 44px; }
+  .quick-sel-chip { padding: 10px 18px; font-size: 14px; min-height: 44px; }
+
+  /* --- 회원가입 스플릿 레이아웃 → 단일 열 --- */
+  .su-split {
+    grid-template-columns: 1fr;
+    max-width: 100%; min-height: auto;
+    border-radius: 0; box-shadow: none;
+  }
+  .su-left { padding: 28px var(--grid-gutter) 20px; }
+  .su-left h1 { font-size: 26px; margin-bottom: 10px; }
+  .su-left p  { font-size: 15px; margin-bottom: 20px; }
+  .su-right { padding: 24px var(--grid-gutter) 32px; }
+  .su-right h2 { font-size: 22px; }
+
+  /* --- 앱 헤더 --- */
+  .app-header { padding: 0 var(--grid-gutter); gap: 10px; }
+  .hdr-logo { font-size: 20px; }
+  .hdr-nav { display: none; }           /* 상단 탭 숨김 */
+  .hdr-bell-btn, .hdr-mypage-btn { height: 40px; padding: 0 12px; font-size: 13px; }
+
+  /* --- 알림 드롭다운 → 바텀시트 --- */
+  .noti-dropdown {
+    position: fixed; top: auto; bottom: 0;
+    left: 0; right: 0; width: 100%;
+    border-radius: 20px 20px 0 0;
+    max-height: 80vh;
+    transform: translateY(8px);
+  }
+  .noti-dropdown.open { transform: translateY(0); }
+  .noti-drop-body { max-height: 60vh; }
+
+  /* --- 본문 레이아웃 --- */
+  .app-body { padding-top: var(--header-h); height: 100dvh; }
+  .main-content {
+    margin-left: 0;
+    padding: 20px var(--grid-gutter) 80px;
+  }
+  .page-title { font-size: 22px; }
+  .page-sub   { font-size: 15px; margin-bottom: 20px; }
+
+  /* --- 하단 탭바 (JS로 추가 시 즉시 적용) --- */
+  .bottom-tab-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 64px; background: white;
+    border-top: 2px solid var(--gray-200);
+    display: flex; align-items: stretch; z-index: 200;
+    box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+  }
+  .tab-bar-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px; font-size: 11px; font-weight: 700;
+    color: var(--gray-400); cursor: pointer; min-height: 64px;
+    transition: color .15s;
+  }
+  .tab-bar-item.on { color: var(--primary); }
+  .tab-bar-item-icon { font-size: 22px; }
+
+  /* --- 홈 레이아웃 (2열 → 단일) --- */
+  .home-layout { grid-template-columns: 1fr; gap: 16px; }
+  .right-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .panel-card { padding: 16px; }
+  .panel-title { font-size: 15px; margin-bottom: 12px; }
+  .stat-val { font-size: 20px; }
+
+  /* --- 홈 통계 바둑판 4→2열 --- */
+  .home-stat-row { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+  .home-stat-val { font-size: 18px; }
+
+  /* --- 홈 쿠폰 그리드 4→2열 --- */
+  .home-cpn-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+
+  /* --- 홈 액션 타일 --- */
+  .home-action-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .hat-title { font-size: 13px; }
+  .hat-sub   { font-size: 11px; }
+
+  /* --- 만료 임박 캐러셀 --- */
+  .carousel-slide { flex: 0 0 78vw; max-width: 320px; padding: 22px 20px; }
+  .carousel-slide .cs-title { font-size: 18px; }
+  .carousel-slide .cs-disc  { font-size: 30px; }
+  .carousel-track { gap: 14px; }
+  .c-btn { padding: 10px 18px; font-size: 14px; min-height: 44px; }
+
+  /* --- 추천 캐러셀 center-focus --- */
+  .home-rec-card { width: 72vw; max-width: 280px; min-height: 200px; padding: 22px 18px 20px; }
+  .home-rec-track { padding: 0 calc(50% - 36vw); gap: 12px; }
+  .hrc-disc  { font-size: 40px; }
+  .hrc-title { font-size: 15px; }
+  .hrn-btn   { width: 40px; height: 40px; font-size: 22px; }
+
+  /* --- 메인 추천 (Primary card) --- */
+  .primary-cpn-card { padding: 24px 20px 20px; border-radius: 18px; margin-bottom: 16px; min-height: auto; }
+  .primary-disc  { font-size: 56px; }
+  .primary-title { font-size: 17px; }
+  .primary-cond  { font-size: 13px; }
+
+  /* --- 서브 슬라이드 --- */
+  .secondary-slide { width: 160px; padding: 16px; }
+  .secondary-disc  { font-size: 26px; }
+
+  /* --- 쿠폰 그리드 (cpn-grid) 3→2열 --- */
+  .cpn-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .cpn-visual { height: 120px; }
+  .cpn-vis-disc  { font-size: 32px; }
+  .cpn-title     { font-size: 13px; }
+  .cpn-info      { padding: 12px 14px 14px; }
+
+  /* --- 지갑 그리드 3→2열 --- */
+  .wallet-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .wlt-cat-tabs { overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; padding-bottom: 4px; }
+  .wlt-cat-tabs::-webkit-scrollbar { display: none; }
+  .wlt-cat-btn { flex: 0 0 auto; padding: 10px 14px; min-height: 44px; font-size: 14px; }
+  .wlt-sort-select { height: 44px; font-size: 14px; }
+
+  /* --- 만료 스트립 카드 --- */
+  .expire-soon-card { width: 80vw; max-width: 280px; padding: 18px; }
+  .esc-title { font-size: 15px; }
+  .esc-disc  { font-size: 24px; }
+
+  /* --- 상세 페이지 2→1열 --- */
+  .det-layout { grid-template-columns: 1fr; gap: 16px; }
+  .det-hero-card { padding: 28px 24px; }
+  .det-hero-disc { font-size: 52px; }
+  .det-price-val { font-size: 32px; }
+
+  /* --- 바코드 팝업 --- */
+  .brc-zoom-box { width: 92vw; padding: 28px 20px; border-radius: 20px; }
+  .brc-zoom-num { font-size: 18px; letter-spacing: 3px; }
+
+  /* --- 바코드 페이지 --- */
+  .brc-center { gap: 16px; }
+  .brc-card   { padding: 28px 20px; }
+  .brc-card h3 { font-size: 20px; }
+  .brc-num    { font-size: 20px; letter-spacing: 3px; }
+  .brc-fullscreen-card { padding: 28px 20px; }
+  .brc-cpn-name  { font-size: 18px; }
+  .brc-num-large { font-size: 20px; letter-spacing: 4px; }
+  .brc-popup-body  { padding: 16px 20px 0; }
+  .brc-popup-title { font-size: 17px; }
+  .brc-popup-name  { font-size: 18px; }
+  .brc-popup-num   { font-size: 19px; letter-spacing: 4px; }
+
+  /* --- 포인트 허브 2→1열 --- */
+  .pts-layout { grid-template-columns: 1fr; gap: 16px; }
+  .pts-grid   { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .pts-svc-card { padding: 16px; }
+  .pts-brand  { font-size: 17px; }
+  .pts-bal    { font-size: 26px; }
+  .pts-hero   { padding: 22px 20px; }
+  .pts-total  { font-size: 32px; }
+  .pts-det-layout { grid-template-columns: 1fr; gap: 16px; }
+  .pts-det-bal    { font-size: 42px; }
+  .cat-tab { padding: 10px 16px; font-size: 14px; min-height: 44px; }
+
+  /* --- 마이페이지 2→1열 --- */
+  .mypage-layout { grid-template-columns: 1fr; gap: 16px; }
+  .user-card   { padding: 24px 20px; border-radius: 14px; }
+  .user-greeting { font-size: 18px; }
+  .user-avatar { width: 56px; height: 56px; font-size: 22px; }
+  .asset-item  { padding: 14px 10px; }
+  .asset-val   { font-size: 18px; }
+  .asset-lbl   { font-size: 12px; }
+  .mypage-menu-item { padding: 18px; font-size: 16px; min-height: 60px; }
+  .mps-tab  { padding: 12px 16px; font-size: 14px; min-height: 48px; }
+  .mps-card { padding: 20px 16px; }
+  .mps-title { font-size: 20px; margin-bottom: 18px; }
+  .toggle-lbl { font-size: 16px; }
+  .toggle-row { padding: 16px 0; }
+  .radio-opt  { padding: 16px; font-size: 16px; min-height: 56px; }
+  .check-opt  { padding: 12px 16px; font-size: 14px; min-height: 48px; }
+  .noti-master-card { padding: 18px 14px; }
+  .nm-title  { font-size: 16px; }
+  .settings-row { font-size: 15px; padding: 16px 0; }
+  .info-row     { font-size: 15px; padding: 16px 0; }
+
+  /* --- 알림 칩 --- */
+  .noti-cat-chip  { padding: 10px 16px; font-size: 14px; min-height: 44px; }
+  .noti-brand-chip { padding: 10px 12px; min-width: 56px; min-height: 72px; }
+  .noti-brand-method-header,
+  .noti-brand-method-row { grid-template-columns: 80px 1fr; font-size: 12px; }
+
+  /* --- 연동 화면 --- */
+  .connect-type-grid { grid-template-columns: 1fr; gap: 14px; margin-bottom: 20px; }
+  .connect-type-card { padding: 24px 20px; }
+  .connect-type-label { font-size: 18px; }
+  .connect-type-desc  { font-size: 14px; }
+  .svc-sel-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .svc-check-item { padding: 16px 18px; font-size: 16px; min-height: 60px; }
+  .auth-method-card { padding: 18px; font-size: 16px; min-height: 64px; }
+  .connect-success-banner { padding: 28px 20px; }
+  .success-count { font-size: 44px; }
+
+  /* --- 다운로드 페이지 --- */
+  .dl-hero { padding: 24px 20px; border-radius: 14px; }
+  .dl-hero h2 { font-size: 22px; }
+  .dl-hero-count { font-size: 36px; }
+  .dl-cpn-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* --- 지도(GPS) --- */
+  .nearby-split { flex-direction: column; height: auto; min-height: 0; }
+  .nearby-split-list { max-width: 100%; min-width: 0; border-right: none; border-bottom: 1.5px solid var(--gray-200); max-height: 40vh; overflow-y: auto; }
+  .nearby-split-map { min-height: 300px; height: 50vh; }
+  .nearby-search-input { height: 52px; font-size: 15px; }
+  .nearby-search-btn   { height: 52px; padding: 0 16px; font-size: 15px; }
+
+  /* --- 페이지 네비 버튼 --- */
+  .pnav-back, .pnav-home { height: 48px; padding: 0 16px; font-size: 15px; min-width: 64px; }
+  .pnav-title { font-size: 16px; }
+
+  /* --- 채널 탭 세그먼트 --- */
+  .home-channel-tabs { width: 100%; }
+  .hct-btn { flex: 1; min-width: 0; padding: 10px 8px; font-size: 13px; min-height: 44px; }
+
+  /* --- 카테고리 칩 --- */
+  .home-cat-chip  { padding: 10px 16px; font-size: 14px; min-height: 44px; }
+  .home-brand-chip { padding: 9px 14px; font-size: 14px; min-height: 44px; }
+  .home-filter-chip, .home-loc-chip { padding: 9px 14px; font-size: 14px; min-height: 44px; }
+  .home-hashtag-chip { padding: 9px 14px; font-size: 14px; min-height: 44px; }
+
+  /* --- GPS 배너 --- */
+  .gps-noti-bar { padding: 14px 16px; border-radius: 12px; }
+  .gps-noti-title { font-size: 14px; }
+  .gps-noti-sub   { font-size: 12px; }
+
+  /* --- 검색바 --- */
+  .hsb-input { font-size: 15px; }
+  .hsb-search-btn { width: 42px; height: 42px; }
+  .hbs-input { font-size: 15px; }
+  .hbs-btn   { width: 42px; height: 42px; }
+
+  /* --- 히어로 쿠폰 --- */
+  .hero-cpn-card { padding: 22px 20px 18px; border-radius: 16px; margin-bottom: 16px; }
+  .hero-disc  { font-size: 44px; }
+  .hero-title { font-size: 16px; }
+  .hero-btns  { gap: 8px; }
+
+  /* --- 토스트 위치 --- */
+  .toast { bottom: 80px; font-size: 15px; padding: 14px 24px; white-space: normal; text-align: center; max-width: calc(100vw - 40px); }
+
+  /* --- 스플래시 --- */
+  .sp-title   { font-size: 32px; }
+  .sp-sub     { font-size: 17px; }
+  .sp-logo    { width: 100px; height: 100px; border-radius: 20px; }
+  .sp-logo-txt { font-size: 30px; }
+
+  /* --- 로딩 스텝 --- */
+  .ld-steps { max-width: 100%; }
+  .ld-step  { padding: 14px 16px; gap: 12px; }
+  .step-txt { font-size: 16px; }
+
+  /* --- 할인율 슬라이더 --- */
+  .disc-slider-val { font-size: 60px; }
+  .disc-slider-val .disc-pct { font-size: 26px; }
+
+  /* --- 알림 팝업 --- */
+  .noti-popup-card { padding: 28px 20px; border-radius: 18px; }
+  .noti-popup-title { font-size: 18px; }
+  .noti-popup-icon { width: 64px; height: 64px; font-size: 30px; margin-bottom: 16px; }
+
+} /* end @media (max-width: 768px) */
+
+
+/* ============================================================
+   소형 폰 (≤480px) — 일부 그리드 추가 축소
+   ============================================================ */
+@media (max-width: 480px) {
+
+  .main-content { padding: 16px 14px 80px; }
+
+  /* 쿠폰 그리드 1열 */
+  .cpn-grid, .wallet-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* 홈 쿠폰 그리드 2→1열 */
+  .home-cpn-grid { grid-template-columns: 1fr; gap: 8px; }
+
+  /* 온보딩 카드 1열 */
+  .opt-grid   { grid-template-columns: 1fr; }
+  .cat-grid   { grid-template-columns: repeat(3, 1fr); }
+  .brand-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* 연동 서비스 선택 그리드 */
+  .svc-sel-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* 캐러셀 카드 폭 확대 */
+  .home-rec-card { width: 80vw; max-width: 300px; }
+  .home-rec-track { padding: 0 calc(50% - 40vw); }
+  .carousel-slide { flex: 0 0 86vw; max-width: 300px; }
+
+  /* 기타 폰트 */
+  .ob-h2 { font-size: 22px; }
+  .hero-disc { font-size: 38px; }
+  .det-hero-disc { font-size: 44px; }
+  .primary-disc { font-size: 48px; }
+
+} /* end @media (max-width: 480px) */
 </style>
 </head>
 <body>
