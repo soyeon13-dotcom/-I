@@ -1557,12 +1557,27 @@ input[type=range].disc-range::-moz-range-thumb {
 }
 .home-cat-chip:hover { border-color:var(--primary); }
 .home-cat-chip.sel { border-color:var(--primary); background:var(--primary); color:white; }
+/* ── 브랜드 칩 슬라이드 래퍼 ── */
+.home-brand-wrap {
+  display:grid; grid-template-rows:0fr;
+  transition:grid-template-rows .32s cubic-bezier(0,0,.2,1),
+             margin-bottom .32s cubic-bezier(0,0,.2,1);
+  margin-bottom:0;
+}
+.home-brand-wrap.open { grid-template-rows:1fr; margin-bottom:20px; }
+.home-brand-inner { overflow:hidden; padding-top:2px; }
 /* ── 브랜드 칩 행 ── */
-.home-brand-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; justify-content:center; }
+.home-brand-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; padding-bottom:4px; }
+@keyframes brandChipIn {
+  from { opacity:0; transform:translateX(-10px); }
+  to   { opacity:1; transform:translateX(0); }
+}
 .home-brand-chip {
   padding:7px 16px; border-radius:50px; border:1.5px solid var(--gray-200);
   background:white; font-size:13px; font-weight:700; color:var(--gray-600);
-  cursor:pointer; transition:all .15s; white-space:nowrap;
+  cursor:pointer; white-space:nowrap;
+  transition:background .15s, border-color .15s, color .15s;
+  animation:brandChipIn .22s ease both;
 }
 .home-brand-chip:hover { border-color:var(--primary); color:var(--primary); }
 .home-brand-chip.sel { background:var(--primary); color:white; border-color:var(--primary); }
@@ -3168,8 +3183,12 @@ input[type=range].disc-range::-moz-range-thumb {
           </div>
         </div>
 
-        <!-- ⑤ 브랜드 칩 행 (카테고리별 동적) -->
-        <div class="home-brand-row" id="homeBrandRow"></div>
+        <!-- ⑤ 브랜드 칩 행 (카테고리별 동적 — 슬라이드 래퍼) -->
+        <div class="home-brand-wrap" id="homeBrandWrap">
+          <div class="home-brand-inner">
+            <div class="home-brand-row" id="homeBrandRow"></div>
+          </div>
+        </div>
 
         <!-- ⑥ 채널 세그먼트 컨트롤 + 쿠폰 그리드 -->
         <!-- 채널 세그먼트 컨트롤 -->
@@ -5712,12 +5731,32 @@ let _homeSvc = 'all';
 let _homeBrand = 'all';
 
 function renderHomeBrandRow(svc) {
-  const row = document.getElementById('homeBrandRow');
+  const row  = document.getElementById('homeBrandRow');
+  const wrap = document.getElementById('homeBrandWrap');
   if (!row) return;
-  const brands = HOME_BRANDS[svc] || HOME_BRANDS.all;
-  row.innerHTML = `<div class="home-brand-chip sel" data-bid="all" onclick="setHomeBrand('all',this)">전체</div>` +
-    brands.map(b => `<div class="home-brand-chip" data-bid="${b.id}" onclick="setHomeBrand('${b.id}',this)">${b.label}</div>`).join('');
+
+  /* 전체 선택 시 → 브랜드 행 collapse */
+  if (svc === 'all') {
+    if (wrap) wrap.classList.remove('open');
+    row.innerHTML = '';
+    _homeBrand = 'all';
+    return;
+  }
+
+  /* 특정 카테고리 → 칩 렌더 + slide-down + stagger fade-in */
+  const brands = HOME_BRANDS[svc] || [];
+  const allChip = `<div class="home-brand-chip sel" data-bid="all" onclick="setHomeBrand('all',this)" style="animation-delay:0ms">전체</div>`;
+  const brandChips = brands.map((b, i) =>
+    `<div class="home-brand-chip" data-bid="${b.id}" onclick="setHomeBrand('${b.id}',this)" style="animation-delay:${(i + 1) * 45}ms">${b.label}</div>`
+  ).join('');
+  row.innerHTML = allChip + brandChips;
   _homeBrand = 'all';
+
+  /* 래퍼가 이미 open 상태면 닫았다 열어 애니메이션 재실행 */
+  if (wrap) {
+    wrap.classList.remove('open');
+    requestAnimationFrame(() => requestAnimationFrame(() => wrap.classList.add('open')));
+  }
 }
 
 function setHomeSvcCat(svc, el) {
