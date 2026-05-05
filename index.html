@@ -1501,28 +1501,63 @@ input[type=range].disc-range::-moz-range-thumb {
 .home-hashtag-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
 .home-hashtag-chip { padding:8px 16px; border-radius:50px; background:var(--gray-100); font-size:14px; font-weight:700; color:var(--gray-700); cursor:pointer; transition:all .15s; }
 .home-hashtag-chip:hover,.home-hashtag-chip.sel { background:var(--primary-lt); color:var(--primary); }
-/* ── 홈 검색창 ── */
-.home-search-bar {
-  display:flex; align-items:center; gap:8px;
-  background:white; border:2px solid var(--gray-200); border-radius:50px;
-  padding:8px 12px 8px 18px; margin-bottom:20px;
-  box-shadow:0 2px 10px rgba(0,0,0,.06);
-  transition:border-color .2s;
+/* ── 홈 검색 섹션 (Rolling Title + Bar + Trending) ── */
+.hsb-wrap { margin-bottom:20px; }
+
+/* Rolling Title */
+.hsb-rolling-title {
+  font-size:15px; font-weight:700; color:var(--gray-700);
+  margin-bottom:12px; display:flex; align-items:center; flex-wrap:wrap; gap:4px; line-height:1.5;
 }
-.home-search-bar:focus-within { border-color:var(--primary); }
-.hsb-icon-left { font-size:16px; flex-shrink:0; color:var(--gray-400); }
+.hsb-rolling-kw-wrap {
+  display:inline-flex; overflow:hidden;
+  height:1.45em; align-items:flex-start; vertical-align:bottom;
+}
+.hsb-rolling-kw { display:inline-block; color:var(--primary); font-weight:800; white-space:nowrap; }
+@keyframes hsbRollOut { from{transform:translateY(0);opacity:1} to{transform:translateY(-110%);opacity:0} }
+@keyframes hsbRollIn  { from{transform:translateY(110%);opacity:0} to{transform:translateY(0);opacity:1} }
+
+/* Search Bar */
+.hsb-bar {
+  display:flex; align-items:center;
+  background:white; border:2px solid var(--gray-200); border-radius:50px;
+  padding:6px 8px 6px 6px; margin-bottom:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+  transition:border-color .2s, box-shadow .2s;
+}
+.hsb-bar:focus-within { border-color:var(--primary); box-shadow:0 4px 20px rgba(15,65,166,.12); }
+.hsb-cat-sel {
+  border:none; outline:none; background:transparent;
+  font-family:var(--font); font-size:13px; font-weight:700;
+  color:var(--gray-700); cursor:pointer; padding:0 4px 0 10px; flex-shrink:0;
+}
+.hsb-bar-div { width:1px; height:20px; background:var(--gray-300); flex-shrink:0; margin:0 8px; }
 .hsb-input {
-  flex:1; border:none; outline:none;
-  font-size:14px; font-weight:500; color:var(--gray-900); background:transparent;
+  flex:1; border:none; outline:none; min-width:0;
+  font-size:14px; font-weight:500; color:var(--gray-900); background:transparent; padding:6px 4px;
 }
 .hsb-input::placeholder { color:var(--gray-400); }
-.hsb-icon-btn {
-  width:34px; height:34px; border-radius:50%; border:none;
-  background:var(--gray-100); cursor:pointer; font-size:16px;
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; transition:background .15s;
+.hsb-search-btn {
+  width:38px; height:38px; border-radius:50%; background:var(--primary);
+  color:white; border:none; cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:transform .15s, background .15s;
 }
-.hsb-icon-btn:hover { background:var(--primary-lt); }
+.hsb-search-btn:hover { transform:scale(1.08); background:var(--primary-dk); }
+
+/* Trending Tags */
+.hsb-trending-wrap { display:flex; align-items:center; gap:10px; opacity:.7; transition:opacity .2s; }
+.hsb-wrap:focus-within .hsb-trending-wrap { opacity:1; }
+.hsb-trending-lbl { font-size:12px; font-weight:700; color:var(--gray-500); white-space:nowrap; flex-shrink:0; }
+.hsb-trending-row { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; }
+.hsb-trending-row::-webkit-scrollbar { display:none; }
+.hsb-trend-tag {
+  padding:6px 13px; border-radius:50px; background:var(--gray-100);
+  font-size:12px; font-weight:700; color:var(--gray-700);
+  cursor:pointer; white-space:nowrap; flex-shrink:0;
+  transition:background .15s, color .15s;
+}
+.hsb-trend-tag:hover { background:var(--primary-lt); color:var(--primary); }
 
 /* ── 추천 쿠폰 캐러셀 (Center Focus) ── */
 .home-rec-section { margin-bottom:28px; }
@@ -3140,16 +3175,44 @@ input[type=range].disc-range::-moz-range-thumb {
       <!-- ── HOME ── -->
       <div id="p-home" class="app-page active">
 
-        <!-- 검색창 -->
-        <div class="home-search-bar">
-          <span class="hsb-icon-left">🔍</span>
-          <input class="hsb-input" type="text" id="homeBigSearch"
-            placeholder="브랜드, 카테고리 검색..."
-            oninput="_applyHomeFilter()"
-            onkeydown="if(event.key==='Enter'&&this.value.trim())doSearch(this.value.trim())">
-          <button class="hsb-icon-btn" title="검색" onclick="const v=document.getElementById('homeBigSearch').value.trim();if(v)doSearch(v)">🔍</button>
-          <button class="hsb-icon-btn" title="음성 검색" onclick="alert('음성 인식 기능')">🎙️</button>
-          <button class="hsb-icon-btn" title="카메라 검색" onclick="alert('카메라 인식 기능')">📷</button>
+        <!-- 검색창 (Rolling Title + Bar + Trending) -->
+        <div class="hsb-wrap" id="hsbWrap">
+          <!-- ① Rolling Title -->
+          <div class="hsb-rolling-title">오늘 어떤&nbsp;<span class="hsb-rolling-kw-wrap"><span class="hsb-rolling-kw" id="hsbRollingKw">카페 쿠폰</span></span>을 찾으시나요?</div>
+
+          <!-- ② Search Bar -->
+          <div class="hsb-bar">
+            <select class="hsb-cat-sel" id="hsbCatSel" onchange="setHomeSvcCat(this.value,null)">
+              <option value="all">전체</option>
+              <option value="mart">마트</option>
+              <option value="convenience">편의점</option>
+              <option value="delivery">배달</option>
+              <option value="cafe">카페</option>
+              <option value="fashion">패션</option>
+              <option value="travel">여행</option>
+            </select>
+            <div class="hsb-bar-div"></div>
+            <input class="hsb-input" type="text" id="homeBigSearch"
+              placeholder="브랜드, 카테고리 검색..."
+              oninput="_applyHomeFilter()"
+              onkeydown="if(event.key==='Enter'&&this.value.trim())doSearch(this.value.trim())">
+            <button class="hsb-search-btn" onclick="const v=document.getElementById('homeBigSearch').value.trim();if(v)doSearch(v)">🔍</button>
+          </div>
+
+          <!-- ③ Trending Tags -->
+          <div class="hsb-trending-wrap" id="hsbTrendingWrap">
+            <span class="hsb-trending-lbl">인기 검색어</span>
+            <div class="hsb-trending-row">
+              <span class="hsb-trend-tag" onclick="doSearch('스타벅스')">스타벅스</span>
+              <span class="hsb-trend-tag" onclick="doSearch('치킨 20%')">치킨 20%</span>
+              <span class="hsb-trend-tag" onclick="doSearch('생활용품')">생활용품</span>
+              <span class="hsb-trend-tag" onclick="doSearch('마트 할인')">마트 할인</span>
+              <span class="hsb-trend-tag" onclick="doSearch('커피')">커피</span>
+              <span class="hsb-trend-tag" onclick="doSearch('배달비 무료')">배달비 무료</span>
+              <span class="hsb-trend-tag" onclick="doSearch('이마트')">이마트</span>
+              <span class="hsb-trend-tag" onclick="doSearch('GS25')">GS25</span>
+            </div>
+          </div>
         </div>
 
         <!-- ③ 오늘의 추천 쿠폰 캐러셀 -->
@@ -4864,8 +4927,10 @@ function showAppPage(id, skipHistory) {
     _homeSvc = 'all';
     _homeBrand = 'all';
     initRecCarousel();
+    startRollingTitle();
     document.querySelectorAll('.hct-btn').forEach(b => b.classList.toggle('on', b.dataset.cat === 'all'));
     document.querySelectorAll('#homeCatChips .home-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.svc === 'all'));
+    const hsbSel = document.getElementById('hsbCatSel'); if (hsbSel) hsbSel.value = 'all';
     renderHomeBrandRow('all');
     // pill 위치는 레이아웃 계산 후 이동
     requestAnimationFrame(() => {
@@ -5713,6 +5778,30 @@ function drawDetBRC() {
 /* ============================================================ DOWNLOAD BTN ============================================================ */
 const downloadedCpns = new Set();
 
+/* ── 홈 Rolling Title ── */
+const _ROLLING_KWS = ['카페 쿠폰','베이커리','마트 할인','외식 카테고리','편의점 혜택','스타벅스 쿠폰'];
+let _rollingIdx   = 0;
+let _rollingTimer = null;
+
+function startRollingTitle() {
+  const el = document.getElementById('hsbRollingKw');
+  if (!el) return;
+  if (_rollingTimer) clearInterval(_rollingTimer);
+  _rollingIdx = 0;
+  el.textContent = _ROLLING_KWS[0];
+  el.style.animation = 'none';
+  _rollingTimer = setInterval(() => {
+    const kw = document.getElementById('hsbRollingKw');
+    if (!kw) { clearInterval(_rollingTimer); return; }
+    kw.style.animation = 'hsbRollOut .28s cubic-bezier(.4,0,.2,1) forwards';
+    setTimeout(() => {
+      _rollingIdx = (_rollingIdx + 1) % _ROLLING_KWS.length;
+      kw.textContent = _ROLLING_KWS[_rollingIdx];
+      kw.style.animation = 'hsbRollIn .28s cubic-bezier(0,0,.2,1) forwards';
+    }, 280);
+  }, 3000);
+}
+
 function goSvcNext() {
   const selected = [...document.querySelectorAll('#p-connect-svc-select .svc-sel-card.sel')];
   if (selected.length === 0) return;
@@ -5792,6 +5881,7 @@ function setHomeSvcCat(svc, el) {
   _homeSvc = svc;
   _homeBrand = 'all';
   document.querySelectorAll('#homeCatChips .home-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.svc === svc));
+  const sel = document.getElementById('hsbCatSel'); if (sel) sel.value = svc;
   renderHomeBrandRow(svc);
   _applyHomeFilter();
 }
