@@ -2688,6 +2688,179 @@ input[type=range].disc-range::-moz-range-thumb {
 .noti-popup-benefit-row + .noti-popup-benefit-row { border-top:1px solid var(--gray-200); }
 .noti-popup-check { color:var(--primary); font-size:17px; font-weight:900; flex-shrink:0; }
 .noti-popup-btns { display:flex; flex-direction:column; gap:10px; }
+
+/* ── 5단계 온보딩 모달 ── */
+.ob-modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.55);
+  display:flex; align-items:flex-end; justify-content:center;
+  z-index:10000; animation:fadeIn .2s ease;
+}
+.ob-modal-card {
+  background:white; border-radius:28px 28px 0 0;
+  width:100%; max-width:480px; max-height:90vh;
+  display:flex; flex-direction:column;
+  box-shadow:0 -8px 40px rgba(0,0,0,.2);
+  animation:slideUp .32s cubic-bezier(0,0,.2,1);
+  overflow:hidden;
+}
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+
+/* 헤더 */
+.ob-modal-header {
+  display:flex; align-items:center; padding:20px 20px 0;
+  gap:12px; flex-shrink:0;
+}
+.ob-back-btn {
+  width:36px; height:36px; border-radius:50%; border:none;
+  background:var(--gray-100); font-size:18px; font-weight:700;
+  color:var(--gray-600); cursor:pointer; display:flex;
+  align-items:center; justify-content:center; flex-shrink:0;
+}
+.ob-progress-bar {
+  flex:1; height:6px; background:var(--gray-200); border-radius:3px; overflow:hidden;
+}
+.ob-progress-fill {
+  height:100%; background:var(--primary); border-radius:3px;
+  transition:width .3s ease;
+}
+.ob-skip-btn {
+  font-size:13px; font-weight:700; color:var(--gray-400);
+  background:none; border:none; cursor:pointer; padding:4px 8px; flex-shrink:0;
+}
+
+/* 스텝 정보 */
+.ob-step-info { padding:20px 24px 4px; flex-shrink:0; }
+.ob-step-label { font-size:12px; font-weight:700; color:var(--primary); margin-bottom:4px; letter-spacing:.5px; }
+.ob-step-title { font-size:20px; font-weight:800; color:var(--gray-900); line-height:1.3; }
+.ob-step-sub { font-size:13px; color:var(--gray-500); margin-top:6px; font-weight:500; }
+
+/* 바디 */
+.ob-modal-body { flex:1; overflow-y:auto; padding:20px 24px; min-height:0; }
+
+/* Step 1: 연령대 */
+.ob-age-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.ob-age-card {
+  border:2px solid var(--gray-200); border-radius:16px; padding:24px 16px;
+  text-align:center; cursor:pointer; transition:all .15s; background:white;
+}
+.ob-age-card:hover { border-color:var(--primary); }
+.ob-age-card.sel { border-color:var(--primary); background:var(--primary-lt); }
+.ob-age-icon { font-size:30px; margin-bottom:10px; }
+.ob-age-label { font-size:15px; font-weight:700; color:var(--gray-800); }
+.ob-age-card.sel .ob-age-label { color:var(--primary); }
+
+/* Step 2: 카테고리 */
+.ob-cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.ob-cat-chip {
+  border:2px solid var(--gray-200); border-radius:14px; padding:16px 8px;
+  text-align:center; cursor:pointer; transition:all .15s; background:white;
+}
+.ob-cat-chip:hover { border-color:var(--primary); }
+.ob-cat-chip.sel { border-color:var(--primary); background:var(--primary-lt); }
+.ob-cat-chip-icon { font-size:26px; margin-bottom:6px; }
+.ob-cat-chip-label { font-size:13px; font-weight:700; color:var(--gray-700); }
+.ob-cat-chip.sel .ob-cat-chip-label { color:var(--primary); }
+
+/* Step 3: 브랜드 */
+.ob-brand-search {
+  display:flex; align-items:center; gap:8px;
+  background:var(--gray-100); border-radius:12px; padding:10px 14px;
+  margin-bottom:14px;
+}
+.ob-brand-search input {
+  flex:1; border:none; outline:none; background:transparent;
+  font-size:14px; color:var(--gray-900); font-weight:500; font-family:var(--font);
+}
+.ob-brand-search input::placeholder { color:var(--gray-400); }
+.ob-brand-grid { display:flex; flex-wrap:wrap; gap:8px; }
+.ob-brand-chip {
+  display:flex; align-items:center; gap:8px;
+  border:2px solid var(--gray-200); border-radius:50px; padding:8px 14px;
+  cursor:pointer; transition:all .15s; background:white;
+}
+.ob-brand-chip:hover { border-color:var(--primary); }
+.ob-brand-chip.sel { border-color:var(--primary); background:var(--primary-lt); }
+.ob-brand-logo {
+  width:26px; height:26px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:900; color:white; line-height:1;
+}
+.ob-brand-name { font-size:13px; font-weight:700; color:var(--gray-700); }
+.ob-brand-chip.sel .ob-brand-name { color:var(--primary); }
+
+/* Step 4: 할인율 슬라이더 */
+.ob-disc-preview { text-align:center; margin-bottom:28px; }
+.ob-disc-big { font-size:60px; font-weight:800; color:var(--primary); line-height:1; display:inline-flex; align-items:baseline; gap:4px; }
+.ob-disc-big-num { display:inline; }
+.ob-disc-pct { font-size:28px; font-weight:700; color:var(--primary); }
+.ob-disc-hint { font-size:14px; color:var(--gray-500); margin-top:10px; font-weight:500; }
+.ob-disc-range {
+  width:100%; -webkit-appearance:none; height:8px;
+  border-radius:4px; outline:none; cursor:pointer; margin-bottom:16px;
+  background:linear-gradient(to right, var(--primary) 0%, var(--primary) 30%, var(--gray-200) 30%, var(--gray-200) 100%);
+}
+.ob-disc-range::-webkit-slider-thumb {
+  -webkit-appearance:none; width:28px; height:28px; border-radius:50%;
+  background:var(--primary); box-shadow:0 2px 8px rgba(15,65,166,.3); cursor:pointer;
+}
+.ob-disc-range::-moz-range-thumb {
+  width:28px; height:28px; border-radius:50%; border:none;
+  background:var(--primary); box-shadow:0 2px 8px rgba(15,65,166,.3); cursor:pointer;
+}
+.ob-disc-ticks { display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:var(--gray-400); margin-top:4px; }
+
+/* Step 5: 알림 설정 */
+.ob-noti-brand-row {
+  display:flex; align-items:center; gap:12px; padding:14px 0;
+  border-bottom:1px solid var(--gray-100);
+}
+.ob-noti-brand-logo {
+  width:40px; height:40px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:900; color:white; line-height:1.1; text-align:center;
+}
+.ob-noti-brand-info { flex:1; min-width:0; }
+.ob-noti-brand-name { font-size:14px; font-weight:700; color:var(--gray-900); }
+.ob-noti-method { display:flex; gap:5px; margin-top:6px; flex-wrap:wrap; }
+.ob-noti-method-btn {
+  padding:4px 10px; border-radius:50px; border:1.5px solid var(--gray-200);
+  font-size:11px; font-weight:700; color:var(--gray-500);
+  background:white; cursor:pointer; transition:all .15s; font-family:var(--font);
+}
+.ob-noti-method-btn.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+.ob-noti-toggle {
+  width:46px; height:26px; border-radius:13px; border:none;
+  background:var(--gray-200); position:relative; cursor:pointer;
+  transition:background .2s; flex-shrink:0; padding:0;
+}
+.ob-noti-toggle.on { background:var(--primary); }
+.ob-noti-toggle::after {
+  content:''; position:absolute; top:3px; left:3px;
+  width:20px; height:20px; border-radius:50%; background:white;
+  transition:transform .2s; box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+.ob-noti-toggle.on::after { transform:translateX(20px); }
+.ob-extra-toggles { margin-top:20px; border-top:2px solid var(--gray-100); padding-top:16px; }
+.ob-extra-toggle-row {
+  display:flex; align-items:center; justify-content:space-between; padding:10px 0;
+}
+.ob-extra-label { font-size:14px; font-weight:700; color:var(--gray-800); }
+.ob-extra-sub { font-size:12px; color:var(--gray-400); margin-top:2px; font-weight:500; }
+
+/* 푸터 */
+.ob-modal-footer {
+  padding:16px 24px 24px; flex-shrink:0;
+  border-top:1.5px solid var(--gray-100);
+}
+.ob-next-btn {
+  width:100%; padding:16px; border-radius:16px; border:none;
+  background:var(--primary); color:white; font-size:16px; font-weight:800;
+  font-family:var(--font); cursor:pointer;
+  transition:opacity .15s, transform .1s;
+}
+.ob-next-btn:disabled { background:var(--gray-200); color:var(--gray-400); cursor:not-allowed; }
+.ob-next-btn:not(:disabled):hover { opacity:.9; }
+.ob-next-btn:not(:disabled):active { transform:scale(.98); }
 </style>
 </head>
 <body>
@@ -6768,7 +6941,246 @@ function showNotiPopup() {
 function closeNotiPopup(choice) {
   const el = document.getElementById('notiPopup');
   if (el) el.style.display = 'none';
-  if (choice === 'on') go('category');
+  if (choice === 'on') openOnboardingModal();
+}
+
+// ── 5단계 온보딩 모달 ──
+const OB_STATE = {
+  step: 1,
+  age: null,
+  cats: new Set(),
+  brands: new Set(),
+  disc: 30,
+  notiEnabled: {},
+  notiMethod: {},
+  gpsNoti: true,
+  similarNoti: true,
+};
+
+const OB_CATS = [
+  { key:'food',     icon:'🍔', label:'음식'  },
+  { key:'cafe',     icon:'☕', label:'카페'  },
+  { key:'shopping', icon:'🛍️', label:'쇼핑'  },
+  { key:'movie',    icon:'🎬', label:'영화'  },
+  { key:'travel',   icon:'✈️', label:'여행'  },
+  { key:'beauty',   icon:'💄', label:'뷰티'  },
+  { key:'mart',     icon:'🏪', label:'마트'  },
+  { key:'delivery', icon:'🛵', label:'배달'  },
+  { key:'etc',      icon:'📦', label:'기타'  },
+];
+
+const OB_BRANDS_BY_CAT = {
+  food:     [{id:'mcdonalds',label:'맥도날드',bg:'linear-gradient(135deg,#DA291C,#FFC72C)'},{id:'burgerking',label:'버거킹',bg:'linear-gradient(135deg,#BF1722,#F5821F)'},{id:'bbq',label:'BBQ',bg:'linear-gradient(135deg,#e8a000,#c07800)'},{id:'pizzahut',label:'피자헛',bg:'linear-gradient(135deg,#E31837,#c00)'}],
+  cafe:     [{id:'starbucks',label:'스타벅스',bg:'linear-gradient(135deg,#00704A,#1e8449)'},{id:'ediya',label:'이디야',bg:'linear-gradient(135deg,#003DA5,#0050c8)'},{id:'megacoffee',label:'메가커피',bg:'linear-gradient(135deg,#FFCB00,#c09800)'},{id:'paik',label:'빽다방',bg:'linear-gradient(135deg,#e84545,#c0392b)'}],
+  shopping: [{id:'oliveyoung',label:'올리브영',bg:'linear-gradient(135deg,#e91e8c,#c2185b)'},{id:'coupang',label:'쿠팡',bg:'linear-gradient(135deg,#1877F2,#0a56c7)'},{id:'gmarket',label:'G마켓',bg:'linear-gradient(135deg,#E63946,#cc2a36)'},{id:'st11',label:'11번가',bg:'linear-gradient(135deg,#FF5000,#d94000)'}],
+  movie:    [{id:'cgv',label:'CGV',bg:'linear-gradient(135deg,#E30613,#b50000)'},{id:'lottecine',label:'롯데시네마',bg:'linear-gradient(135deg,#CC0000,#990000)'},{id:'megabox',label:'메가박스',bg:'linear-gradient(135deg,#00ADEF,#007bb5)'}],
+  travel:   [{id:'yanolja',label:'야놀자',bg:'linear-gradient(135deg,#FF4785,#e63068)'},{id:'interpark',label:'인터파크',bg:'linear-gradient(135deg,#0066FF,#0050cc)'},{id:'jejuair',label:'제주항공',bg:'linear-gradient(135deg,#F06400,#c85000)'}],
+  beauty:   [{id:'oliveyoung',label:'올리브영',bg:'linear-gradient(135deg,#e91e8c,#c2185b)'},{id:'laneige',label:'라네즈',bg:'linear-gradient(135deg,#7A5AF8,#5B3AD5)'},{id:'innisfree',label:'이니스프리',bg:'linear-gradient(135deg,#6DB33F,#4a8a2a)'}],
+  mart:     [{id:'emart',label:'이마트',bg:'linear-gradient(135deg,#F5A623,#E8870A)'},{id:'lottemart',label:'롯데마트',bg:'linear-gradient(135deg,#CC0000,#990000)'},{id:'homeplus',label:'홈플러스',bg:'linear-gradient(135deg,#0066CC,#004fa3)'}],
+  delivery: [{id:'baemin',label:'배달의민족',bg:'linear-gradient(135deg,#00C3E3,#0099CC)'},{id:'yogiyo',label:'요기요',bg:'linear-gradient(135deg,#FF3250,#cc0022)'},{id:'coupangeats',label:'쿠팡이츠',bg:'linear-gradient(135deg,#1877F2,#0a56c7)'}],
+  etc:      [{id:'gs25',label:'GS25',bg:'linear-gradient(135deg,#00A651,#007A3D)'},{id:'cu',label:'CU',bg:'linear-gradient(135deg,#5D2D91,#3d1a6b)'},{id:'seven',label:'세븐일레븐',bg:'linear-gradient(135deg,#006DB7,#004c8a)'}],
+};
+
+function openOnboardingModal() {
+  OB_STATE.step = 1;
+  OB_STATE.age = null;
+  OB_STATE.cats.clear();
+  OB_STATE.brands.clear();
+  OB_STATE.disc = 30;
+  OB_STATE.notiEnabled = {};
+  OB_STATE.notiMethod = {};
+  OB_STATE.gpsNoti = true;
+  OB_STATE.similarNoti = true;
+  document.getElementById('onboardingModal').style.display = 'flex';
+  obRender();
+}
+function closeOnboardingModal() {
+  document.getElementById('onboardingModal').style.display = 'none';
+}
+function obSkip() { closeOnboardingModal(); }
+
+function obNext() {
+  if (OB_STATE.step < 5) { OB_STATE.step++; obRender(); }
+  else obFinish();
+}
+function obBack() {
+  if (OB_STATE.step > 1) { OB_STATE.step--; obRender(); }
+  else closeOnboardingModal();
+}
+function obFinish() { closeOnboardingModal(); }
+
+function obRender() {
+  const s = OB_STATE.step;
+  document.getElementById('obProgressFill').style.width = (s / 5 * 100) + '%';
+  document.getElementById('obStepLabel').textContent = s + ' / 5단계';
+  const titles = ['연령대를 선택해 주세요', '관심 카테고리를 선택해 주세요', '좋아하는 브랜드를 선택해 주세요', '최소 할인율을 설정하세요', '알림 설정을 완료하세요'];
+  const subs   = ['맞춤 혜택을 추천해 드릴게요', '여러 개 선택 가능해요', '여러 개 선택 가능해요', '이 기준 이상의 쿠폰을 알려드려요', '브랜드별 알림 방식을 설정해요'];
+  document.getElementById('obStepTitle').textContent = titles[s - 1];
+  document.getElementById('obStepSub').textContent   = subs[s - 1];
+  const renders = [obStep1HTML, obStep2HTML, obStep3HTML, obStep4HTML, obStep5HTML];
+  const body = document.getElementById('obModalBody');
+  body.innerHTML = renders[s - 1]();
+  body.scrollTop = 0;
+  // 다음 버튼
+  const btn = document.getElementById('obNextBtn');
+  btn.textContent = s === 5 ? '완료' : '다음';
+  const canNext = (s === 1 && OB_STATE.age !== null) ||
+                  (s === 2 && OB_STATE.cats.size > 0) ||
+                  s >= 3;
+  btn.disabled = !canNext;
+  // 슬라이더 초기 배경
+  if (s === 4) { const r = document.getElementById('obDiscRange'); if (r) obUpdateDisc(r); }
+}
+
+/* Step 1 — 연령대 */
+function obStep1HTML() {
+  const ages = [
+    {id:'10s',icon:'🧑',label:'10~20대'},
+    {id:'30s',icon:'👤',label:'30~40대'},
+    {id:'50s',icon:'🧓',label:'50~60대'},
+    {id:'65p',icon:'👴',label:'65세 이상'},
+  ];
+  return '<div class="ob-age-grid">' +
+    ages.map(a => `<div class="ob-age-card${OB_STATE.age===a.id?' sel':''}" onclick="obSelAge('${a.id}')">
+      <div class="ob-age-icon">${a.icon}</div>
+      <div class="ob-age-label">${a.label}</div>
+    </div>`).join('') +
+  '</div>';
+}
+function obSelAge(id) { OB_STATE.age = id; obRender(); }
+
+/* Step 2 — 카테고리 */
+function obStep2HTML() {
+  return '<div class="ob-cat-grid">' +
+    OB_CATS.map(c => `<div class="ob-cat-chip${OB_STATE.cats.has(c.key)?' sel':''}" onclick="obToggleCat('${c.key}')">
+      <div class="ob-cat-chip-icon">${c.icon}</div>
+      <div class="ob-cat-chip-label">${c.label}</div>
+    </div>`).join('') +
+  '</div>';
+}
+function obToggleCat(key) {
+  if (OB_STATE.cats.has(key)) OB_STATE.cats.delete(key); else OB_STATE.cats.add(key);
+  obRender();
+}
+
+/* Step 3 — 브랜드 */
+function obStep3HTML() {
+  const seen = new Set();
+  const brands = [];
+  const cats = OB_STATE.cats.size > 0 ? [...OB_STATE.cats] : Object.keys(OB_BRANDS_BY_CAT);
+  cats.forEach(cat => (OB_BRANDS_BY_CAT[cat]||[]).forEach(b => {
+    if (!seen.has(b.id)) { seen.add(b.id); brands.push(b); }
+  }));
+  return `<div class="ob-brand-search"><span style="font-size:16px;color:var(--gray-400)">🔍</span><input type="text" placeholder="브랜드 검색..." oninput="obFilterBrands(this.value)" id="obBrandSearch"></div>` +
+    `<div class="ob-brand-grid" id="obBrandGrid">` +
+    brands.map(b => `<div class="ob-brand-chip${OB_STATE.brands.has(b.id)?' sel':''}" data-brand="${b.id}" onclick="obToggleBrand('${b.id}')">
+      <div class="ob-brand-logo" style="background:${b.bg}">${b.label.slice(0,2)}</div>
+      <span class="ob-brand-name">${b.label}</span>
+    </div>`).join('') +
+    `</div>`;
+}
+function obFilterBrands(kw) {
+  const q = kw.toLowerCase();
+  document.querySelectorAll('#obBrandGrid .ob-brand-chip').forEach(el => {
+    const name = el.querySelector('.ob-brand-name')?.textContent.toLowerCase() || '';
+    el.style.display = (!q || name.includes(q)) ? '' : 'none';
+  });
+}
+function obToggleBrand(id) {
+  if (OB_STATE.brands.has(id)) OB_STATE.brands.delete(id); else OB_STATE.brands.add(id);
+  const chip = document.querySelector(`#obBrandGrid [data-brand="${id}"]`);
+  if (chip) chip.classList.toggle('sel', OB_STATE.brands.has(id));
+}
+
+/* Step 4 — 할인율 슬라이더 */
+function obStep4HTML() {
+  const v = OB_STATE.disc;
+  return `<div class="ob-disc-preview">
+    <div class="ob-disc-big"><span class="ob-disc-big-num" id="obDiscNum">${v}</span><span class="ob-disc-pct">%</span></div>
+    <div class="ob-disc-hint">이상 할인율 쿠폰만 알림 받기</div>
+  </div>
+  <input type="range" class="ob-disc-range" id="obDiscRange" min="0" max="100" step="5" value="${v}"
+    oninput="OB_STATE.disc=+this.value; obUpdateDisc(this)">
+  <div class="ob-disc-ticks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>`;
+}
+function obUpdateDisc(input) {
+  const pct = +input.value;
+  input.style.background = `linear-gradient(to right,var(--primary) 0%,var(--primary) ${pct}%,var(--gray-200) ${pct}%,var(--gray-200) 100%)`;
+  const num = document.getElementById('obDiscNum');
+  if (num) num.textContent = pct;
+}
+
+/* Step 5 — 알림 설정 */
+function obStep5HTML() {
+  const seen = new Set();
+  const brands = [];
+  const cats = OB_STATE.cats.size > 0 ? [...OB_STATE.cats] : ['mart','cafe','delivery'];
+  cats.forEach(cat => (OB_BRANDS_BY_CAT[cat]||[]).forEach(b => {
+    if (!seen.has(b.id) && (OB_STATE.brands.size === 0 || OB_STATE.brands.has(b.id))) {
+      seen.add(b.id); brands.push(b);
+    }
+  }));
+  // 폴백: 선택 없으면 기본 3개
+  if (brands.length === 0) {
+    ['emart','starbucks','baemin'].forEach(id => {
+      const b = Object.values(OB_BRANDS_BY_CAT).flat().find(x => x.id === id);
+      if (b && !seen.has(b.id)) { seen.add(b.id); brands.push(b); }
+    });
+  }
+  brands.slice(0, 8).forEach(b => {
+    if (OB_STATE.notiEnabled[b.id] === undefined) OB_STATE.notiEnabled[b.id] = true;
+    if (!OB_STATE.notiMethod[b.id]) OB_STATE.notiMethod[b.id] = 'push';
+  });
+  const methodLabel = m => m === 'push' ? '푸시' : m === 'sms' ? 'SMS' : '이메일';
+  const rows = brands.slice(0, 8).map(b => `
+    <div class="ob-noti-brand-row">
+      <div class="ob-noti-brand-logo" style="background:${b.bg}">${b.label.slice(0,2)}</div>
+      <div class="ob-noti-brand-info">
+        <div class="ob-noti-brand-name">${b.label}</div>
+        <div class="ob-noti-method">
+          ${['push','sms','email'].map(m => `<button class="ob-noti-method-btn${OB_STATE.notiMethod[b.id]===m?' sel':''}"
+            onclick="obSetMethod('${b.id}','${m}')">${methodLabel(m)}</button>`).join('')}
+        </div>
+      </div>
+      <button class="ob-noti-toggle${OB_STATE.notiEnabled[b.id]?' on':''}" id="obToggle_${b.id}"
+        onclick="obToggleNoti('${b.id}')"></button>
+    </div>`).join('');
+  return rows + `<div class="ob-extra-toggles">
+    <div class="ob-extra-toggle-row">
+      <div>
+        <div class="ob-extra-label">📍 내 주변 쿠폰 알림</div>
+        <div class="ob-extra-sub">GPS 기반 근처 매장 쿠폰 알림</div>
+      </div>
+      <button class="ob-noti-toggle${OB_STATE.gpsNoti?' on':''}" id="obGpsToggle"
+        onclick="OB_STATE.gpsNoti=!OB_STATE.gpsNoti;this.classList.toggle('on',OB_STATE.gpsNoti)"></button>
+    </div>
+    <div class="ob-extra-toggle-row">
+      <div>
+        <div class="ob-extra-label">💡 유사 카테고리 추천</div>
+        <div class="ob-extra-sub">비슷한 혜택 쿠폰도 함께 알려드려요</div>
+      </div>
+      <button class="ob-noti-toggle${OB_STATE.similarNoti?' on':''}" id="obSimToggle"
+        onclick="OB_STATE.similarNoti=!OB_STATE.similarNoti;this.classList.toggle('on',OB_STATE.similarNoti)"></button>
+    </div>
+  </div>`;
+}
+function obSetMethod(brandId, method) {
+  OB_STATE.notiMethod[brandId] = method;
+  // 해당 row만 업데이트
+  const rows = document.querySelectorAll('#obModalBody .ob-noti-brand-row');
+  rows.forEach(row => {
+    const toggle = row.querySelector('.ob-noti-toggle');
+    if (!toggle || toggle.id !== 'obToggle_' + brandId) return;
+    const methodLabel = m => m === 'push' ? '푸시' : m === 'sms' ? 'SMS' : '이메일';
+    row.querySelectorAll('.ob-noti-method-btn').forEach(btn => {
+      btn.classList.toggle('sel', btn.textContent === methodLabel(method));
+    });
+  });
+}
+function obToggleNoti(brandId) {
+  OB_STATE.notiEnabled[brandId] = !OB_STATE.notiEnabled[brandId];
+  const btn = document.getElementById('obToggle_' + brandId);
+  if (btn) btn.classList.toggle('on', OB_STATE.notiEnabled[brandId]);
 }
 
 function filterSvcCards(kw) {
@@ -7653,6 +8065,30 @@ function showToast(msg) {
     <div class="noti-popup-btns">
       <button class="btn-primary" style="font-size:17px" onclick="closeNotiPopup('on')">알림 켜기</button>
       <button class="btn-ghost" style="font-size:15px" onclick="closeNotiPopup('later')">나중에 설정하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 5단계 온보딩 모달 ── -->
+<div id="onboardingModal" class="ob-modal-overlay" style="display:none" onclick="if(event.target===this){}">
+  <div class="ob-modal-card">
+    <!-- 헤더 -->
+    <div class="ob-modal-header">
+      <button class="ob-back-btn" onclick="obBack()">‹</button>
+      <div class="ob-progress-bar"><div class="ob-progress-fill" id="obProgressFill" style="width:20%"></div></div>
+      <button class="ob-skip-btn" onclick="obSkip()">건너뛰기</button>
+    </div>
+    <!-- 스텝 정보 -->
+    <div class="ob-step-info">
+      <div class="ob-step-label" id="obStepLabel">1 / 5단계</div>
+      <div class="ob-step-title" id="obStepTitle">연령대를 선택해 주세요</div>
+      <div class="ob-step-sub" id="obStepSub">맞춤 혜택을 추천해 드릴게요</div>
+    </div>
+    <!-- 동적 바디 -->
+    <div class="ob-modal-body" id="obModalBody"></div>
+    <!-- 푸터 -->
+    <div class="ob-modal-footer">
+      <button class="ob-next-btn" id="obNextBtn" onclick="obNext()" disabled>다음</button>
     </div>
   </div>
 </div>
