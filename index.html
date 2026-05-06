@@ -6473,10 +6473,7 @@ function showNotiPopup() {
 function closeNotiPopup(choice) {
   const el = document.getElementById('notiPopup');
   if (el) el.style.display = 'none';
-  if (choice === 'on') {
-    showAppPage('mypage'); updateSidebar('mypage');
-    setTimeout(()=>showMypageSub('noti'), 80);
-  }
+  if (choice === 'on') go('noti-consent');
 }
 
 function filterSvcCards(kw) {
@@ -6915,7 +6912,7 @@ const ACT = {
   'go-signup-complete': ()=>{
     go('signup-complete');
     clearTimeout(S._signupTimer);
-    S._signupTimer = setTimeout(()=>{ go('home'); }, 2500);
+    S._signupTimer = setTimeout(()=>{ go('home'); setTimeout(showNotiPopup, 400); }, 2500);
   },
   'go-noti-consent': ()=>go('noti-consent'),
   'nav-noti-alert':  ()=>{ showAppPage('noti-alert'); updateSidebar('noti-alert'); setTimeout(initNearbyMap, 150); },
