@@ -219,9 +219,10 @@ body   { font-family: var(--font); background: #ffffff; color: var(--gray-900); 
 .gender-btn:hover { border-color:var(--primary); color:var(--primary); }
 .gender-btn.sel { border-color:var(--primary); background:var(--primary); color:white; }
 /* SMS 인라인 버튼 */
-.sms-row { display:flex; gap:8px; align-items:stretch; width:100%; }
-.sms-row .field-wrap { flex:1; margin-bottom:0; }
-.btn-sms-send { padding:0 18px; background:var(--primary); color:white; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:var(--font); flex-shrink:0; min-height:60px; }
+.sms-row { display:flex; gap:8px; align-items:stretch; width:100%; overflow:hidden; }
+.sms-row .field-wrap { flex:1; min-width:0; margin-bottom:0; }
+.sms-row .field-wrap input { min-width:0; }
+.btn-sms-send { padding:0 14px; background:var(--primary); color:white; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:var(--font); flex-shrink:0; min-height:60px; }
 .btn-sms-resend { padding:0 14px; background:var(--secondary-lt); color:var(--secondary); border:2px solid var(--secondary); border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:var(--font); flex-shrink:0; min-height:60px; }
 /* 생년월일 가로 직접입력 */
 .birth-row { display:flex; align-items:center; gap:6px; width:100%; }
@@ -237,12 +238,13 @@ body   { font-family: var(--font); background: #ffffff; color: var(--gray-900); 
 .birth-input:focus { border-color:var(--primary); }
 .birth-sep { font-size:14px; font-weight:700; color:var(--gray-500); flex-shrink:0; }
 /* 이메일 분할 */
-.email-row { display:flex; align-items:center; gap:6px; width:100%; }
-.email-row .field-wrap { margin-bottom:0; }
+.email-row { display:flex; align-items:center; gap:6px; width:100%; overflow:hidden; }
+.email-row .field-wrap { margin-bottom:0; flex:1; min-width:0; }
+.email-row .field-wrap input { min-width:0; }
 .email-at { font-size:17px; font-weight:700; color:var(--gray-500); flex-shrink:0; }
-.email-domain-wrap { flex:1; min-height:60px; border-radius:10px; border:2px solid var(--gray-300); background:white; display:flex; align-items:center; padding:0 14px; transition:border-color .2s; }
+.email-domain-wrap { flex:1; min-width:0; min-height:60px; border-radius:10px; border:2px solid var(--gray-300); background:white; display:flex; align-items:center; padding:0 14px; transition:border-color .2s; }
 .email-domain-wrap:focus-within { border-color:var(--primary); }
-.email-domain-wrap select { flex:1; font-size:15px; font-weight:600; color:var(--gray-800); background:transparent; border:none; outline:none; font-family:var(--font); cursor:pointer; }
+.email-domain-wrap select { flex:1; min-width:0; font-size:15px; font-weight:600; color:var(--gray-800); background:transparent; border:none; outline:none; font-family:var(--font); cursor:pointer; }
 .otp-lbl { font-size:15px; color:var(--gray-600); margin-bottom:10px; font-weight:600; }
 .otp-big-wrap { margin-top:12px; margin-bottom:4px; }
 .otp-big-wrap .field-wrap { margin-bottom:0; }
@@ -272,26 +274,40 @@ body   { font-family: var(--font); background: #ffffff; color: var(--gray-900); 
 .opt-card.sel .opt-sub { color:var(--primary); }
 
 /* Category chips (onboarding) */
-.cat-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:32px; }
+.cat-grid { display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:32px; }
 .cat-chip {
-  padding:22px 10px; border:2px solid var(--gray-200); border-radius:12px;
-  cursor:pointer; transition:all .15s; background:white; text-align:center;
+  padding:18px 20px; border:2px solid var(--gray-200); border-radius:12px;
+  cursor:pointer; transition:all .15s; background:white; text-align:left;
   font-size:15px; font-weight:700; color:var(--gray-800);
 }
 .cat-chip:hover { border-color:var(--primary); }
 .cat-chip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
 
 /* Brand chips */
-.brand-grid { display:grid; grid-template-columns:repeat(8,1fr); gap:14px; margin-bottom:32px; }
+.brand-grid { display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:32px; }
 .brand-chip {
-  padding:18px 8px; border:2px solid var(--gray-200); border-radius:12px;
-  cursor:pointer; transition:all .15s; background:white; text-align:center;
-  font-size:13px; font-weight:700; color:var(--gray-800);
+  padding:16px 20px; border:2px solid var(--gray-200); border-radius:12px;
+  cursor:pointer; transition:all .15s; background:white; text-align:left;
+  font-size:15px; font-weight:700; color:var(--gray-800);
 }
 .brand-chip:hover { border-color:var(--primary); }
 .brand-chip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
 
 /* Service list */
+/* s-integration: 버튼 sticky 플로팅 */
+#s-integration .ob-card {
+  display: flex; flex-direction: column;
+  max-height: calc(100svh - 56px);
+  overflow: hidden;
+}
+#s-integration .svc-grid {
+  overflow-y: auto; flex: 1;
+  margin-bottom: 0; padding-bottom: 4px;
+}
+#s-integration .btn-primary[data-action="go-signup-complete"] {
+  flex-shrink: 0; margin-top: 16px;
+  position: sticky; bottom: 0; z-index: 5;
+}
 .svc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
 .svc-card {
   padding:16px 18px; background:white; border-radius:12px;
@@ -894,10 +910,20 @@ body   { font-family: var(--font); background: #ffffff; color: var(--gray-900); 
 /* ============================================================
    DISCOUNT SLIDER (온보딩)
    ============================================================ */
-.disc-slider-wrap { padding:16px 0 28px; }
-.disc-slider-val  { font-size:72px; font-weight:700; color:var(--primary); text-align:center; line-height:1; margin-bottom:4px; }
-.disc-slider-val .disc-pct { font-size:32px; color:var(--gray-400); font-weight:700; }
-.disc-slider-hint { font-size:14px; color:var(--gray-500); text-align:center; margin-bottom:24px; }
+/* 원형 다이얼 */
+.disc-arc-wrap {
+  position: relative; width: 240px; height: 240px;
+  margin: 20px auto 28px;
+}
+.disc-arc-svg { width: 100%; height: 100%; touch-action: none; overflow: visible; }
+.disc-arc-center {
+  position: absolute; top: 46%; left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; align-items: baseline; gap: 3px;
+  pointer-events: none;
+}
+.disc-arc-center #discVal { font-size: 56px; font-weight: 700; color: var(--primary); line-height: 1; }
+.disc-arc-center .disc-pct { font-size: 24px; font-weight: 700; color: var(--gray-400); }
 input[type=range].disc-range {
   width:100%; height:8px; border-radius:4px; outline:none; cursor:pointer;
   -webkit-appearance:none; appearance:none;
@@ -1575,44 +1601,47 @@ input[type=range].disc-range::-moz-range-thumb {
 /* 트랙: padding으로 카드 0을 중앙 정렬 */
 .home-rec-track {
   display:flex; gap:14px; align-items:center;
-  padding:0 calc(50% - 127px);
+  padding:0 calc(50% - 100px);
   transition:transform .42s cubic-bezier(.4,0,.2,1);
   will-change:transform;
 }
-/* 카드 기본: inactive (far) 상태 — 1.5× 사이즈 */
+/* 카드 기본: inactive (far) 상태 */
 .home-rec-card {
-  flex-shrink:0; width:255px; border-radius:28px; padding:28px 22px 24px;
+  flex-shrink:0; width:200px; border-radius:24px; padding:20px 18px 18px;
   display:flex; flex-direction:column; gap:4px; cursor:pointer;
-  position:relative; overflow:hidden; min-height:228px;
+  position:relative; overflow:hidden; min-height:180px;
   transform-origin:center center;
   transition:transform .42s cubic-bezier(.4,0,.2,1),
              opacity .42s ease, box-shadow .42s ease, filter .42s ease;
-  transform:scale(0.72); opacity:0.28; filter:blur(1.5px);
+  transform:scale(1); opacity:0.28; filter:blur(1.5px);
   pointer-events:none;
 }
 /* Active — 중앙 카드 */
 .home-rec-card.rec-active {
-  transform:scale(1.07); opacity:1; filter:none;
-  box-shadow:
-    0 14px 40px rgba(15,65,166,.30),   /* 메인컬러 드롭셰도우 */
-    0 0 18px rgba(15,65,166,.20);      /* 중앙 글로우 20% */
+  transform:scale(1); opacity:1; filter:none;
+  box-shadow: 0 6px 20px rgba(15,65,166,.22);
   pointer-events:auto; z-index:3;
+}
+/* 호버 시만 살짝 확대 */
+.home-rec-card.rec-active:hover {
+  transform:scale(1.04);
+  transition:transform .2s ease;
 }
 /* Adjacent — 좌/우 인접 카드 */
 .home-rec-card.rec-adj {
-  transform:scale(0.84); opacity:0.68; filter:blur(.4px);
-  box-shadow:0 0 10px rgba(15,65,166,.20); /* 중앙 글로우 20% */
+  transform:scale(1); opacity:0.6; filter:blur(0.3px);
+  box-shadow:none;
   pointer-events:auto; z-index:2;
 }
 /* Far — 2칸 이상 떨어진 카드 */
 .home-rec-card.rec-far {
-  transform:scale(0.7); opacity:0.22; filter:blur(1.5px);
+  transform:scale(1); opacity:0.2; filter:blur(1.5px);
   pointer-events:none; z-index:1;
 }
-.hrc-d-badge { position:absolute; top:16px; right:16px; background:rgba(255,255,255,.28); color:white; font-size:13px; font-weight:700; padding:4px 11px; border-radius:50px; backdrop-filter:blur(4px); }
-.hrc-disc { font-size:50px; font-weight:700; color:white; line-height:1; letter-spacing:-2px; margin-top:8px; }
-.hrc-brand { font-size:14px; font-weight:700; color:rgba(255,255,255,.7); margin-top:12px; }
-.hrc-title { font-size:17px; font-weight:700; color:white; line-height:1.3; }
+.hrc-d-badge { position:absolute; top:12px; right:12px; background:rgba(255,255,255,.28); color:white; font-size:12px; font-weight:700; padding:3px 9px; border-radius:50px; backdrop-filter:blur(4px); }
+.hrc-disc { font-size:38px; font-weight:700; color:white; line-height:1; letter-spacing:-1px; margin-top:6px; }
+.hrc-brand { font-size:13px; font-weight:700; color:rgba(255,255,255,.7); margin-top:10px; }
+.hrc-title { font-size:15px; font-weight:700; color:white; line-height:1.3; }
 .hrc-cond { font-size:13px; color:rgba(255,255,255,.6); margin-top:3px; }
 /* 마감임박 카드 — 노란 배경에 어두운 텍스트 */
 .hrc-expire .hrc-d-badge { background:rgba(0,0,0,.14); color:#3d2700; }
@@ -2270,7 +2299,38 @@ input[type=range].disc-range::-moz-range-thumb {
 
 /* 모바일 전용 요소 — 데스크탑에서 숨김 */
 #mypageQuickGrid { display: none; }
-#mpsBackBar { display: none; }
+/* 백바 — 전체 화면 공통 fixed (JS로 display:flex 제어) */
+#mpsBackBar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background: white;
+  border-bottom: 1px solid var(--gray-200);
+  align-items: center; gap: 12px;
+  padding: 0 var(--grid-gutter);
+  z-index: 1100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+/* mps 서브패널 오버레이 — 전체 화면 공통 (top:0 으로 헤더까지 덮음) */
+#p-mypage .mps.mps-open {
+  display: block !important;
+  position: fixed !important;
+  left: 0 !important; right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  z-index: 1050 !important;
+  background: var(--gray-100) !important;
+  overflow-y: auto !important;
+  scrollbar-width: none !important;
+}
+#p-mypage .mps.mps-open::-webkit-scrollbar { display: none !important; }
+#p-mypage .mps.mps-open .mps-card {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding-top: calc(56px + 24px) !important;
+}
 
 /* 전역 스크롤바 숨김 (모바일) */
 .main-content::-webkit-scrollbar,
@@ -2338,10 +2398,10 @@ input[type=range].disc-range::-moz-range-thumb {
   .opt-grid   { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
   .opt-card   { padding: 22px 14px; min-height: 88px; border-radius: var(--radius-card); }
   .opt-card .opt-title { font-size: 16px; }
-  .cat-grid   { grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-  .cat-chip   { padding: 18px 8px; font-size: 14px; min-height: 64px; border-radius: 12px; }
-  .brand-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-  .brand-chip { padding: 14px 6px; font-size: 13px; min-height: 56px; border-radius: 12px; }
+  .cat-grid   { grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+  .cat-chip   { padding: 16px 20px; font-size: 15px; border-radius: 12px; }
+  .brand-grid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+  .brand-chip { padding: 16px 20px; font-size: 15px; border-radius: 12px; }
   .svc-grid   { grid-template-columns: 1fr; gap: 10px; }
   .svc-card   { padding: 14px 16px; border-radius: var(--radius-card); }
   .conn-btn   { padding: 10px 16px; font-size: 14px; min-height: 44px; border-radius: 10px; }
@@ -2897,30 +2957,15 @@ input[type=range].disc-range::-moz-range-thumb {
   /* 마이페이지 서브 패널 — 모바일에서 기본 숨김 */
   #p-mypage .mps { display: none !important; }
 
-  /* mps-open → 헤더 아래 전체화면 (탭바도 덮음) */
+  /* mps-open → 전체화면 (헤더·탭바 모두 덮음) */
   #p-mypage .mps.mps-open {
-    display: block !important;
-    position: fixed !important;
-    left: 0 !important; right: 0 !important;
-    top: var(--header-h) !important;
-    bottom: 0 !important;
-    z-index: 950 !important;
-    background: var(--gray-100) !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
+    top: 0 !important;
+    z-index: 1050 !important;
     padding: 0 0 env(safe-area-inset-bottom, 0px) !important;
+    -webkit-overflow-scrolling: touch !important;
   }
-  #p-mypage .mps.mps-open::-webkit-scrollbar { display: none !important; }
-  #p-mypage .mps.mps-open .mps-card {
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-  }
-  /* 백바 — z-index 오버레이 위로 */
-  .mps-back-bar { z-index: 960 !important; top: var(--header-h) !important; }
-  /* mps 오버레이 열릴 때 콘텐츠 영역 패딩 */
-  #p-mypage .mps.mps-open > * { padding-top: 0; }
+  /* 백바 — 최상단 고정 */
+  .mps-back-bar { z-index: 1100 !important; top: 0 !important; }
   /* 백바 아래 콘텐츠 여백 */
   #p-mypage .mps.mps-open .mps-card { padding-top: calc(56px + 16px) !important; }
 
@@ -2954,8 +2999,8 @@ input[type=range].disc-range::-moz-range-thumb {
 
   /* 온보딩 */
   .opt-grid   { grid-template-columns: 1fr; }
-  .cat-grid   { grid-template-columns: repeat(3, 1fr); }
-  .brand-grid { grid-template-columns: repeat(3, 1fr); }
+  .cat-grid   { grid-template-columns: 1fr; }
+  .brand-grid { grid-template-columns: 1fr; }
   .svc-sel-grid { grid-template-columns: repeat(2, 1fr); }
 
   /* 캐러셀 */
@@ -3211,23 +3256,19 @@ input[type=range].disc-range::-moz-range-thumb {
       <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px">
         <div class="age-option" data-action="sel-age" style="display:flex;align-items:center;gap:16px;padding:18px 20px;border:2px solid var(--gray-200);border-radius:14px;cursor:pointer;transition:all .15s;background:white">
           <span style="font-size:22px">🎮</span>
-          <div><div style="font-size:17px;font-weight:700;color:var(--gray-900)">10대</div><div style="font-size:13px;color:var(--gray-500)">13 – 19세</div></div>
-        </div>
-        <div class="age-option sel" data-action="sel-age" style="display:flex;align-items:center;gap:16px;padding:18px 20px;border:2px solid var(--primary);border-radius:14px;cursor:pointer;transition:all .15s;background:var(--primary-lt)">
-          <span style="font-size:22px">☕</span>
-          <div><div style="font-size:17px;font-weight:700;color:var(--primary)">20대</div><div style="font-size:13px;color:var(--gray-500)">20 – 29세</div></div>
+          <div><div style="font-size:17px;font-weight:700;color:var(--gray-900)">10 – 20대</div><div style="font-size:13px;color:var(--gray-500)">10 – 29세</div></div>
         </div>
         <div class="age-option" data-action="sel-age" style="display:flex;align-items:center;gap:16px;padding:18px 20px;border:2px solid var(--gray-200);border-radius:14px;cursor:pointer;transition:all .15s;background:white">
           <span style="font-size:22px">🛒</span>
-          <div><div style="font-size:17px;font-weight:700;color:var(--gray-900)">30대</div><div style="font-size:13px;color:var(--gray-500)">30 – 39세</div></div>
+          <div><div style="font-size:17px;font-weight:700;color:var(--gray-900)">30 – 40대</div><div style="font-size:13px;color:var(--gray-500)">30 – 49세</div></div>
         </div>
         <div class="age-option" data-action="sel-age" style="display:flex;align-items:center;gap:16px;padding:18px 20px;border:2px solid var(--gray-200);border-radius:14px;cursor:pointer;transition:all .15s;background:white">
           <span style="font-size:22px">🏡</span>
-          <div><div style="font-size:17px;font-weight:700;color:var(--gray-900)">40대</div><div style="font-size:13px;color:var(--gray-500)">40 – 49세</div></div>
+          <div><div style="font-size:17px;font-weight:700;color:var(--gray-900)">50 – 60대</div><div style="font-size:13px;color:var(--gray-500)">50 – 64세</div></div>
         </div>
         <div class="age-option" data-action="sel-age" style="display:flex;align-items:center;gap:16px;padding:18px 20px;border:2px solid var(--gray-200);border-radius:14px;cursor:pointer;transition:all .15s;background:white">
           <span style="font-size:22px">🌿</span>
-          <div><div style="font-size:17px;font-weight:700;color:var(--gray-900)">50대+</div><div style="font-size:13px;color:var(--gray-500)">50세 이상</div></div>
+          <div><div style="font-size:17px;font-weight:700;color:var(--gray-900)">65+</div><div style="font-size:13px;color:var(--gray-500)">65세 이상</div></div>
         </div>
       </div>
       <button class="btn-primary" data-action="go-category">다음</button>
@@ -3247,11 +3288,10 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="ob-prog-info"><span class="ob-prog-step">2 / 5단계</span><span class="ob-prog-step">관심 카테고리</span></div>
         <div class="ob-prog-track"><div class="ob-prog-fill" style="width:40%"></div></div>
       </div>
-      <h2 class="ob-h2">관심 카테고리를 선택해 주세요</h2>
-      <!-- 전체선택/전체해제 -->
-      <div style="display:flex;gap:8px;margin-bottom:14px">
-        <button style="flex:1;padding:8px 0;border-radius:8px;border:1.5px solid var(--primary);background:var(--primary-lt);color:var(--primary);font-size:14px;font-weight:700;cursor:pointer" data-action="cat-all">전체 선택</button>
-        <button style="flex:1;padding:8px 0;border-radius:8px;border:1.5px solid var(--gray-300);background:white;color:var(--gray-500);font-size:14px;font-weight:700;cursor:pointer" data-action="cat-none">전체 해제</button>
+      <h2 class="ob-h2">더 관심있는 카테고리를 선택해주세요</h2>
+      <!-- 전체 선택 토글 -->
+      <div style="margin-bottom:14px">
+        <button id="catAllToggle" style="width:100%;padding:10px 0;border-radius:8px;border:1.5px solid var(--primary);background:var(--primary-lt);color:var(--primary);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font)" data-action="cat-all-toggle">전체 선택</button>
       </div>
       <div class="cat-grid" id="catGrid">
         <div class="cat-chip sel" data-action="toggle-cat">마트</div>
@@ -3278,7 +3318,7 @@ input[type=range].disc-range::-moz-range-thumb {
       </div>
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
         <div>
-          <h2 class="ob-h2" style="margin-bottom:4px">자주 이용하는 브랜드를 선택하세요</h2>
+          <h2 class="ob-h2" style="margin-bottom:4px">자주 이용하는 브랜드를 선택해 주세요</h2>
         </div>
         <button id="brandAllToggleBtn" onclick="toggleBrandAll()"
           style="padding:8px 20px;border-radius:20px;border:2px solid var(--primary);background:var(--primary);color:white;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--font);flex-shrink:0;transition:all .15s">전체</button>
@@ -3309,14 +3349,22 @@ input[type=range].disc-range::-moz-range-thumb {
         <div class="ob-prog-track"><div class="ob-prog-fill" style="width:80%"></div></div>
       </div>
       <h2 class="ob-h2">어느 정도 할인이면<br>알림 받을까요?</h2>
-      <div class="disc-slider-wrap" style="padding:28px 0 8px">
-        <div class="disc-slider-val"><span id="discVal">30</span><span class="disc-pct">%</span></div>
-        <div class="disc-slider-hint" style="text-align:center;font-size:15px;color:var(--gray-500);margin-bottom:24px">이 기준 이상의 쿠폰만 알려드려요</div>
-        <input type="range" class="disc-range" id="discRange" min="0" max="100" value="30" step="5"
-          oninput="document.getElementById('discVal').textContent=this.value; updateDiscSlider(this)"
-          style="width:100%;margin-bottom:12px">
-        <div class="disc-range-labels" style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray-400);font-weight:600">
-          <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+      <div style="font-size:15px;color:var(--gray-500);margin-bottom:8px">이 기준 이상의 쿠폰만 알려드려요</div>
+      <!-- 원형 다이얼 -->
+      <div class="disc-arc-wrap" id="discArcWrap">
+        <svg class="disc-arc-svg" id="discArcSvg" viewBox="0 0 200 200">
+          <!-- 배경 트랙: 135° → 45° (시계방향 270°) -->
+          <path d="M 46.97,153.03 A 75,75 0 1,1 153.03,153.03"
+                fill="none" stroke="#E5E7EB" stroke-width="16" stroke-linecap="round"/>
+          <!-- 채워진 호 -->
+          <path id="discArcFill" fill="none" stroke="var(--primary)" stroke-width="16" stroke-linecap="round"/>
+          <!-- 핸들 -->
+          <circle id="discArcHandle" r="16"
+                  fill="white" stroke="var(--primary)" stroke-width="3"
+                  style="cursor:grab;filter:drop-shadow(0 2px 8px rgba(15,65,166,.25))"/>
+        </svg>
+        <div class="disc-arc-center">
+          <span id="discVal">30</span><span class="disc-pct">%</span>
         </div>
       </div>
       <button class="btn-primary" data-action="go-notification">다음</button>
@@ -3563,6 +3611,10 @@ input[type=range].disc-range::-moz-range-thumb {
 <div class="screen" id="s-more-connect">
   <div class="ob-page">
     <div class="ob-card wide" style="text-align:center">
+      <div class="ob-nav-row">
+        <div class="ob-back" data-action="go-back">‹ 뒤로</div>
+        <span class="ob-skip" data-action="go-home">건너뛰기</span>
+      </div>
       <h2 class="ob-h2" style="margin-bottom:8px">쿠폰을 모두 찾았어요!</h2>
       <div style="font-size:16px;color:var(--gray-500);margin-bottom:28px">선택한 서비스에서 총 <strong style="color:var(--primary)">47개</strong>의 쿠폰을 발견했어요</div>
 
@@ -3583,7 +3635,7 @@ input[type=range].disc-range::-moz-range-thumb {
         <button class="btn-outline" data-action="go-integration" style="font-size:15px;min-height:48px">+ 서비스 추가 선택하기</button>
       </div>
 
-      <button class="btn-primary" data-action="go-age" style="font-size:18px">맞춤 설정하기</button>
+      <button class="btn-primary" data-action="go-age" style="font-size:18px">알림 설정하기</button>
     </div>
   </div>
 </div>
@@ -4764,7 +4816,7 @@ input[type=range].disc-range::-moz-range-thumb {
 
 
             <!-- 서브페이지 A: 알림 설정 (카테고리별 통합) -->
-            <div id="mps-noti" class="mps" style="display:block">
+            <div id="mps-noti" class="mps" style="display:none">
               <div class="mps-card">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
                   <div class="mps-title" style="margin-bottom:0">알림 설정</div>
@@ -5740,7 +5792,7 @@ function goBack() {
       showAppPage(prev, true); // skipHistory=true 로 중복 push 방지
       updateSidebar(prev);
       // mypage 탭 연동
-      if (prev === 'mypage') setTimeout(()=>showMypageSub('noti'), 50);
+      // mypage 복귀 시 서브패널은 자동으로 열지 않음
     }
     return;
   }
@@ -6164,10 +6216,65 @@ function filterNearby() {
 }
 
 /* ============================================================ DISCOUNT SLIDER ============================================================ */
-function updateDiscSlider(input) {
-  const pct = input.value;
-  input.style.background = `linear-gradient(to right, var(--primary) 0%, var(--primary) ${pct}%, var(--gray-200) ${pct}%, var(--gray-200) 100%)`;
+/* ── 할인율 원형 다이얼 ── */
+const _DA = { r:75, cx:100, cy:100, start:135, sweep:270 };
+
+function _daPoint(deg) {
+  const rad = deg * Math.PI / 180;
+  return [_DA.cx + _DA.r * Math.cos(rad), _DA.cy + _DA.r * Math.sin(rad)];
 }
+
+function updateDiscArc(v) {
+  v = Math.max(0, Math.min(100, Math.round(v / 5) * 5));
+  const [sx, sy] = _daPoint(_DA.start);
+  const endDeg = _DA.start + _DA.sweep * v / 100;
+  const [ex, ey] = _daPoint(endDeg);
+  const fill = document.getElementById('discArcFill');
+  const handle = document.getElementById('discArcHandle');
+  const valEl = document.getElementById('discVal');
+  if (valEl) valEl.textContent = v;
+  if (handle) { handle.setAttribute('cx', ex.toFixed(2)); handle.setAttribute('cy', ey.toFixed(2)); }
+  if (fill) {
+    if (v === 0) { fill.setAttribute('d', ''); }
+    else {
+      const large = (_DA.sweep * v / 100 > 180) ? 1 : 0;
+      fill.setAttribute('d', `M ${sx.toFixed(2)},${sy.toFixed(2)} A ${_DA.r},${_DA.r} 0 ${large},1 ${ex.toFixed(2)},${ey.toFixed(2)}`);
+    }
+  }
+}
+
+let _daInited = false;
+function initDiscArc() {
+  const svg = document.getElementById('discArcSvg');
+  if (!svg) return;
+  updateDiscArc(30);
+  if (_daInited) return;
+  _daInited = true;
+  let _daDrag = false;
+
+  function _daGetVal(e) {
+    const rect = svg.getBoundingClientRect();
+    const px = e.clientX !== undefined ? e.clientX : e.touches[0].clientX;
+    const py = e.clientY !== undefined ? e.clientY : e.touches[0].clientY;
+    let angle = Math.atan2(py - (rect.top + rect.height/2), px - (rect.left + rect.width/2)) * 180 / Math.PI;
+    if (angle < 0) angle += 360;
+    let rel = angle - _DA.start;
+    if (rel < 0) rel += 360;
+    if (rel > _DA.sweep) rel = (rel < _DA.sweep + (360 - _DA.sweep)/2) ? _DA.sweep : 0;
+    return Math.round(rel / _DA.sweep * 100 / 5) * 5;
+  }
+
+  svg.addEventListener('pointerdown', e => {
+    _daDrag = true;
+    svg.setPointerCapture(e.pointerId);
+    updateDiscArc(_daGetVal(e));
+    e.preventDefault();
+  });
+  svg.addEventListener('pointermove', e => { if (_daDrag) updateDiscArc(_daGetVal(e)); });
+  ['pointerup','pointercancel'].forEach(ev => svg.addEventListener(ev, () => _daDrag = false));
+}
+
+function updateDiscSlider(input) { /* 하위 호환 유지 — 미사용 */ }
 
 /* ── 알림설정 브랜드 검색 ── */
 const BRAND_NOTI_LIST = [
@@ -6767,38 +6874,52 @@ function setHomeBrand(bid, el) {
   _applyHomeFilter();
 }
 
-/* ── 오늘의 추천 쿠폰 — Center Focus Carousel ── */
-let _recIdx   = 0;
-let _recTimer = null;
+/* ── 오늘의 추천 쿠폰 — Center Focus Carousel (infinite loop) ── */
+let _recIdx    = 0;
+let _recOrigN  = 0;   // 원본 카드 수 (클론 제외)
+let _recTimer  = null;
 let _recLocked = false;
 let _recInited = false;
-const _REC_CW   = 255;              // card width (px) — 1.5× of original 170
+const _REC_CW   = 200;              // card width (px)
 const _REC_G    = 14;               // gap (px)
-const _REC_STEP = _REC_CW + _REC_G; // 269px per slot
+const _REC_STEP = _REC_CW + _REC_G; // 214px per slot
 
 function updateRecCarousel(newIdx, instant) {
   if (_recLocked && !instant) return;
   const track = document.getElementById('homeRecTrack');
   if (!track) return;
   const cards = [...track.querySelectorAll('.home-rec-card')];
-  const n = cards.length;
-  if (n < 2) return; // fallback: 카드 수 부족 시 일반 슬라이드 유지
+  const n = cards.length;           // 전체 (클론 포함)
+  const orig = _recOrigN || n;      // 원본 수
+  if (n < 2) return;
 
   _recIdx = ((newIdx % n) + n) % n;
 
-  // 각 카드에 상태 클래스 적용
+  // 각 카드 상태 클래스 — 클론도 원본 인덱스 기준으로 동일 처리
   cards.forEach((card, i) => {
-    const dist = Math.min(Math.abs(i - _recIdx), n - Math.abs(i - _recIdx));
+    const vi = i % orig;            // 가상 인덱스 (클론 → 원본으로 매핑)
+    const vr = _recIdx % orig;
+    const dist = Math.min(Math.abs(vi - vr), orig - Math.abs(vi - vr));
     card.classList.remove('rec-active', 'rec-adj', 'rec-far');
     if      (dist === 0) card.classList.add('rec-active');
     else if (dist === 1) card.classList.add('rec-adj');
     else                 card.classList.add('rec-far');
   });
 
-  // 트랙 이동 (instant = 애니메이션 없이 즉시)
+  // 트랙 이동
   if (instant) track.style.transition = 'none';
   track.style.transform = `translateX(${-_recIdx * _REC_STEP}px)`;
   if (instant) requestAnimationFrame(() => { track.style.transition = ''; });
+
+  // 클론 위치(orig)에 도달했을 때 transition 후 즉시 원본 0으로 점프
+  if (!instant && _recIdx === orig) {
+    setTimeout(() => {
+      _recLocked = false;
+      updateRecCarousel(0, true);
+    }, 430);
+    _recLocked = true;
+    return; // 아래 lock 타이머 중복 방지
+  }
 
   // 빠른 연속 조작 lock
   if (!instant) {
@@ -6808,14 +6929,13 @@ function updateRecCarousel(newIdx, instant) {
 }
 
 function scrollRecCar(dir) {
-  const n = document.querySelectorAll('#homeRecTrack .home-rec-card').length;
   if (dir === null) {
-    // 자동 슬라이드: 끝에서 첫 카드로 순간 이동 후 다음으로
-    if (_recIdx === n - 1) { updateRecCarousel(0, true); return; }
+    // 자동: 항상 +1 (클론 덕분에 끊김 없음)
     updateRecCarousel(_recIdx + 1);
   } else {
+    const orig = _recOrigN;
     const next = _recIdx + dir;
-    if (next < 0 || next >= n) return; // 끝 도달 시 클램프
+    if (next < 0 || next >= orig) return; // 수동은 원본 범위 내에서만
     updateRecCarousel(next);
   }
 }
@@ -6838,6 +6958,16 @@ function initRecCarousel() {
   const track = document.getElementById('homeRecTrack');
   if (!wrap || !track) return;
 
+  // 원본 카드 확인 후 첫 번째 카드를 끝에 클론 → 무한 루프
+  if (!_recInited) {
+    const origCards = [...track.querySelectorAll('.home-rec-card')];
+    _recOrigN = origCards.length;
+    const clone = origCards[0].cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    clone.removeAttribute('data-action'); // 클론 클릭 이벤트 방지
+    track.appendChild(clone);
+  }
+
   updateRecCarousel(0, true); // 초기 상태 (애니메이션 없이)
   startRecAuto();
 
@@ -6851,7 +6981,7 @@ function initRecCarousel() {
   // ② Drag / Swipe
   let _dragX    = null;
   let _wasDrag  = false;
-  let _justDrag = false; // click 시 drag 판별용
+  let _justDrag = false;
 
   wrap.addEventListener('pointerdown', e => {
     _dragX   = e.clientX;
@@ -6886,13 +7016,13 @@ function initRecCarousel() {
   wrap.addEventListener('pointerup',     endDrag);
   wrap.addEventListener('pointercancel', endDrag);
 
-  // ③ 인접 카드 클릭 → 중앙 이동 (active 카드는 go-detail 그대로)
+  // ③ 인접 카드 클릭 → 중앙 이동
   wrap.addEventListener('click', e => {
     if (_justDrag) { _justDrag = false; e.stopPropagation(); return; }
     const card = e.target.closest('.home-rec-card');
     if (!card || card.classList.contains('rec-active')) return;
     if (card.classList.contains('rec-adj')) {
-      e.stopPropagation(); // ACT go-detail 방지
+      e.stopPropagation();
       const cards = [...track.querySelectorAll('.home-rec-card')];
       const idx = cards.indexOf(card);
       scrollRecCarManual(idx > _recIdx ? 1 : -1);
@@ -6930,7 +7060,7 @@ const ACT = {
   'go-age':          ()=>go('age'),
   'go-category':     ()=>go('category'),
   'go-brand':        ()=>go('brand'),
-  'go-discount':     ()=>go('discount'),
+  'go-discount':     ()=>{ go('discount'); setTimeout(initDiscArc, 60); },
   'go-notification': ()=>go('notification'),
   'go-wallet-setup': ()=>go('wallet-setup'),
   'sel-age': (e)=>{
@@ -7039,7 +7169,7 @@ const ACT = {
   'pts-det-back':    ()=>goBack(),
   'nav-download':    ()=>{ showAppPage('download'); updateSidebar('download'); },
   'nav-wallet':      ()=>{ showAppPage('wallet'); updateSidebar('wallet'); applyWalletTab('downloaded'); },
-  'nav-mypage':          ()=>{ showAppPage('mypage'); updateSidebar('mypage'); setTimeout(()=>showMypageSub('noti'), 50); },
+  'nav-mypage':          ()=>{ showAppPage('mypage'); updateSidebar('mypage'); },
   'nav-mypage-noti':     ()=>{ showAppPage('mypage'); updateSidebar('mypage'); setTimeout(()=>showMypageSub('noti'), 50); },
   'nav-mypage-info':     ()=>{ showMypageSub('info'); },
   'nav-mypage-profile':  ()=>{ showAppPage('mypage'); updateSidebar('mypage'); setTimeout(()=>showMypageSub('profile'),50); },
@@ -7096,6 +7226,13 @@ const ACT = {
   'toggle-brand':    (e)=>e.target.closest('.brand-chip').classList.toggle('sel'),
   'brand-all':       ()=>document.querySelectorAll('#brandGrid .brand-chip').forEach(c=>c.classList.add('sel')),
   'brand-none':      ()=>document.querySelectorAll('#brandGrid .brand-chip').forEach(c=>c.classList.remove('sel')),
+  'cat-all-toggle':  ()=>{
+    const chips = document.querySelectorAll('#catGrid .cat-chip');
+    const btn = document.getElementById('catAllToggle');
+    const allSel = [...chips].every(c=>c.classList.contains('sel'));
+    chips.forEach(c=>{ if(allSel) c.classList.remove('sel'); else c.classList.add('sel'); });
+    if(btn){ btn.textContent = allSel ? '전체 선택' : '전체 해제'; btn.style.background = allSel ? 'var(--primary-lt)' : 'var(--gray-100)'; btn.style.borderColor = allSel ? 'var(--primary)' : 'var(--gray-300)'; btn.style.color = allSel ? 'var(--primary)' : 'var(--gray-500)'; }
+  },
   'cat-all':         ()=>document.querySelectorAll('#catGrid .cat-chip').forEach(c=>c.classList.add('sel')),
   'cat-none':        ()=>document.querySelectorAll('#catGrid .cat-chip').forEach(c=>c.classList.remove('sel')),
   'toggle-svc':      (e)=>{ const btn=e.target.closest('.conn-btn'); const card=btn.closest('.svc-card'); btn.classList.toggle('done'); const isDone=btn.classList.contains('done'); btn.textContent=isDone?'✓ 연동 완료':'연동하기'; if(card) card.classList.toggle('connected',isDone); },
