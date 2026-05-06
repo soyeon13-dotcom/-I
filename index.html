@@ -2084,119 +2084,164 @@ input[type=range].disc-range::-moz-range-thumb {
 }
 
 /* ============================================================
-   GPS 맵 페이지 — 네이버 지도 스타일
+   GPS 맵 페이지 v3 — 검색/필터 + 리스트 + 지도 + 정보팝업
    ============================================================ */
-/* 전체 레이아웃: 1(목록) : 3(지도) */
-.nearby-split {
-  display:flex; gap:0;
-  height:calc(100vh - var(--header-h) - 90px);
-  min-height:480px;
-  border:1.5px solid var(--gray-200);
-  border-radius:14px; overflow:hidden;
-}
-.nearby-split-list {
-  flex:1; min-width:180px; max-width:280px;
+#p-noti-alert {
   display:flex; flex-direction:column;
-  background:white;
-  border-right:1.5px solid var(--gray-200);
+  height:100%; padding:0; overflow:hidden;
 }
-.nearby-split-map {
-  flex:3; min-width:0; display:flex; flex-direction:column;
+.main-content:has(#p-noti-alert.active) {
+  padding:0 !important; overflow:hidden !important;
+  height:calc(100vh - var(--header-h));
 }
-#nearbyMap { flex:1; z-index:1; }
-
-/* 왼쪽 패널 — 타이틀 */
-.nearby-panel-title {
-  font-size:17px; font-weight:800; color:var(--gray-900);
-  padding:16px 16px 12px; border-bottom:1px solid var(--gray-200);
-  flex-shrink:0;
+.nmap-topbar {
+  flex-shrink:0; padding:12px 16px 10px;
+  background:white; border-bottom:1.5px solid var(--gray-200);
+  display:flex; flex-direction:column; gap:10px; z-index:10;
 }
-/* 검색 + 필터 컨트롤 영역 */
-.nearby-panel-controls {
-  padding:10px 12px; border-bottom:1px solid var(--gray-200);
-  flex-shrink:0; display:flex; flex-direction:column; gap:8px;
+.nmap-search-wrap { position:relative; }
+.nmap-search-box {
+  display:flex; align-items:center; gap:8px;
+  height:42px; padding:0 14px;
+  border:2px solid var(--gray-200); border-radius:12px;
+  background:white; transition:border-color .2s;
 }
-.nearby-panel-search {
-  display:flex; align-items:center;
-  border:1.5px solid var(--gray-200); border-radius:8px; overflow:hidden; background:white;
+.nmap-search-box:focus-within { border-color:var(--primary); box-shadow:0 0 0 3px rgba(15,65,166,.08); }
+.nmap-search-ico { color:var(--gray-400); flex-shrink:0; }
+.nmap-search-box input { flex:1; border:none; outline:none; font-size:14px; font-family:var(--font); color:var(--gray-900); background:transparent; }
+.nmap-search-box input::placeholder { color:var(--gray-400); }
+.nmap-search-clear { background:none; border:none; cursor:pointer; color:var(--gray-400); font-size:14px; padding:2px 4px; flex-shrink:0; }
+.nmap-search-clear:hover { color:var(--gray-700); }
+.nmap-autocomplete {
+  position:absolute; top:calc(100% + 6px); left:0; right:0;
+  background:white; border:1.5px solid var(--gray-200); border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12); z-index:200;
+  overflow:hidden; max-height:240px; overflow-y:auto;
 }
-.nearby-panel-search input {
-  flex:1; height:36px; padding:0 10px; border:none;
-  font-size:13px; outline:none; background:transparent; color:var(--gray-900);
+.nmap-ac-item { display:flex; align-items:center; gap:10px; padding:10px 14px; cursor:pointer; transition:background .12s; font-size:14px; color:var(--gray-800); }
+.nmap-ac-item:hover { background:var(--primary-lt); color:var(--primary); }
+.nmap-ac-ico { font-size:16px; flex-shrink:0; }
+.nmap-ac-sub { font-size:11px; color:var(--gray-400); margin-top:1px; }
+.nmap-filter-chips { display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
+.nmap-filter-chips::-webkit-scrollbar { display:none; }
+.nmap-chip { flex-shrink:0; height:30px; padding:0 12px; border:1.5px solid var(--gray-200); border-radius:20px; font-size:12px; font-weight:700; color:var(--gray-600); background:white; cursor:pointer; transition:all .15s; font-family:var(--font); }
+.nmap-chip:hover { border-color:var(--primary); color:var(--primary); }
+.nmap-chip.active { background:var(--primary); border-color:var(--primary); color:white; }
+.nmap-chip-open.active { background:#16a34a; border-color:#16a34a; }
+.nmap-body { flex:1; display:flex; min-height:0; overflow:hidden; }
+.nmap-list-panel { width:300px; flex-shrink:0; display:flex; flex-direction:column; background:white; border-right:1.5px solid var(--gray-200); overflow:hidden; }
+.nmap-list-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--gray-200); flex-shrink:0; }
+.nmap-list-count { font-size:13px; font-weight:700; color:var(--gray-700); }
+.nmap-sort-sel { height:28px; padding:0 8px; border:1.5px solid var(--gray-200); border-radius:8px; font-size:12px; font-weight:700; color:var(--gray-700); background:white; outline:none; cursor:pointer; font-family:var(--font); }
+.nmap-myloc-btn { display:flex; align-items:center; justify-content:center; gap:6px; margin:8px 12px; padding:8px; border-radius:10px; background:var(--primary-lt); color:var(--primary); border:1.5px solid rgba(15,65,166,.2); font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; font-family:var(--font); flex-shrink:0; }
+.nmap-myloc-btn:hover { background:var(--primary); color:white; }
+#nmapList { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--gray-300) transparent; }
+.nmap-item { padding:14px 14px 12px; border-bottom:1px solid var(--gray-200); cursor:pointer; transition:all .18s; background:white; position:relative; }
+.nmap-item:last-child { border-bottom:none; }
+.nmap-item:hover { background:#f5f7ff; }
+.nmap-item.active { background:var(--primary-lt); border-left:3px solid var(--primary); padding-left:11px; }
+.nmap-item.active .nmap-item-name { color:var(--primary); }
+.nmap-item-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.nmap-item-logo { width:42px; height:42px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:white; font-size:10px; font-weight:900; text-align:center; line-height:1.2; transition:transform .2s; }
+.nmap-item.active .nmap-item-logo { transform:scale(1.08); }
+.nmap-item-info { flex:1; min-width:0; }
+.nmap-item-name { font-size:14px; font-weight:700; color:var(--gray-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:color .15s; }
+.nmap-item-addr { font-size:11px; color:var(--gray-500); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.nmap-item-dist { font-size:12px; font-weight:700; color:var(--primary); flex-shrink:0; }
+.nmap-item-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+.nmap-item-badge { padding:2px 8px; border-radius:20px; background:var(--primary-lt); color:var(--primary); font-size:11px; font-weight:700; }
+.nmap-item.active .nmap-item-badge { background:white; }
+.nmap-item-exp { font-size:11px; font-weight:700; }
+.nmap-item-open { font-size:10px; font-weight:700; color:#16a34a; background:#dcfce7; border-radius:20px; padding:2px 7px; }
+.nmap-item-hours { font-size:10px; color:var(--gray-400); }
+.nmap-item-dl { width:100%; padding:7px; border-radius:8px; border:1.5px solid var(--primary); background:white; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; font-family:var(--font); }
+.nmap-item-dl:hover { background:var(--primary); color:white; }
+.nmap-item.active .nmap-item-dl { background:var(--primary); color:white; }
+.nmap-skeleton-list { padding:8px 0; }
+.nmap-skel-item { display:flex; align-items:center; gap:10px; padding:14px; border-bottom:1px solid var(--gray-200); }
+.nmap-skel-logo { width:42px; height:42px; border-radius:12px; background:linear-gradient(90deg,var(--gray-200) 25%,var(--gray-100) 50%,var(--gray-200) 75%); background-size:200% 100%; animation:nmapSkelShimmer 1.4s infinite; flex-shrink:0; }
+.nmap-skel-lines { flex:1; display:flex; flex-direction:column; gap:7px; }
+.nmap-skel-line { height:11px; border-radius:6px; background:linear-gradient(90deg,var(--gray-200) 25%,var(--gray-100) 50%,var(--gray-200) 75%); background-size:200% 100%; animation:nmapSkelShimmer 1.4s infinite; }
+.nmap-skel-line.w70{width:70%} .nmap-skel-line.w50{width:50%} .nmap-skel-line.w60{width:60%} .nmap-skel-line.w40{width:40%} .nmap-skel-line.w80{width:80%} .nmap-skel-line.w55{width:55%}
+@keyframes nmapSkelShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.nmap-empty { padding:48px 20px; text-align:center; color:var(--gray-400); }
+.nmap-map-panel { flex:1; min-width:0; position:relative; overflow:hidden; }
+#nearbyMap { width:100%; height:100%; z-index:1; }
+.nmap-rezone-btn { position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:100; background:white; border:1.5px solid var(--primary); border-radius:20px; padding:7px 16px; font-size:13px; font-weight:700; color:var(--primary); cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,.15); transition:all .15s; font-family:var(--font); white-space:nowrap; }
+.nmap-rezone-btn:hover { background:var(--primary); color:white; }
+.nmap-mini-card { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); z-index:100; background:white; border-radius:16px; width:calc(100% - 32px); max-width:360px; box-shadow:0 8px 32px rgba(0,0,0,.2); padding:14px 16px; border:1.5px solid var(--gray-200); animation:nmapMiniSlide .22s cubic-bezier(.34,1.3,.64,1); }
+@keyframes nmapMiniSlide { from{opacity:0;transform:translateX(-50%) translateY(12px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+.nmap-mini-close { position:absolute; top:10px; right:10px; width:24px; height:24px; border-radius:50%; background:var(--gray-100); display:flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer; color:var(--gray-600); }
+.nmap-mini-close:hover { background:var(--gray-200); }
+.nmap-mini-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.nmap-mini-logo { width:40px; height:40px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:white; font-size:10px; font-weight:900; text-align:center; }
+.nmap-mini-name { font-size:15px; font-weight:700; color:var(--gray-900); }
+.nmap-mini-addr { font-size:11px; color:var(--gray-500); margin-top:2px; }
+.nmap-mini-meta { display:flex; align-items:center; gap:6px; margin-bottom:10px; }
+.nmap-mini-badge { padding:2px 8px; border-radius:20px; background:var(--primary-lt); color:var(--primary); font-size:11px; font-weight:700; }
+.nmap-mini-exp { font-size:11px; font-weight:700; }
+.nmap-mini-dist { font-size:11px; font-weight:700; color:var(--primary); margin-left:auto; }
+.nmap-mini-actions { display:flex; gap:8px; }
+.nmap-mini-dl { flex:2; padding:9px; border-radius:9px; background:var(--primary); color:white; border:none; font-size:13px; font-weight:700; cursor:pointer; transition:background .15s; font-family:var(--font); }
+.nmap-mini-dl:hover { background:var(--primary-dk); }
+.nmap-mini-nav { flex:1; padding:9px; border-radius:9px; background:var(--gray-100); color:var(--gray-700); border:none; font-size:13px; font-weight:700; text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+.nmap-mini-nav:hover { background:var(--gray-200); }
+.nmap-info-popup-overlay { position:fixed; top:var(--header-h); left:0; right:0; bottom:0; z-index:3000; background:transparent; pointer-events:none; display:flex; justify-content:flex-end; }
+.nmap-info-popup-overlay.open { pointer-events:all; }
+.nmap-info-popup { position:relative; width:340px; height:100%; background:white; box-shadow:-8px 0 40px rgba(0,0,0,.18); transform:translateX(100%); transition:transform .28s cubic-bezier(.4,0,.2,1); overflow-y:auto; display:flex; flex-direction:column; }
+.nmap-info-popup-overlay.open .nmap-info-popup { transform:translateX(0); }
+@media (max-width:700px) {
+  .nmap-info-popup-overlay { align-items:flex-end; justify-content:stretch; }
+  .nmap-info-popup { width:100%; height:auto; border-radius:20px 20px 0 0; transform:translateY(100%); max-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,.18); }
+  .nmap-info-popup-overlay.open .nmap-info-popup { transform:translateY(0); }
 }
-.nearby-panel-search input::placeholder { color:var(--gray-400); }
-.nearby-panel-search button {
-  width:36px; height:36px; border:none; background:transparent;
-  cursor:pointer; font-size:15px; border-left:1px solid var(--gray-200);
-  color:var(--gray-500); display:flex; align-items:center; justify-content:center;
+.nmap-popup-handle { width:40px; height:4px; background:var(--gray-300); border-radius:2px; margin:12px auto 0; display:none; }
+@media (max-width:700px) { .nmap-popup-handle { display:block; } }
+.nmap-popup-hero { height:120px; position:relative; flex-shrink:0; display:flex; align-items:flex-end; padding:14px 16px; }
+.nmap-popup-hero-logo { width:48px; height:48px; border-radius:14px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:white; font-size:13px; font-weight:900; box-shadow:0 4px 16px rgba(0,0,0,.2); position:relative; z-index:1; }
+.nmap-popup-hero-bg { position:absolute; inset:0; opacity:.18; }
+.nmap-popup-close-btn { position:absolute; top:12px; right:12px; z-index:2; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.85); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--gray-700); transition:background .15s; }
+.nmap-popup-close-btn:hover { background:white; }
+.nmap-popup-body { padding:16px 18px; flex:1; }
+.nmap-popup-name { font-size:18px; font-weight:800; color:var(--gray-900); margin-bottom:4px; }
+.nmap-popup-addr { font-size:13px; color:var(--gray-500); margin-bottom:14px; display:flex; align-items:center; gap:4px; }
+.nmap-popup-info-rows { display:flex; flex-direction:column; gap:0; margin-bottom:16px; border:1.5px solid var(--gray-200); border-radius:12px; overflow:hidden; }
+.nmap-popup-info-row { display:flex; align-items:center; gap:10px; padding:11px 14px; border-bottom:1px solid var(--gray-200); font-size:13px; }
+.nmap-popup-info-row:last-child { border-bottom:none; }
+.nmap-popup-info-ico { font-size:15px; flex-shrink:0; width:22px; text-align:center; }
+.nmap-popup-info-lbl { color:var(--gray-500); font-weight:600; flex-shrink:0; width:52px; }
+.nmap-popup-info-val { color:var(--gray-900); font-weight:600; flex:1; }
+.nmap-popup-cpn-section { margin-bottom:16px; }
+.nmap-popup-cpn-lbl { font-size:12px; font-weight:800; color:var(--gray-500); letter-spacing:.4px; text-transform:uppercase; margin-bottom:8px; }
+.nmap-popup-cpn-card { background:var(--primary-lt); border-radius:12px; padding:14px; display:flex; align-items:center; justify-content:space-between; border:1.5px solid rgba(15,65,166,.12); }
+.nmap-popup-cpn-disc { font-size:28px; font-weight:700; color:var(--primary); line-height:1; }
+.nmap-popup-cpn-info { flex:1; padding:0 12px; }
+.nmap-popup-cpn-title { font-size:13px; font-weight:700; color:var(--gray-900); }
+.nmap-popup-cpn-exp { font-size:11px; font-weight:700; margin-top:3px; }
+.nmap-popup-actions { display:flex; flex-direction:column; gap:8px; padding-top:4px; }
+.nmap-popup-btn-primary { width:100%; padding:13px; border-radius:12px; background:var(--primary); color:white; border:none; font-size:15px; font-weight:700; cursor:pointer; transition:background .15s; font-family:var(--font); }
+.nmap-popup-btn-primary:hover { background:var(--primary-dk); }
+.nmap-popup-btn-secondary { width:100%; padding:12px; border-radius:12px; background:var(--gray-100); color:var(--gray-700); border:none; font-size:14px; font-weight:700; cursor:pointer; transition:background .15s; font-family:var(--font); display:flex; align-items:center; justify-content:center; gap:6px; }
+.nmap-popup-btn-secondary:hover { background:var(--gray-200); }
+.nmap-pin { background:var(--primary); color:white; border-radius:20px; padding:5px 10px; font-size:12px; font-weight:700; white-space:nowrap; box-shadow:0 3px 10px rgba(0,0,0,.28); border:2.5px solid white; cursor:pointer; transition:transform .18s, box-shadow .18s; }
+.nmap-pin:hover { transform:scale(1.1); box-shadow:0 6px 16px rgba(0,0,0,.32); }
+.nmap-pin.pin-active { background:var(--accent-dk); color:#2a1d00; transform:scale(1.22); box-shadow:0 6px 20px rgba(0,0,0,.35); z-index:999 !important; }
+@keyframes nmapPinBounce { 0%,100%{transform:scale(1.22) translateY(0)} 40%{transform:scale(1.22) translateY(-8px)} 70%{transform:scale(1.22) translateY(-3px)} }
+.nmap-pin.pin-bounce { animation:nmapPinBounce .5s ease; }
+.map-user-pin { font-size:26px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
+.nmap-mobile-tabs { display:none; position:fixed; bottom:0; left:0; right:0; z-index:200; background:white; border-top:1.5px solid var(--gray-200); padding:8px 16px calc(8px + env(safe-area-inset-bottom)); gap:8px; }
+.nmap-mob-tab { flex:1; padding:10px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; border:1.5px solid var(--gray-200); background:white; color:var(--gray-600); transition:all .15s; font-family:var(--font); display:flex; align-items:center; justify-content:center; gap:6px; }
+.nmap-mob-tab.active { background:var(--primary); border-color:var(--primary); color:white; }
+.nmap-mob-badge { background:var(--danger); color:white; font-size:11px; font-weight:700; padding:1px 6px; border-radius:10px; }
+@media (max-width:700px) {
+  .nmap-list-panel { display:none; width:100%; }
+  .nmap-list-panel.mob-show { display:flex; position:absolute; inset:0; z-index:50; }
+  .nmap-map-panel.mob-hide { display:none; }
+  .nmap-mobile-tabs { display:flex; }
+  #p-noti-alert { padding-bottom:64px; }
 }
-.nearby-loc-row { display:flex; gap:6px; }
-.nearby-loc-sel {
-  flex:1; height:32px; padding:0 6px; border:1.5px solid var(--gray-200);
-  border-radius:6px; font-size:11px; color:var(--gray-700); background:white;
-  outline:none; cursor:pointer;
-}
-/* 카운트 + 정렬 */
-.nearby-count-row {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:7px 12px; border-bottom:1px solid var(--gray-200);
-  flex-shrink:0;
-}
-.nearby-count-txt { font-size:12px; color:var(--gray-600); font-weight:600; }
-.nearby-sort-sel {
-  height:26px; padding:0 6px; border:1.5px solid var(--gray-200);
-  border-radius:6px; font-size:11px; color:var(--gray-700); background:white;
-  outline:none; cursor:pointer;
-}
-/* 브랜드 목록 */
-#nearbyList { flex:1; overflow-y:auto; padding:0; background:white; }
-.nearby-cpn-item {
-  display:flex; flex-direction:column; gap:8px;
-  padding:14px 14px; border-bottom:1px solid var(--gray-200);
-  cursor:pointer; transition:background .15s; text-align:left;
-  background:white;
-}
-.nearby-cpn-item:last-child { border-bottom:none; }
-.nearby-cpn-item:hover { background:var(--gray-50,#f8f9fb); }
-.nearby-cpn-item.map-selected { background:var(--primary-lt); }
-/* 아이템 헤더: 로고 + 이름/주소 */
-.nci-item-header { display:flex; align-items:center; gap:10px; }
-.nci-brand-logo {
-  width:40px; height:40px; border-radius:10px; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  color:white; font-size:10px; font-weight:900; line-height:1.2; text-align:center;
-}
-.nci-name-col { flex:1; min-width:0; }
-.nci-store {
-  font-size:14px; font-weight:700; color:var(--primary);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.nci-addr {
-  font-size:11px; color:var(--gray-500); font-weight:500; margin-top:2px;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-/* 할인 뱃지 + 만료일 */
-.nci-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-.nci-disc-badge {
-  padding:2px 8px; border-radius:20px;
-  background:var(--primary-lt); color:var(--primary); font-size:11px; font-weight:700;
-}
-.nci-exp { font-size:11px; font-weight:700; }
-/* 다운로드 버튼 */
-.nci-dl-btn {
-  width:100%; padding:8px 0; border-radius:8px;
-  border:1.5px solid var(--primary);
-  background:white; color:var(--primary); font-size:12px; font-weight:700;
-  cursor:pointer; transition:all .15s;
-}
-.nci-dl-btn:hover { background:var(--primary); color:white; }
-/* 지도 핀 */
-.map-store-pin {
-  background:var(--primary); color:white; border-radius:20px; padding:5px 10px;
-  font-size:12px; font-weight:700; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,.3);
-  border:2px solid white; cursor:pointer;
-}
-.map-user-pin { font-size:22px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.3)); }
+/* 기존 호환 */
+.map-store-pin { background:var(--primary); color:white; border-radius:20px; padding:5px 10px; font-size:12px; font-weight:700; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,.3); border:2px solid white; cursor:pointer; }
 
 /* ============================================================
    BARCODE 전체화면
@@ -5026,151 +5071,162 @@ input[type=range].disc-range::-moz-range-thumb {
 
       <!-- ── NOTI ALERT: GPS 기반 추천 쿠폰 ── -->
       <div id="p-noti-alert" class="app-page">
-        <div class="page-nav">
-          <button class="pnav-back" data-action="go-back">‹ 뒤로</button>
-          <span class="pnav-title">주변 쿠폰 지도</span>
+
+        <!-- ── 상단 검색/필터 바 ── -->
+        <div class="nmap-topbar">
+          <div class="nmap-search-wrap">
+            <div class="nmap-search-box" id="nmapSearchBox">
+              <svg class="nmap-search-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="nmapSearchInput" placeholder="매장명, 브랜드, 지역 검색..."
+                oninput="nmapHandleSearch(this.value)"
+                onkeydown="if(event.key==='Enter')nmapCommitSearch(this.value)"
+                autocomplete="off">
+              <button class="nmap-search-clear" id="nmapSearchClear" onclick="nmapClearSearch()" style="display:none">✕</button>
+            </div>
+            <div class="nmap-autocomplete" id="nmapAutocomplete" style="display:none"></div>
+          </div>
+          <div class="nmap-filter-chips">
+            <button class="nmap-chip active" data-filter="all"          onclick="nmapSetFilter('all',this)">전체</button>
+            <button class="nmap-chip" data-filter="mart"                onclick="nmapSetFilter('mart',this)">🛒 마트</button>
+            <button class="nmap-chip" data-filter="convenience"         onclick="nmapSetFilter('convenience',this)">🏪 편의점</button>
+            <button class="nmap-chip" data-filter="cafe"                onclick="nmapSetFilter('cafe',this)">☕ 카페</button>
+            <button class="nmap-chip" data-filter="beauty"              onclick="nmapSetFilter('beauty',this)">💄 뷰티</button>
+            <button class="nmap-chip nmap-chip-open" data-filter="open" onclick="nmapSetFilter('open',this)">🟢 영업중</button>
+          </div>
         </div>
 
-        <!-- 목록(좌 1) + 지도(우 3) -->
-        <div class="nearby-split">
+        <!-- ── 본문: 리스트 + 지도 ── -->
+        <div class="nmap-body">
 
-          <!-- ── 왼쪽 패널 ── -->
-          <div class="nearby-split-list">
-
-            <!-- 타이틀 -->
-            <div class="nearby-panel-title">브랜드 검색</div>
-
-            <!-- 검색 + 지역 필터 -->
-            <div class="nearby-panel-controls">
-              <div class="nearby-panel-search">
-                <input type="text" id="nearbySearchInput" placeholder="브랜드명을 입력해주세요" oninput="filterNearbyList(this.value)">
-                <button onclick="filterNearbyList(document.getElementById('nearbySearchInput').value)">🔍</button>
-              </div>
-              <div class="nearby-loc-row">
-                <select class="nearby-loc-sel" id="nearbyCitySelect" onchange="updateNearbyDistricts(this.value)">
-                  <option value="">도시 선택</option>
-                  <option value="서울">서울특별시</option>
-                  <option value="부산">부산광역시</option>
-                  <option value="대구">대구광역시</option>
-                  <option value="인천">인천광역시</option>
-                  <option value="광주">광주광역시</option>
-                  <option value="대전">대전광역시</option>
-                  <option value="울산">울산광역시</option>
-                  <option value="세종">세종특별자치시</option>
-                  <option value="경기">경기도</option>
-                  <option value="강원">강원특별자치도</option>
-                  <option value="충북">충청북도</option>
-                  <option value="충남">충청남도</option>
-                  <option value="전북">전북특별자치도</option>
-                  <option value="전남">전라남도</option>
-                  <option value="경북">경상북도</option>
-                  <option value="경남">경상남도</option>
-                  <option value="제주">제주특별자치도</option>
-                </select>
-                <select class="nearby-loc-sel" id="nearbyDistrictSelect">
-                  <option>시/구/군 선택</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- 카운트 + 정렬 -->
-            <div class="nearby-count-row">
-              <span class="nearby-count-txt">총 5개 브랜드가 있습니다.</span>
-              <select id="nearbySort" class="nearby-sort-sel" onchange="sortNearbyList(this.value)">
+          <!-- 왼쪽 리스트 패널 -->
+          <div class="nmap-list-panel" id="nmapListPanel">
+            <div class="nmap-list-header">
+              <span class="nmap-list-count" id="nmapListCount">6개 매장</span>
+              <select class="nmap-sort-sel" id="nmapSortSel" onchange="nmapSort(this.value)">
                 <option value="dist">거리순</option>
-                <option value="popular">인기순</option>
                 <option value="expire">마감임박순</option>
-                <option value="disc">최대할인</option>
+                <option value="disc">최대할인순</option>
               </select>
             </div>
-
-            <!-- 브랜드 목록 -->
-            <div id="nearbyList">
-
-              <div class="nearby-cpn-item" data-action="go-detail" data-id="emart" data-store="이마트">
-                <div class="nci-item-header">
-                  <div class="nci-brand-logo" style="background:linear-gradient(135deg,#f5a623,#e8870a)">이마트</div>
-                  <div class="nci-name-col">
-                    <div class="nci-store">이마트 ›</div>
-                    <div class="nci-addr">서울 영등포구 영중로 15</div>
-                  </div>
-                </div>
-                <div class="nci-meta">
-                  <span class="nci-disc-badge">30%</span>
-                  <span class="nci-exp" style="color:var(--danger)">오늘 만료</span>
-                </div>
-                <button class="nci-dl-btn" onclick="handleDownload(this);event.stopPropagation()">↓ 다운로드</button>
-              </div>
-
-              <div class="nearby-cpn-item" data-store="GS25">
-                <div class="nci-item-header">
-                  <div class="nci-brand-logo" style="background:linear-gradient(135deg,#00a651,#007a3d)">GS25</div>
-                  <div class="nci-name-col">
-                    <div class="nci-store">GS25 ›</div>
-                    <div class="nci-addr">서울 영등포구 경인로 846</div>
-                  </div>
-                </div>
-                <div class="nci-meta">
-                  <span class="nci-disc-badge">20%</span>
-                  <span class="nci-exp" style="color:var(--gray-400)">D-14</span>
-                </div>
-                <button class="nci-dl-btn" onclick="handleDownload(this);event.stopPropagation()">↓ 다운로드</button>
-              </div>
-
-              <div class="nearby-cpn-item" data-store="스타벅스">
-                <div class="nci-item-header">
-                  <div class="nci-brand-logo" style="background:linear-gradient(135deg,#00704a,#1e8449)">SBX</div>
-                  <div class="nci-name-col">
-                    <div class="nci-store">스타벅스 ›</div>
-                    <div class="nci-addr">서울 영등포구 국제금융로 2</div>
-                  </div>
-                </div>
-                <div class="nci-meta">
-                  <span class="nci-disc-badge">1+1</span>
-                  <span class="nci-exp" style="color:var(--gray-400)">D-7</span>
-                </div>
-                <button class="nci-dl-btn" onclick="handleDownload(this);event.stopPropagation()">↓ 다운로드</button>
-              </div>
-
-              <div class="nearby-cpn-item" data-store="올리브영">
-                <div class="nci-item-header">
-                  <div class="nci-brand-logo" style="background:linear-gradient(135deg,#e91e8c,#c2185b)">OY</div>
-                  <div class="nci-name-col">
-                    <div class="nci-store">올리브영 ›</div>
-                    <div class="nci-addr">서울 영등포구 당산로 123</div>
-                  </div>
-                </div>
-                <div class="nci-meta">
-                  <span class="nci-disc-badge">5,000원</span>
-                  <span class="nci-exp" style="color:var(--gray-400)">D-30</span>
-                </div>
-                <button class="nci-dl-btn" onclick="handleDownload(this);event.stopPropagation()">↓ 다운로드</button>
-              </div>
-
-              <div class="nearby-cpn-item" data-store="롯데마트">
-                <div class="nci-item-header">
-                  <div class="nci-brand-logo" style="background:linear-gradient(135deg,#cc0000,#990000)">롯데</div>
-                  <div class="nci-name-col">
-                    <div class="nci-store">롯데마트 ›</div>
-                    <div class="nci-addr">서울 영등포구 양산로 53</div>
-                  </div>
-                </div>
-                <div class="nci-meta">
-                  <span class="nci-disc-badge">25%</span>
-                  <span class="nci-exp" style="color:var(--warning)">D-5</span>
-                </div>
-                <button class="nci-dl-btn" onclick="handleDownload(this);event.stopPropagation()">↓ 다운로드</button>
-              </div>
-
-            </div><!-- /nearbyList -->
-          </div><!-- /nearby-split-list -->
-
-          <!-- ── 오른쪽 지도 (3/4) ── -->
-          <div class="nearby-split-map">
-            <div id="nearbyMap"></div>
+            <button class="nmap-myloc-btn" onclick="nmapGoMyLocation()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+              현재 위치 기준 재정렬
+            </button>
+            <div class="nmap-skeleton-list" id="nmapSkeleton" style="display:none">
+              <div class="nmap-skel-item"><div class="nmap-skel-logo"></div><div class="nmap-skel-lines"><div class="nmap-skel-line w70"></div><div class="nmap-skel-line w50"></div></div></div>
+              <div class="nmap-skel-item"><div class="nmap-skel-logo"></div><div class="nmap-skel-lines"><div class="nmap-skel-line w60"></div><div class="nmap-skel-line w40"></div></div></div>
+              <div class="nmap-skel-item"><div class="nmap-skel-logo"></div><div class="nmap-skel-lines"><div class="nmap-skel-line w80"></div><div class="nmap-skel-line w55"></div></div></div>
+            </div>
+            <div id="nmapList"></div>
+            <div class="nmap-empty" id="nmapEmpty" style="display:none">
+              <div style="font-size:32px;margin-bottom:8px">🔍</div>
+              <div style="font-size:14px;font-weight:700;color:var(--gray-600)">검색 결과가 없어요</div>
+              <div style="font-size:12px;color:var(--gray-400);margin-top:4px">다른 키워드나 필터를 사용해보세요</div>
+            </div>
           </div>
 
-        </div><!-- /nearby-split -->
+          <!-- 오른쪽 지도 패널 -->
+          <div class="nmap-map-panel">
+            <button class="nmap-rezone-btn" id="nmapRezoneBtn" onclick="nmapFilterByBounds()" style="display:none">
+              🔄 이 지역 매장 다시 검색
+            </button>
+            <div id="nearbyMap"></div>
+
+            <!-- 지도 위 미니카드 (마커 클릭 시) -->
+            <div class="nmap-mini-card" id="nmapMiniCard" style="display:none">
+              <div class="nmap-mini-close" onclick="nmapCloseMiniCard()">✕</div>
+              <div class="nmap-mini-top">
+                <div class="nmap-mini-logo" id="nmapMiniLogo"></div>
+                <div>
+                  <div class="nmap-mini-name" id="nmapMiniName"></div>
+                  <div class="nmap-mini-addr" id="nmapMiniAddr"></div>
+                </div>
+              </div>
+              <div class="nmap-mini-meta">
+                <span class="nmap-mini-badge" id="nmapMiniBadge"></span>
+                <span class="nmap-mini-exp" id="nmapMiniExp"></span>
+                <span class="nmap-mini-dist" id="nmapMiniDist"></span>
+              </div>
+              <div class="nmap-mini-actions">
+                <button class="nmap-mini-dl" id="nmapMiniDlBtn" onclick="nmapMiniGoDetail()">🎟 쿠폰 상세보기</button>
+                <a class="nmap-mini-nav" id="nmapMiniNav" href="#" target="_blank">🗺 길찾기</a>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /nmap-body -->
+
+        <!-- 장소 정보 팝업 (리스트 클릭 시) -->
+        <div class="nmap-info-popup-overlay" id="nmapInfoOverlay" style="display:none" onclick="if(event.target===this)nmapCloseInfoPopup()">
+          <div class="nmap-info-popup" id="nmapInfoPopup">
+            <div class="nmap-popup-handle"></div>
+            <div class="nmap-popup-hero" id="nmapPopupHero">
+              <div class="nmap-popup-hero-bg" id="nmapPopupHeroBg"></div>
+              <button class="nmap-popup-close-btn" onclick="nmapCloseInfoPopup()">✕</button>
+              <div class="nmap-popup-hero-logo" id="nmapPopupLogo"></div>
+            </div>
+            <div class="nmap-popup-body">
+              <div class="nmap-popup-name" id="nmapPopupName"></div>
+              <div class="nmap-popup-addr" id="nmapPopupAddr">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span id="nmapPopupAddrTxt"></span>
+              </div>
+
+              <!-- 기본 정보 rows -->
+              <div class="nmap-popup-info-rows">
+                <div class="nmap-popup-info-row">
+                  <span class="nmap-popup-info-ico">🕐</span>
+                  <span class="nmap-popup-info-lbl">운영시간</span>
+                  <span class="nmap-popup-info-val" id="nmapPopupHours"></span>
+                </div>
+                <div class="nmap-popup-info-row">
+                  <span class="nmap-popup-info-ico" id="nmapPopupOpenIco"></span>
+                  <span class="nmap-popup-info-lbl">영업상태</span>
+                  <span class="nmap-popup-info-val" id="nmapPopupOpenVal"></span>
+                </div>
+                <div class="nmap-popup-info-row">
+                  <span class="nmap-popup-info-ico">📍</span>
+                  <span class="nmap-popup-info-lbl">거리</span>
+                  <span class="nmap-popup-info-val" id="nmapPopupDist"></span>
+                </div>
+                <div class="nmap-popup-info-row">
+                  <span class="nmap-popup-info-ico">📞</span>
+                  <span class="nmap-popup-info-lbl">연락처</span>
+                  <span class="nmap-popup-info-val" id="nmapPopupPhone"></span>
+                </div>
+              </div>
+
+              <!-- 쿠폰 섹션 -->
+              <div class="nmap-popup-cpn-section">
+                <div class="nmap-popup-cpn-lbl">보유 쿠폰</div>
+                <div class="nmap-popup-cpn-card">
+                  <div class="nmap-popup-cpn-disc" id="nmapPopupDisc"></div>
+                  <div class="nmap-popup-cpn-info">
+                    <div class="nmap-popup-cpn-title" id="nmapPopupCpnTitle"></div>
+                    <div class="nmap-popup-cpn-exp" id="nmapPopupCpnExp"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 액션 버튼 -->
+              <div class="nmap-popup-actions">
+                <button class="nmap-popup-btn-primary" id="nmapPopupDetailBtn" onclick="nmapPopupGoDetail()">
+                  🎟 쿠폰 상세페이지로 이동
+                </button>
+                <button class="nmap-popup-btn-secondary" id="nmapPopupNavBtn">
+                  🗺 길찾기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 모바일 탭 토글 -->
+        <div class="nmap-mobile-tabs">
+          <button class="nmap-mob-tab active" id="nmapMobMap" onclick="nmapMobileTab('map')">🗺 지도</button>
+          <button class="nmap-mob-tab" id="nmapMobList" onclick="nmapMobileTab('list')">📋 목록 <span id="nmapMobCount" class="nmap-mob-badge">6</span></button>
+        </div>
+
       </div>
 
       <!-- ── SEARCH RESULTS ── -->
@@ -5420,102 +5476,349 @@ function _applyHomeFilter() {
   if (noResult) noResult.style.display = !anyVisible ? '' : 'none';
 }
 
-/* ── GPS 주변 목록 검색 필터 ── */
-function filterNearbyList(kw) {
-  const q=(kw||'').trim().toLowerCase();
-  document.querySelectorAll('#nearbyList .nearby-cpn-item').forEach(item=>{
-    const txt=(item.dataset.store||'')+item.textContent;
-    const match = !q || txt.toLowerCase().includes(q);
-    // display:none 대신 opacity+visibility로 처리 → 공간 유지, 레이아웃 밀림 없음
-    item.style.visibility    = match ? '' : 'hidden';
-    item.style.opacity       = match ? '1' : '0';
-    item.style.pointerEvents = match ? '' : 'none';
-    item.style.transition    = 'opacity .15s';
-  });
-}
-function sortNearbyList(val) { /* prototype — UI only */ }
+/* ============================================================
+   지도 기반 매장 찾기 v3 — 정보 팝업 + 핀 클릭 → 상세 이동
+   ============================================================ */
+let nearbyMap = null;
+let nmapMarkers = [];
+let nmapActiveIdx = -1;
+let nmapCurrentFilter = 'all';
+let nmapDragTimer = null;
+let nmapCurrentStore = null;
 
-/* ── 대한민국 행정구역 데이터 ── */
-const KOREA_DISTRICTS = {
-  '서울': ['전체','종로구','중구','용산구','성동구','광진구','동대문구','중랑구','성북구','강북구','도봉구','노원구','은평구','서대문구','마포구','양천구','강서구','구로구','금천구','영등포구','동작구','관악구','서초구','강남구','송파구','강동구'],
-  '부산': ['전체','중구','서구','동구','영도구','부산진구','동래구','남구','북구','해운대구','사하구','금정구','강서구','연제구','수영구','사상구','기장군'],
-  '대구': ['전체','중구','동구','서구','남구','북구','수성구','달서구','달성군','군위군'],
-  '인천': ['전체','중구','동구','미추홀구','연수구','남동구','부평구','계양구','서구','강화군','옹진군'],
-  '광주': ['전체','동구','서구','남구','북구','광산구'],
-  '대전': ['전체','동구','중구','서구','유성구','대덕구'],
-  '울산': ['전체','중구','남구','동구','북구','울주군'],
-  '세종': ['전체','세종시'],
-  '경기': ['전체','수원시','성남시','의정부시','안양시','부천시','광명시','평택시','동두천시','안산시','고양시','과천시','구리시','남양주시','오산시','시흥시','군포시','의왕시','하남시','용인시','파주시','이천시','안성시','김포시','화성시','광주시','양주시','포천시','여주시','연천군','가평군','양평군'],
-  '강원': ['전체','춘천시','원주시','강릉시','동해시','태백시','속초시','삼척시','홍천군','횡성군','영월군','평창군','정선군','철원군','화천군','양구군','인제군','고성군','양양군'],
-  '충북': ['전체','청주시','충주시','제천시','보은군','옥천군','영동군','증평군','진천군','괴산군','음성군','단양군'],
-  '충남': ['전체','천안시','공주시','보령시','아산시','서산시','논산시','계룡시','당진시','금산군','부여군','서천군','청양군','홍성군','예산군','태안군'],
-  '전북': ['전체','전주시','군산시','익산시','정읍시','남원시','김제시','완주군','진안군','무주군','장수군','임실군','순창군','고창군','부안군'],
-  '전남': ['전체','목포시','여수시','순천시','나주시','광양시','담양군','곡성군','구례군','고흥군','보성군','화순군','장흥군','강진군','해남군','영암군','무안군','함평군','영광군','장성군','완도군','진도군','신안군'],
-  '경북': ['전체','포항시','경주시','김천시','안동시','구미시','영주시','영천시','상주시','문경시','경산시','군위군','의성군','청송군','영양군','영덕군','청도군','고령군','성주군','칠곡군','예천군','봉화군','울진군','울릉군'],
-  '경남': ['전체','창원시','진주시','통영시','사천시','김해시','밀양시','거제시','양산시','의령군','함안군','창녕군','고성군','남해군','하동군','산청군','함양군','거창군','합천군'],
-  '제주': ['전체','제주시','서귀포시']
-};
+const NMAP_STORES = [
+  { id:'emart',     name:'이마트 영등포점',   addr:'서울 영등포구 영중로 15',      lat:37.5262, lng:126.8953, disc:'30%',    cpnTitle:'전 매장 쇼핑 할인',      expText:'오늘 만료', expNum:0,  color:'linear-gradient(135deg,#f5a623,#e8870a)', logoText:'이마트', category:'mart',         open:true,  hours:'09:00~23:00', dist:0.3, phone:'02-2260-1234' },
+  { id:'gs25',      name:'GS25 영등포역점',   addr:'서울 영등포구 경인로 846',     lat:37.5285, lng:126.8993, disc:'20%',    cpnTitle:'도시락 20% 할인',         expText:'D-14',      expNum:14, color:'linear-gradient(135deg,#00a651,#007a3d)', logoText:'GS25',   category:'convenience',  open:true,  hours:'24시간 운영',  dist:0.6, phone:'02-2678-3456' },
+  { id:'starbucks', name:'스타벅스 영등포점', addr:'서울 영등포구 국제금융로 2',   lat:37.5244, lng:126.8931, disc:'1+1',    cpnTitle:'음료 1+1 증정',           expText:'D-7',       expNum:7,  color:'linear-gradient(135deg,#00704a,#1e8449)', logoText:'SBX',    category:'cafe',         open:true,  hours:'07:00~22:00', dist:0.8, phone:'02-2176-5678' },
+  { id:'oliveyoung',name:'올리브영 영등포점', addr:'서울 영등포구 당산로 123',     lat:37.5291, lng:126.9013, disc:'5,000원',cpnTitle:'전 상품 5,000원 할인',    expText:'D-30',      expNum:30, color:'linear-gradient(135deg,#e91e8c,#c2185b)', logoText:'OY',     category:'beauty',       open:false, hours:'10:00~22:00', dist:1.1, phone:'02-2631-7890' },
+  { id:'lottemart', name:'롯데마트 영등포점', addr:'서울 영등포구 양산로 53',      lat:37.5220, lng:126.8910, disc:'25%',    cpnTitle:'신선식품 25% 할인',        expText:'D-5',       expNum:5,  color:'linear-gradient(135deg,#cc0000,#990000)', logoText:'롯데',   category:'mart',         open:true,  hours:'10:00~23:00', dist:1.4, phone:'02-2164-0123' },
+  { id:'baemin',    name:'배달의민족 픽업',   addr:'서울 영등포구 도림로 310',     lat:37.5310, lng:126.8970, disc:'3,000원',cpnTitle:'배달 주문 3,000원 할인',  expText:'D-3',       expNum:3,  color:'linear-gradient(135deg,#00c3e3,#0077cc)', logoText:'BM',     category:'delivery',     open:true,  hours:'10:00~22:00', dist:1.7, phone:'1588-2345' },
+];
 
-function updateNearbyDistricts(city) {
-  const sel = document.getElementById('nearbyDistrictSelect');
-  if (!sel) return;
-  const list = KOREA_DISTRICTS[city] || [];
-  sel.innerHTML = list.length
-    ? list.map(d => `<option>${d}</option>`).join('')
-    : '<option>시/구/군 선택</option>';
-}
-
-/* ── Leaflet 지도 초기화 ── */
-let nearbyMap=null;
 function initNearbyMap() {
   if (!window.L) return;
-  const el=document.getElementById('nearbyMap');
+  const el = document.getElementById('nearbyMap');
   if (!el) return;
-  if (nearbyMap) { setTimeout(()=>nearbyMap.invalidateSize(),100); return; }
-  nearbyMap = L.map('nearbyMap',{zoomControl:true}).setView([37.5270,126.8960],15);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© <a href="https://www.openstreetmap.org">OpenStreetMap</a>',maxZoom:19
+  if (nearbyMap) { setTimeout(() => nearbyMap.invalidateSize(), 120); nmapRenderList(NMAP_STORES); return; }
+
+  nearbyMap = L.map('nearbyMap', { zoomControl:true }).setView([37.5270, 126.8960], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'© <a href="https://www.openstreetmap.org">OpenStreetMap</a>', maxZoom:19
   }).addTo(nearbyMap);
 
-  /* 현재 위치 마커 */
-  const userIcon=L.divIcon({html:'<div class="map-user-pin">📍</div>',iconSize:[28,28],iconAnchor:[14,28],className:''});
-  L.marker([37.5270,126.8960],{icon:userIcon}).addTo(nearbyMap).bindPopup('<b>현재 위치</b>').openPopup();
+  const userIcon = L.divIcon({ html:'<div class="map-user-pin">📍</div>', iconSize:[32,32], iconAnchor:[16,32], className:'' });
+  L.marker([37.5270, 126.8960], { icon:userIcon }).addTo(nearbyMap).bindPopup('<b>📍 현재 위치</b>').openPopup();
 
-  /* 상점 마커 */
-  const stores=[
-    {name:'이마트 영등포점', lat:37.5262, lng:126.8953, disc:'30%', color:'#C0392B'},
-    {name:'GS25 영등포역점',  lat:37.5285, lng:126.8993, disc:'20%', color:'#0F41A6'},
-    {name:'스타벅스 영등포점',lat:37.5244, lng:126.8931, disc:'1+1', color:'#00704A'},
-    {name:'올리브영 영등포점',lat:37.5291, lng:126.9013, disc:'5,000원',color:'#E91E8C'},
-    {name:'롯데마트 영등포점',lat:37.5220, lng:126.8910, disc:'25%', color:'#E63946'},
-  ];
-  stores.forEach(s=>{
-    const icon=L.divIcon({
-      html:`<div class="map-store-pin" style="background:${s.color}">${s.disc}</div>`,
-      iconSize:[64,30],iconAnchor:[32,30],className:''
-    });
-    L.marker([s.lat,s.lng],{icon})
-      .addTo(nearbyMap)
-      .bindPopup(`<b>${s.name}</b><br>쿠폰: ${s.disc}`)
-      .on('click', ()=>{ highlightNearbyItem(s.name); });
+  nmapRenderMarkers(NMAP_STORES);
+  nmapRenderList(NMAP_STORES);
+
+  nearbyMap.on('moveend', () => {
+    clearTimeout(nmapDragTimer);
+    nmapDragTimer = setTimeout(() => {
+      const btn = document.getElementById('nmapRezoneBtn');
+      if (btn) btn.style.display = '';
+    }, 600);
   });
-  setTimeout(()=>nearbyMap.invalidateSize(),200);
+  nearbyMap.on('movestart', () => {
+    clearTimeout(nmapDragTimer);
+    const btn = document.getElementById('nmapRezoneBtn');
+    if (btn) btn.style.display = 'none';
+  });
+
+  setTimeout(() => nearbyMap.invalidateSize(), 200);
 }
 
-function highlightNearbyItem(storeName) {
-  const list = document.getElementById('nearbyList');
-  if (!list) return;
-  // 모든 아이템 하이라이트 해제
-  list.querySelectorAll('.nearby-cpn-item').forEach(el => el.classList.remove('map-selected'));
-  // 해당 아이템 찾기
-  const target = [...list.querySelectorAll('.nearby-cpn-item')]
-    .find(el => (el.dataset.store || '') === storeName);
-  if (!target) return;
-  // 하이라이트 적용
-  target.classList.add('map-selected');
-  // 박스 최상단으로 스크롤
-  list.scrollTo({ top: target.offsetTop - list.offsetTop, behavior: 'smooth' });
+function nmapRenderMarkers(stores) {
+  nmapMarkers.forEach(m => nearbyMap.removeLayer(m.marker));
+  nmapMarkers = [];
+  stores.forEach((s, i) => {
+    const pinDiv = `<div class="nmap-pin">${s.disc}</div>`;
+    const icon = L.divIcon({ html:pinDiv, iconSize:[72,30], iconAnchor:[36,30], className:'' });
+    const marker = L.marker([s.lat, s.lng], { icon })
+      .addTo(nearbyMap)
+      .on('click', () => nmapPinClick(i, stores));
+    nmapMarkers.push({ marker, data:s, idx:i });
+  });
 }
+
+function nmapPinClick(idx, stores) {
+  const s = stores[idx];
+  if (!s) return;
+  nmapMarkers.forEach(m => {
+    const pin = m.marker.getElement()?.querySelector('.nmap-pin');
+    if (pin) pin.classList.remove('pin-active', 'pin-bounce');
+  });
+  document.querySelectorAll('.nmap-item').forEach(el => el.classList.remove('active'));
+  const cur = nmapMarkers[idx];
+  if (cur) {
+    const pin = cur.marker.getElement()?.querySelector('.nmap-pin');
+    if (pin) {
+      pin.classList.add('pin-active');
+      pin.classList.remove('pin-bounce');
+      requestAnimationFrame(() => pin.classList.add('pin-bounce'));
+      setTimeout(() => pin.classList.remove('pin-bounce'), 520);
+    }
+  }
+  nmapActiveIdx = idx;
+  nmapCurrentStore = s;
+  const items = document.querySelectorAll('.nmap-item');
+  const target = [...items].find(el => el.dataset.id === s.id);
+  if (target) {
+    target.classList.add('active');
+    const panel = document.getElementById('nmapList');
+    if (panel) panel.scrollTo({ top: target.offsetTop - panel.offsetTop - 8, behavior:'smooth' });
+  }
+  if (nearbyMap) nearbyMap.flyTo([s.lat, s.lng], 16, { animate:true, duration:.5 });
+  nmapCloseMiniCard();
+  nmapOpenInfoPopup(s);
+}
+
+function nmapListClick(idx) {
+  const stores = nmapGetCurrentStores();
+  const s = stores[idx];
+  if (!s) return;
+  document.querySelectorAll('.nmap-item').forEach(el => el.classList.remove('active'));
+  const items = document.querySelectorAll('.nmap-item');
+  const target = [...items].find(el => parseInt(el.dataset.idx) === idx);
+  if (target) target.classList.add('active');
+  nmapMarkers.forEach(m => {
+    const pin = m.marker.getElement()?.querySelector('.nmap-pin');
+    if (pin) pin.classList.remove('pin-active', 'pin-bounce');
+  });
+  const markerObj = nmapMarkers.find(m => m.data.id === s.id);
+  if (markerObj) {
+    const pin = markerObj.marker.getElement()?.querySelector('.nmap-pin');
+    if (pin) {
+      pin.classList.add('pin-active');
+      requestAnimationFrame(() => pin.classList.add('pin-bounce'));
+      setTimeout(() => pin.classList.remove('pin-bounce'), 520);
+    }
+  }
+  nmapActiveIdx = idx;
+  nmapCurrentStore = s;
+  if (nearbyMap) nearbyMap.flyTo([s.lat, s.lng], 16, { animate:true, duration:.6 });
+  nmapCloseMiniCard();
+  nmapOpenInfoPopup(s);
+}
+
+function nmapOpenInfoPopup(s) {
+  const overlay = document.getElementById('nmapInfoOverlay');
+  if (!overlay) return;
+  document.getElementById('nmapPopupHeroBg').style.background = s.color;
+  document.getElementById('nmapPopupLogo').style.background = s.color;
+  document.getElementById('nmapPopupLogo').textContent = s.logoText;
+  document.getElementById('nmapPopupName').textContent = s.name;
+  document.getElementById('nmapPopupAddrTxt').textContent = s.addr;
+  document.getElementById('nmapPopupHours').textContent = s.hours;
+  document.getElementById('nmapPopupDist').textContent = `현위치에서 ${s.dist}km`;
+  document.getElementById('nmapPopupPhone').textContent = s.phone;
+  const openIco = document.getElementById('nmapPopupOpenIco');
+  const openVal = document.getElementById('nmapPopupOpenVal');
+  if (s.open) {
+    openIco.textContent = '🟢';
+    openVal.innerHTML = `<strong style="color:#16a34a">영업중</strong>`;
+  } else {
+    openIco.textContent = '🔴';
+    openVal.innerHTML = `<strong style="color:var(--danger)">영업종료</strong>`;
+  }
+  document.getElementById('nmapPopupDisc').textContent = s.disc;
+  document.getElementById('nmapPopupCpnTitle').textContent = s.cpnTitle;
+  const expColor = s.expNum === 0 ? 'var(--danger)' : s.expNum <= 5 ? 'var(--warning)' : 'var(--gray-400)';
+  document.getElementById('nmapPopupCpnExp').innerHTML = `<span style="color:${expColor};font-weight:700">${s.expText} 만료</span>`;
+  const navBtn = document.getElementById('nmapPopupNavBtn');
+  if (navBtn) navBtn.onclick = () => window.open(`https://map.kakao.com/link/to/${encodeURIComponent(s.name)},${s.lat},${s.lng}`, '_blank');
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => overlay.classList.add('open'));
+}
+
+function nmapCloseInfoPopup() {
+  const overlay = document.getElementById('nmapInfoOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  setTimeout(() => { overlay.style.display = 'none'; }, 280);
+}
+
+function nmapPopupGoDetail() {
+  if (!nmapCurrentStore) return;
+  nmapCloseInfoPopup();
+  ACT['go-detail']?.({ target: { closest: () => ({ dataset:{ id: nmapCurrentStore.id } }) } });
+}
+
+function nmapMiniGoDetail() {
+  if (!nmapCurrentStore) return;
+  nmapCloseMiniCard();
+  ACT['go-detail']?.({ target: { closest: () => ({ dataset:{ id: nmapCurrentStore.id } }) } });
+}
+
+function nmapShowMiniCard(s) {
+  const card = document.getElementById('nmapMiniCard');
+  if (!card) return;
+  const expColor = s.expNum === 0 ? 'color:var(--danger)' : s.expNum <= 5 ? 'color:var(--warning)' : 'color:var(--gray-400)';
+  document.getElementById('nmapMiniLogo').style.background = s.color;
+  document.getElementById('nmapMiniLogo').textContent = s.logoText;
+  document.getElementById('nmapMiniName').textContent = s.name;
+  document.getElementById('nmapMiniAddr').textContent = s.addr;
+  document.getElementById('nmapMiniBadge').textContent = s.disc;
+  document.getElementById('nmapMiniExp').textContent = s.expText;
+  document.getElementById('nmapMiniExp').style.cssText = expColor + ';font-size:11px;font-weight:700';
+  document.getElementById('nmapMiniDist').textContent = s.dist + 'km';
+  document.getElementById('nmapMiniNav').href = `https://map.kakao.com/link/to/${encodeURIComponent(s.name)},${s.lat},${s.lng}`;
+  card.style.display = '';
+}
+function nmapCloseMiniCard() {
+  const card = document.getElementById('nmapMiniCard');
+  if (card) card.style.display = 'none';
+}
+
+function nmapRenderList(stores) {
+  const container = document.getElementById('nmapList');
+  const emptyEl   = document.getElementById('nmapEmpty');
+  const countEl   = document.getElementById('nmapListCount');
+  const mobCount  = document.getElementById('nmapMobCount');
+  if (!container) return;
+  if (!stores.length) {
+    container.innerHTML = '';
+    if (emptyEl) emptyEl.style.display = '';
+    if (countEl) countEl.textContent = '결과 없음';
+    if (mobCount) mobCount.textContent = '0';
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (countEl) countEl.textContent = `${stores.length}개 매장`;
+  if (mobCount) mobCount.textContent = stores.length;
+  container.innerHTML = stores.map((s, i) => {
+    const expColor = s.expNum === 0 ? 'color:var(--danger)' : s.expNum <= 5 ? 'color:var(--warning)' : 'color:var(--gray-400)';
+    const openBadge = s.open
+      ? `<span class="nmap-item-open">● 영업중</span><span class="nmap-item-hours">${s.hours}</span>`
+      : `<span style="font-size:10px;font-weight:700;color:var(--danger);background:#fee2e2;border-radius:20px;padding:2px 7px">영업종료</span>`;
+    return `
+    <div class="nmap-item" data-idx="${i}" data-id="${s.id}" onclick="nmapListClick(${i})">
+      <div class="nmap-item-row">
+        <div class="nmap-item-logo" style="background:${s.color}">${s.logoText}</div>
+        <div class="nmap-item-info">
+          <div class="nmap-item-name">${s.name}</div>
+          <div class="nmap-item-addr">${s.addr}</div>
+        </div>
+        <div class="nmap-item-dist">${s.dist}km</div>
+      </div>
+      <div class="nmap-item-meta">
+        <span class="nmap-item-badge">${s.disc}</span>
+        <span class="nmap-item-exp" style="${expColor}">${s.expText}</span>
+        ${openBadge}
+      </div>
+      <button class="nmap-item-dl" onclick="handleDownload(this);event.stopPropagation()">↓ 쿠폰 받기</button>
+    </div>`;
+  }).join('');
+}
+
+function nmapGetCurrentStores() {
+  return [...document.querySelectorAll('.nmap-item')].map(el => NMAP_STORES.find(s => s.id === el.dataset.id)).filter(Boolean);
+}
+
+function nmapHandleSearch(val) {
+  document.getElementById('nmapSearchClear').style.display = val ? '' : 'none';
+  const ac = document.getElementById('nmapAutocomplete');
+  if (!val.trim()) { ac.style.display = 'none'; return; }
+  const matches = NMAP_STORES.filter(s => s.name.includes(val) || s.addr.includes(val));
+  if (!matches.length) { ac.style.display = 'none'; return; }
+  ac.innerHTML = matches.map(s => `
+    <div class="nmap-ac-item" onclick="nmapCommitSearch('${s.name}')">
+      <span class="nmap-ac-ico">${s.open ? '🟢' : '🔴'}</span>
+      <div><div>${s.name}</div><div class="nmap-ac-sub">${s.addr} · ${s.dist}km</div></div>
+    </div>`).join('');
+  ac.style.display = '';
+}
+function nmapCommitSearch(val) {
+  document.getElementById('nmapSearchInput').value = val;
+  document.getElementById('nmapAutocomplete').style.display = 'none';
+  document.getElementById('nmapSearchClear').style.display = '';
+  const filtered = NMAP_STORES.filter(s => (s.name.includes(val) || s.addr.includes(val)) && nmapPassFilter(s));
+  nmapRenderMarkers(filtered);
+  nmapRenderList(filtered);
+  nmapCloseInfoPopup(); nmapCloseMiniCard();
+  if (filtered.length && nearbyMap) nearbyMap.flyTo([filtered[0].lat, filtered[0].lng], 16, { duration:.6 });
+}
+function nmapClearSearch() {
+  document.getElementById('nmapSearchInput').value = '';
+  document.getElementById('nmapSearchClear').style.display = 'none';
+  document.getElementById('nmapAutocomplete').style.display = 'none';
+  const filtered = NMAP_STORES.filter(s => nmapPassFilter(s));
+  nmapRenderMarkers(filtered); nmapRenderList(filtered);
+  nmapCloseInfoPopup(); nmapCloseMiniCard();
+}
+
+function nmapSetFilter(filter, btn) {
+  nmapCurrentFilter = filter;
+  document.querySelectorAll('.nmap-chip').forEach(c => c.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const kw = document.getElementById('nmapSearchInput')?.value || '';
+  const filtered = NMAP_STORES.filter(s => (!kw || s.name.includes(kw)) && nmapPassFilter(s));
+  nmapRenderMarkers(filtered); nmapRenderList(filtered);
+  nmapCloseInfoPopup(); nmapCloseMiniCard();
+}
+function nmapPassFilter(s) {
+  if (nmapCurrentFilter === 'all') return true;
+  if (nmapCurrentFilter === 'open') return s.open;
+  return s.category === nmapCurrentFilter;
+}
+
+function nmapFilterByBounds() {
+  if (!nearbyMap) return;
+  document.getElementById('nmapRezoneBtn').style.display = 'none';
+  document.getElementById('nmapSkeleton').style.display = '';
+  document.getElementById('nmapList').innerHTML = '';
+  const bounds = nearbyMap.getBounds();
+  setTimeout(() => {
+    document.getElementById('nmapSkeleton').style.display = 'none';
+    const filtered = NMAP_STORES.filter(s => bounds.contains([s.lat, s.lng]) && nmapPassFilter(s));
+    nmapRenderMarkers(filtered); nmapRenderList(filtered);
+    nmapCloseInfoPopup(); nmapCloseMiniCard();
+    nmapActiveIdx = -1;
+  }, 500);
+}
+
+function nmapSort(mode) {
+  const stores = nmapGetCurrentStores();
+  if (mode === 'dist')   stores.sort((a,b) => a.dist - b.dist);
+  if (mode === 'expire') stores.sort((a,b) => a.expNum - b.expNum);
+  if (mode === 'disc')   stores.sort((a,b) => parseFloat(b.disc) - parseFloat(a.disc));
+  nmapRenderList(stores);
+}
+
+function nmapGoMyLocation() {
+  if (!navigator.geolocation) { showToast('위치 권한이 거부되었어요 — 영등포 기준으로 표시합니다'); return; }
+  navigator.geolocation.getCurrentPosition(
+    pos => { nearbyMap?.flyTo([pos.coords.latitude, pos.coords.longitude], 15, { duration:.8 }); showToast('현재 위치 기준으로 정렬했어요'); },
+    ()  => showToast('위치 권한이 거부되었어요 — 영등포 기준으로 표시합니다')
+  );
+}
+
+function nmapMobileTab(tab) {
+  const lp = document.getElementById('nmapListPanel');
+  const mp = document.querySelector('.nmap-map-panel');
+  const tm = document.getElementById('nmapMobMap');
+  const tl = document.getElementById('nmapMobList');
+  if (tab === 'map') {
+    lp?.classList.remove('mob-show'); mp?.classList.remove('mob-hide');
+    tm?.classList.add('active'); tl?.classList.remove('active');
+    if (nearbyMap) setTimeout(() => nearbyMap.invalidateSize(), 80);
+  } else {
+    lp?.classList.add('mob-show'); mp?.classList.add('mob-hide');
+    tl?.classList.add('active'); tm?.classList.remove('active');
+  }
+}
+
+document.addEventListener('click', e => {
+  const ac = document.getElementById('nmapAutocomplete');
+  const box = document.getElementById('nmapSearchBox');
+  if (ac && box && !box.contains(e.target)) ac.style.display = 'none';
+});
+
+/* 하위 호환 */
+function filterNearbyList(kw) { nmapCommitSearch(kw); }
+function highlightNearbyItem() {}
+function sortNearbyList() {}
+function updateNearbyDistricts() {}
 
 /* ============================================================ LOADING ============================================================ */
 function startLoading() {
