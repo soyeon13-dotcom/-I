@@ -936,6 +936,390 @@ input[type=range].disc-range::-moz-range-thumb {
 .noti-disc-hchip { flex-shrink:0; padding:6px 11px; border:1.5px solid var(--gray-200); border-radius:18px; font-size:12px; font-weight:700; color:var(--gray-500); cursor:pointer; white-space:nowrap; transition:all .12s; background:white; }
 .noti-disc-hchip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
 
+/* ── 알림 설정 v2 (브랜드 검색 + 전체 선택 + 할인율 스크롤) ── */
+.ns2-search-wrap {
+  display:flex; align-items:center; gap:10px;
+  background:white; border:2px solid var(--gray-200); border-radius:12px;
+  padding:10px 14px; margin-bottom:16px; transition:border-color .2s;
+}
+.ns2-search-wrap:focus-within { border-color:var(--primary); }
+.ns2-search-icon { font-size:15px; flex-shrink:0; color:var(--gray-400); }
+.ns2-search-input { flex:1; border:none; outline:none; font-size:14px; font-weight:500; color:var(--gray-900); background:transparent; }
+.ns2-search-input::placeholder { color:var(--gray-400); }
+
+.ns2-brand-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:20px; }
+.ns2-brand-btn {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  padding:10px 4px 10px; border:2px solid var(--gray-200); border-radius:14px;
+  background:white; cursor:pointer; transition:border-color .15s;
+  user-select:none; position:relative; overflow:hidden;
+}
+.ns2-brand-btn:hover { border-color:var(--primary); }
+.ns2-brand-btn.sel { border-color:var(--primary); }
+.ns2-brand-btn-logo {
+  width:42px; height:42px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:900; color:white; flex-shrink:0;
+  position:relative; z-index:1; line-height:1.2; text-align:center; padding:2px;
+}
+.ns2-brand-btn-overlay {
+  position:absolute; inset:0; background:rgba(15,65,166,.30);
+  opacity:0; transition:opacity .15s; z-index:2; pointer-events:none;
+}
+.ns2-brand-btn.sel .ns2-brand-btn-overlay { opacity:1; }
+.ns2-brand-btn-name {
+  font-size:10px; font-weight:700; color:var(--gray-600);
+  text-align:center; position:relative; z-index:3;
+  line-height:1.2; word-break:keep-all; padding:0 2px;
+}
+.ns2-brand-btn.sel .ns2-brand-btn-name { color:var(--primary); }
+.ns2-brand-btn.ns2-all-btn .ns2-brand-btn-logo {
+  background:linear-gradient(135deg,var(--primary),var(--primary-dk));
+}
+
+/* 알림방식 + 할인율 컨트롤 행 */
+.ns2-ctrl-row { display:flex; gap:14px; align-items:flex-start; margin-bottom:16px; }
+.ns2-noti-wrap { flex-shrink:0; }
+.ns2-noti-lbl { font-size:12px; font-weight:700; color:var(--gray-500); margin-bottom:6px; }
+.ns2-noti-sel {
+  height:40px; padding:0 12px;
+  border:2px solid var(--gray-200); border-radius:10px;
+  font-size:13px; font-weight:700; color:var(--gray-700);
+  background:white; outline:none; cursor:pointer; font-family:var(--font);
+  transition:border-color .15s;
+}
+.ns2-noti-sel:focus { border-color:var(--primary); }
+.ns2-disc-wrap { flex:1; min-width:0; }
+.ns2-disc-lbl { font-size:12px; font-weight:700; color:var(--gray-500); margin-bottom:6px; }
+.ns2-disc-row { display:flex; align-items:center; gap:10px; }
+.ns2-disc-val {
+  flex-shrink:0; font-size:20px; font-weight:800; color:var(--primary);
+  min-width:46px; text-align:center;
+}
+.ns2-disc-scroll { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; flex:1; min-width:0; }
+.ns2-disc-scroll::-webkit-scrollbar { display:none; }
+.ns2-disc-chip {
+  flex-shrink:0; padding:6px 12px; border:2px solid var(--gray-200);
+  border-radius:20px; font-size:12px; font-weight:700; color:var(--gray-500);
+  cursor:pointer; white-space:nowrap; background:white; transition:all .12s;
+}
+.ns2-disc-chip.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+
+/* 저장 버튼 — sticky 하단 */
+.ns2-save-btn {
+  position:sticky; bottom:0;
+  display:block; width:calc(100% + 56px); margin:24px -28px -28px;
+  padding:17px; border:none; border-radius:0 0 12px 12px;
+  background:var(--primary); color:white;
+  font-size:16px; font-weight:800; font-family:var(--font);
+  cursor:pointer; transition:background .15s;
+  box-shadow:0 -3px 14px rgba(15,65,166,.18);
+}
+.ns2-save-btn:hover { background:var(--primary-dk); }
+
+/* ============================================================
+   IMAGE SEARCH MODAL
+   ============================================================ */
+.ism-overlay {
+  position:fixed; inset:0; z-index:9000;
+  background:rgba(0,0,0,.52); backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity .22s ease;
+}
+.ism-overlay.open { opacity:1; pointer-events:auto; }
+.ism-card {
+  background:white; border-radius:24px;
+  width:min(520px,90vw); padding:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.22);
+  transform:translateY(20px) scale(.97);
+  transition:transform .25s cubic-bezier(0,0,.2,1);
+}
+.ism-overlay.open .ism-card { transform:translateY(0) scale(1); }
+
+/* header */
+.ism-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px;
+}
+.ism-title { font-size:18px; font-weight:800; color:var(--gray-900); }
+.ism-close {
+  width:34px; height:34px; border-radius:50%; border:none; background:var(--gray-100);
+  font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  color:var(--gray-500); transition:background .15s;
+}
+.ism-close:hover { background:var(--gray-200); color:var(--gray-900); }
+
+/* dropzone */
+.ism-dropzone {
+  min-height:200px; border-radius:18px;
+  border:2px dashed var(--gray-300); background:#f8f9fc;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:12px; padding:32px 24px; cursor:pointer;
+  transition:background .18s, border-color .18s, transform .12s;
+  user-select:none;
+}
+/* Hover state */
+.ism-dropzone:hover,
+.ism-dropzone.hover { background:#eff6ff; border-color:var(--primary); }
+/* Drag state */
+.ism-dropzone.state-drag {
+  background:#dbeafe; border-color:var(--primary);
+  transform:scale(1.01);
+  box-shadow:0 0 0 4px rgba(15,65,166,.12);
+}
+/* Uploading state */
+.ism-dropzone.state-uploading { cursor:not-allowed; pointer-events:none; background:#f0f4ff; border-color:var(--primary); }
+/* Success state */
+.ism-dropzone.state-success { padding:0; overflow:hidden; border-style:solid; border-color:var(--primary); }
+/* Error state */
+.ism-dropzone.state-error { background:#fef2f2; border-color:#ef4444; }
+
+/* shared state pieces */
+.ism-state { display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; }
+.ism-big-icon { font-size:42px; line-height:1; }
+.ism-main-text { font-size:16px; font-weight:700; color:var(--gray-800); text-align:center; }
+.ism-sub-text  { font-size:13px; color:var(--gray-400); font-weight:500; text-align:center; }
+.ism-drag-badge {
+  padding:6px 18px; background:var(--primary); color:white;
+  border-radius:50px; font-size:13px; font-weight:800;
+  box-shadow:0 4px 12px rgba(15,65,166,.3);
+}
+.ism-browse-btn {
+  margin-top:4px; padding:10px 24px; background:var(--primary); color:white;
+  border:none; border-radius:50px; font-size:14px; font-weight:700;
+  cursor:pointer; font-family:var(--font); transition:background .15s, transform .12s;
+  pointer-events:auto;
+}
+.ism-browse-btn:hover { background:var(--primary-dk); transform:translateY(-1px); }
+
+/* progress bar */
+.ism-progress-bar {
+  width:100%; height:6px; background:var(--gray-200);
+  border-radius:50px; overflow:hidden; margin-top:4px;
+}
+.ism-progress-fill {
+  height:100%; width:0%; background:var(--primary);
+  border-radius:50px; transition:width .1s linear;
+}
+/* spinner */
+@keyframes ismSpin { to { transform:rotate(360deg); } }
+.ism-spinner {
+  width:40px; height:40px; border-radius:50%;
+  border:4px solid rgba(15,65,166,.15); border-top-color:var(--primary);
+  animation:ismSpin .7s linear infinite;
+}
+
+/* success state */
+.ism-preview-wrap { position:relative; width:100%; }
+.ism-preview-img { width:100%; height:180px; object-fit:cover; display:block; }
+.ism-success-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 16px; background:white; border-top:1.5px solid var(--gray-100);
+}
+.ism-success-label { font-size:14px; font-weight:700; color:#16a34a; display:flex; align-items:center; gap:6px; }
+.ism-retry-btn {
+  padding:6px 14px; border:1.5px solid var(--gray-300); border-radius:20px;
+  background:white; font-size:12px; font-weight:700; color:var(--gray-600);
+  cursor:pointer; font-family:var(--font); transition:all .15s;
+}
+.ism-retry-btn:hover { border-color:var(--primary); color:var(--primary); }
+
+/* error state */
+.ism-error-icon { font-size:36px; }
+.ism-error-text { font-size:15px; font-weight:700; color:#dc2626; text-align:center; }
+.ism-error-sub  { font-size:13px; color:var(--gray-400); text-align:center; }
+
+/* result chips */
+.ism-result-area { margin-top:20px; padding-top:20px; border-top:1.5px solid var(--gray-100); }
+.ism-result-title { font-size:14px; font-weight:700; color:var(--gray-700); margin-bottom:10px; }
+.ism-result-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.ism-result-chip {
+  padding:6px 14px; border-radius:50px; background:var(--primary-lt);
+  color:var(--primary); font-size:13px; font-weight:700; cursor:pointer;
+  transition:background .12s;
+}
+.ism-result-chip:hover { background:var(--primary); color:white; }
+
+/* ============================================================
+   VOICE SEARCH MODAL
+   ============================================================ */
+.vsm-overlay {
+  position:fixed; inset:0; z-index:9100;
+  background:rgba(0,0,0,.60); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity .22s ease;
+}
+.vsm-overlay.open { opacity:1; pointer-events:auto; }
+
+.vsm-card {
+  background:white; border-radius:28px;
+  width:min(400px,88vw); padding:40px 32px 36px;
+  text-align:center;
+  box-shadow:0 24px 64px rgba(0,0,0,.28);
+  transform:translateY(24px) scale(.96);
+  transition:transform .28s cubic-bezier(0,0,.2,1);
+  position:relative;
+}
+.vsm-overlay.open .vsm-card { transform:translateY(0) scale(1); }
+
+.vsm-close {
+  position:absolute; top:16px; right:16px;
+  width:32px; height:32px; border-radius:50%; border:none;
+  background:var(--gray-100); color:var(--gray-500);
+  font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:background .15s;
+}
+.vsm-close:hover { background:var(--gray-200); }
+
+/* ── 마이크 버튼 + 펄스 링 ── */
+.vsm-mic-area {
+  position:relative; width:120px; height:120px;
+  margin:0 auto 28px; display:flex; align-items:center; justify-content:center;
+}
+
+/* 펄스 링 — Listening 상태에서만 활성 */
+.vsm-ring {
+  position:absolute; inset:0; border-radius:50%;
+  background:rgba(15,65,166,.18);
+  transform:scale(1); opacity:0;
+  pointer-events:none;
+}
+.vsm-card.state-listening .vsm-ring-1 { animation:vsmRing 2s ease-out infinite; }
+.vsm-card.state-listening .vsm-ring-2 { animation:vsmRing 2s ease-out infinite .65s; }
+.vsm-card.state-listening .vsm-ring-3 { animation:vsmRing 2s ease-out infinite 1.3s; }
+@keyframes vsmRing {
+  0%   { transform:scale(.9);  opacity:.55; }
+  100% { transform:scale(2.2); opacity:0;   }
+}
+
+.vsm-mic-btn {
+  position:relative; z-index:2;
+  width:80px; height:80px; border-radius:50%; border:none;
+  background:var(--gray-200); color:var(--gray-500);
+  font-size:34px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .2s, box-shadow .2s, transform .15s;
+  box-shadow:0 4px 16px rgba(0,0,0,.10);
+}
+.vsm-card.state-idle     .vsm-mic-btn:hover { background:var(--primary-lt); color:var(--primary); }
+.vsm-card.state-listening .vsm-mic-btn {
+  background:var(--primary); color:white;
+  box-shadow:0 6px 24px rgba(15,65,166,.40);
+  animation:vsmMicPulse 1.4s ease-in-out infinite;
+}
+@keyframes vsmMicPulse {
+  0%,100% { transform:scale(1);    }
+  50%     { transform:scale(1.07); }
+}
+.vsm-card.state-processing .vsm-mic-btn {
+  background:var(--gray-200); color:var(--gray-400); cursor:not-allowed;
+}
+
+/* ── 파형 바 ── */
+.vsm-waveform {
+  display:flex; align-items:center; justify-content:center;
+  gap:4px; height:48px; margin-bottom:20px;
+  opacity:0; transition:opacity .2s;
+}
+.vsm-card.state-listening .vsm-waveform { opacity:1; }
+
+.vsm-bar {
+  width:4px; border-radius:3px;
+  background:var(--primary); height:6px;
+  transition:height .08s ease;
+  flex-shrink:0;
+}
+/* 각 바 기본 애니메이션 (JS로 덮어쓰기 가능) */
+.vsm-card.state-listening .vsm-bar { animation:vsmBarIdle .8s ease-in-out infinite; }
+.vsm-card.state-listening .vsm-bar:nth-child(1)  { animation-delay:0s;     }
+.vsm-card.state-listening .vsm-bar:nth-child(2)  { animation-delay:.08s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(3)  { animation-delay:.16s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(4)  { animation-delay:.24s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(5)  { animation-delay:.32s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(6)  { animation-delay:.24s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(7)  { animation-delay:.16s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(8)  { animation-delay:.08s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(9)  { animation-delay:0s;     }
+.vsm-card.state-listening .vsm-bar:nth-child(10) { animation-delay:.08s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(11) { animation-delay:.16s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(12) { animation-delay:.24s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(13) { animation-delay:.32s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(14) { animation-delay:.24s;   }
+.vsm-card.state-listening .vsm-bar:nth-child(15) { animation-delay:.16s;   }
+@keyframes vsmBarIdle {
+  0%,100% { height:6px;  }
+  50%     { height:28px; }
+}
+
+/* ── 텍스트 / 상태 메시지 ── */
+.vsm-label {
+  font-size:18px; font-weight:800; color:var(--gray-900); margin-bottom:8px;
+}
+.vsm-sub {
+  font-size:14px; color:var(--gray-400); font-weight:500; margin-bottom:0;
+  min-height:20px;
+}
+
+/* ── 스피너 (Processing) ── */
+@keyframes vsmSpin { to { transform:rotate(360deg); } }
+.vsm-spinner {
+  width:44px; height:44px; border-radius:50%;
+  border:4px solid rgba(15,65,166,.15); border-top-color:var(--primary);
+  animation:vsmSpin .7s linear infinite;
+  margin:0 auto 24px;
+}
+
+/* ── 결과 (Result) ── */
+.vsm-result-box {
+  background:var(--primary-lt); border:2px solid var(--primary);
+  border-radius:14px; padding:16px 20px; margin-bottom:20px;
+  text-align:left;
+}
+.vsm-result-kw {
+  font-size:20px; font-weight:800; color:var(--primary); line-height:1.3;
+}
+.vsm-result-hint {
+  font-size:12px; color:var(--gray-500); margin-top:4px;
+}
+.vsm-action-row { display:flex; gap:10px; }
+.vsm-search-btn {
+  flex:1; padding:14px; background:var(--primary); color:white;
+  border:none; border-radius:12px; font-size:15px; font-weight:800;
+  cursor:pointer; font-family:var(--font); transition:background .15s;
+}
+.vsm-search-btn:hover { background:var(--primary-dk); }
+.vsm-retry-btn-sm {
+  padding:14px 18px; background:var(--gray-100); color:var(--gray-600);
+  border:none; border-radius:12px; font-size:14px; font-weight:700;
+  cursor:pointer; font-family:var(--font); transition:background .15s;
+}
+.vsm-retry-btn-sm:hover { background:var(--gray-200); }
+
+/* ── 에러 ── */
+.vsm-error-icon { font-size:38px; margin-bottom:12px; }
+.vsm-error-msg  { font-size:16px; font-weight:700; color:#dc2626; margin-bottom:6px; }
+.vsm-error-sub  { font-size:13px; color:var(--gray-400); margin-bottom:20px; }
+
+/* mic button in search bar */
+.hsb-mic-btn {
+  width:34px; height:34px; border-radius:50%; background:var(--gray-100);
+  color:var(--gray-500); border:none; cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:background .15s, color .15s;
+}
+.hsb-mic-btn:hover { background:var(--primary-lt); color:var(--primary); }
+
+/* camera button in search bar */
+.hsb-cam-btn {
+  width:34px; height:34px; border-radius:50%; background:var(--gray-100);
+  color:var(--gray-500); border:none; cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:background .15s, color .15s;
+}
+.hsb-cam-btn:hover { background:var(--primary-lt); color:var(--primary); }
+
 /* ============================================================
    SEARCH RESULTS PAGE
    ============================================================ */
@@ -1594,15 +1978,11 @@ input[type=range].disc-range::-moz-range-thumb {
 /* Active — 중앙 카드 */
 .home-rec-card.rec-active {
   transform:scale(1.07); opacity:1; filter:none;
-  box-shadow:
-    0 14px 40px rgba(15,65,166,.30),   /* 메인컬러 드롭셰도우 */
-    0 0 18px rgba(15,65,166,.20);      /* 중앙 글로우 20% */
   pointer-events:auto; z-index:3;
 }
 /* Adjacent — 좌/우 인접 카드 */
 .home-rec-card.rec-adj {
   transform:scale(0.84); opacity:0.68; filter:blur(.4px);
-  box-shadow:0 0 10px rgba(15,65,166,.20); /* 중앙 글로우 20% */
   pointer-events:auto; z-index:2;
 }
 /* Far — 2칸 이상 떨어진 카드 */
@@ -2905,7 +3285,7 @@ input[type=range].disc-range::-moz-range-thumb {
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <button id="social-login-btn" class="btn-accent" data-action="go-noti-consent" style="font-size:18px;font-weight:700;color:#3A1D00">카카오 계정으로 로그인</button>
-        <div style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:4px">
+        <div id="social-login-sub" style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:4px">
           로그인 시 USE 서비스와 계정이 연동됩니다
         </div>
       </div>
@@ -3212,6 +3592,8 @@ input[type=range].disc-range::-moz-range-thumb {
               placeholder="브랜드, 카테고리 검색..."
               oninput="_applyHomeFilter()"
               onkeydown="if(event.key==='Enter'&&this.value.trim())doSearch(this.value.trim())">
+            <button class="hsb-mic-btn" onclick="openVoiceSearch()" title="음성으로 검색">🎤</button>
+            <button class="hsb-cam-btn" onclick="openImgSearch()" title="이미지로 검색">📷</button>
             <button class="hsb-search-btn" onclick="const v=document.getElementById('homeBigSearch').value.trim();if(v)doSearch(v)">🔍</button>
           </div>
 
@@ -4002,28 +4384,38 @@ input[type=range].disc-range::-moz-range-thumb {
                 <div class="noti-off-msg" id="notiOffMsg" style="display:none">알림이 꺼져 있습니다.</div>
                 <div id="notiSettings" class="noti-settings">
 
-                  <!-- 카테고리 가로 칩 (아이콘 없음) -->
-                  <div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:12px">카테고리 선택</div>
-                  <div class="noti-cat-row" id="notiCatRow">
-                    <div class="noti-cat-chip sel" data-cat="mart"     onclick="selectNotiCat('mart')">마트·편의점</div>
-                    <div class="noti-cat-chip"     data-cat="delivery" onclick="selectNotiCat('delivery')">배달·음식</div>
-                    <div class="noti-cat-chip"     data-cat="fashion"  onclick="selectNotiCat('fashion')">패션·뷰티</div>
-                    <div class="noti-cat-chip"     data-cat="culture"  onclick="selectNotiCat('culture')">문화·영화</div>
-                    <div class="noti-cat-chip"     data-cat="fnb"      onclick="selectNotiCat('fnb')">F&amp;B</div>
-                    <div class="noti-cat-chip"     data-cat="travel"   onclick="selectNotiCat('travel')">여행</div>
-                    <div class="noti-cat-chip"     data-cat="etc"      onclick="selectNotiCat('etc')">기타</div>
+                  <!-- ① 브랜드 검색창 -->
+                  <div class="ns2-search-wrap">
+                    <span class="ns2-search-icon">🔍</span>
+                    <input class="ns2-search-input" type="text" id="notiBrandSearch"
+                      placeholder="브랜드 검색..." oninput="searchNotiBrands(this.value)">
                   </div>
 
-                  <!-- 브랜드 가로 나열 -->
-                  <div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:10px">브랜드 선택 <span style="font-size:13px;font-weight:500;color:var(--gray-400)">— 선택 후 알림 방식과 할인율을 설정하세요</span></div>
-                  <div class="noti-brand-row" id="notiBrandRow"></div>
+                  <!-- ② 브랜드 버튼 그리드 (JS로 렌더링) -->
+                  <div class="ns2-brand-grid" id="ns2BrandGrid"></div>
 
-                  <!-- 알림방식 패널 (브랜드 선택 시 표시) -->
-                  <div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:8px;display:none" id="notiBrandMethodsLabel">알림방식</div>
-                  <div id="notiBrandMethods" class="noti-brand-method-panel" style="display:none"></div>
+                  <!-- ③ 알림방식 드롭다운 + 할인율 가로 스크롤 -->
+                  <div class="ns2-ctrl-row">
+                    <div class="ns2-noti-wrap">
+                      <div class="ns2-noti-lbl">알림 방식</div>
+                      <select class="ns2-noti-sel" id="ns2NotiSel">
+                        <option value="">알림 설정</option>
+                        <option value="app">앱 알림</option>
+                        <option value="sms">문자(SMS)</option>
+                        <option value="both">앱 + 문자</option>
+                      </select>
+                    </div>
+                    <div class="ns2-disc-wrap">
+                      <div class="ns2-disc-lbl">최소 할인율</div>
+                      <div class="ns2-disc-row">
+                        <span class="ns2-disc-val" id="ns2DiscVal">20%</span>
+                        <div class="ns2-disc-scroll" id="ns2DiscScroll"></div>
+                      </div>
+                    </div>
+                  </div>
 
                   <!-- GPS + 유사 추천 -->
-                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;padding-top:20px;border-top:1.5px solid var(--gray-200)">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-top:16px;border-top:1.5px solid var(--gray-200)">
                     <div class="toggle-row" style="border:2px solid var(--gray-200);border-radius:10px;padding:14px 16px;margin:0">
                       <div><div class="toggle-lbl">GPS 위치 알림</div><div class="toggle-sub">근처 매장 쿠폰 즉시 알림</div></div>
                       <label class="toggle-wrap"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
@@ -4035,7 +4427,8 @@ input[type=range].disc-range::-moz-range-thumb {
                   </div>
 
                 </div><!-- /notiSettings -->
-                <button class="btn-save" style="margin-top:20px" data-action="save-noti">저장하기</button>
+                <!-- ④ 고정 저장 버튼 (sticky 하단) -->
+                <button class="ns2-save-btn" onclick="saveNotiSettings()">저장하기</button>
               </div>
             </div>
 
@@ -5376,84 +5769,144 @@ function updateBrandNotiSummary() {
   }
 }
 
-/* ============================================================ NOTI SETTINGS — 카테고리·브랜드 선택 ============================================================ */
-const NOTI_BRANDS = {
-  mart:     [
-    {label:'이마트'},    {label:'GS25'},    {label:'CU'},
-    {label:'롯데마트'},  {label:'홈플러스'}, {label:'세븐일레븐'}
-  ],
-  delivery: [
-    {label:'배달의민족'}, {label:'요기요'}, {label:'쿠팡이츠'}
-  ],
-  fashion:  [
-    {label:'올리브영'}, {label:'무신사'}, {label:'H&M'}, {label:'자라'}
-  ],
-  culture:  [
-    {label:'CGV'}, {label:'롯데시네마'}, {label:'메가박스'}
-  ],
-  fnb:      [
-    {label:'스타벅스'}, {label:'맥도날드'}, {label:'버거킹'}, {label:'투썸플레이스'}
-  ],
-  travel:   [
-    {label:'야놀자'}, {label:'여기어때'}
-  ],
-  etc:      [
-    {label:'쿠팡'}, {label:'티몬'}, {label:'위메프'}
-  ]
-};
+/* ============================================================ NOTI SETTINGS v2 — 브랜드 검색 + 전체선택 + 할인율 스크롤 ============================================================ */
+const NOTI_ALL_BRANDS = [
+  {label:'이마트',    abbr:'이마트', bg:'linear-gradient(135deg,#f5a623,#e8870a)'},
+  {label:'GS25',      abbr:'GS25',  bg:'linear-gradient(135deg,#00a651,#007a3d)'},
+  {label:'CU',        abbr:'CU',    bg:'linear-gradient(135deg,#7c3aed,#6d28d9)'},
+  {label:'롯데마트',  abbr:'롯데',  bg:'linear-gradient(135deg,#cc0000,#990000)'},
+  {label:'홈플러스',  abbr:'홈플',  bg:'linear-gradient(135deg,#0077cc,#005999)'},
+  {label:'세븐일레븐',abbr:'7EL',   bg:'linear-gradient(135deg,#e53935,#c62828)'},
+  {label:'배달의민족',abbr:'배민',  bg:'linear-gradient(135deg,#00c3e3,#0077cc)'},
+  {label:'요기요',    abbr:'요기',  bg:'linear-gradient(135deg,#ff3250,#cc0022)'},
+  {label:'쿠팡이츠',  abbr:'쿠이츠',bg:'linear-gradient(135deg,#ff6b00,#e55a00)'},
+  {label:'올리브영',  abbr:'OY',    bg:'linear-gradient(135deg,#e91e8c,#c2185b)'},
+  {label:'무신사',    abbr:'무신사',bg:'linear-gradient(135deg,#222,#444)'},
+  {label:'H&M',       abbr:'H&M',   bg:'linear-gradient(135deg,#d40000,#a00000)'},
+  {label:'자라',      abbr:'ZARA',  bg:'linear-gradient(135deg,#111,#333)'},
+  {label:'CGV',       abbr:'CGV',   bg:'linear-gradient(135deg,#d40000,#a00000)'},
+  {label:'롯데시네마',abbr:'롯시',  bg:'linear-gradient(135deg,#cc0000,#990000)'},
+  {label:'메가박스',  abbr:'MBX',   bg:'linear-gradient(135deg,#5b21b6,#4c1d95)'},
+  {label:'스타벅스',  abbr:'SBX',   bg:'linear-gradient(135deg,#00704a,#1e8449)'},
+  {label:'맥도날드',  abbr:'MCD',   bg:'linear-gradient(135deg,#ffbc0d,#ff7800)'},
+  {label:'버거킹',    abbr:'BK',    bg:'linear-gradient(135deg,#e02020,#a50000)'},
+  {label:'투썸',      abbr:'투썸',  bg:'linear-gradient(135deg,#6b2737,#4a1b27)'},
+  {label:'야놀자',    abbr:'야놀자',bg:'linear-gradient(135deg,#ff499e,#d400c8)'},
+  {label:'여기어때',  abbr:'여기',  bg:'linear-gradient(135deg,#e83e8c,#c2185b)'},
+  {label:'쿠팡',      abbr:'쿠팡',  bg:'linear-gradient(135deg,#ff6b00,#e55a00)'},
+  {label:'티몬',      abbr:'티몬',  bg:'linear-gradient(135deg,#e53935,#c62828)'},
+  {label:'위메프',    abbr:'위메프',bg:'linear-gradient(135deg,#cc0044,#990033)'},
+];
 const notiSelBrands = new Set();
-const notiBrandMethods = {}; // label → '앱 알림' | '문자(SMS)' | '앱 + 문자'
 
-function selectNotiCat(cat) {
-  document.querySelectorAll('.noti-cat-chip').forEach(c => c.classList.toggle('sel', c.dataset.cat === cat));
-  const row = document.getElementById('notiBrandRow');
-  if (!row) return;
-  const brands = NOTI_BRANDS[cat] || [];
-  row.innerHTML = brands.map(b => `
-    <div class="noti-brand-chip${notiSelBrands.has(b.label) ? ' sel' : ''}" onclick="toggleNotiBrand(this,'${b.label.replace(/'/g,"\\'")}')">
-      <span>${b.label}</span>
+function renderNotiAllBrands(filter) {
+  const grid = document.getElementById('ns2BrandGrid');
+  if (!grid) return;
+  const kw = (filter || '').trim().toLowerCase();
+  const list = kw
+    ? NOTI_ALL_BRANDS.filter(b => b.label.toLowerCase().includes(kw))
+    : NOTI_ALL_BRANDS;
+
+  const allSel = list.length > 0 && list.every(b => notiSelBrands.has(b.label));
+
+  let html = !kw
+    ? `<div class="ns2-brand-btn ns2-all-btn${allSel ? ' sel' : ''}" onclick="toggleNotiAllBrands()">
+        <div class="ns2-brand-btn-overlay"></div>
+        <div class="ns2-brand-btn-logo">전체</div>
+        <span class="ns2-brand-btn-name">전체</span>
+      </div>`
+    : '';
+
+  html += list.map(b => `
+    <div class="ns2-brand-btn${notiSelBrands.has(b.label) ? ' sel' : ''}"
+      onclick="toggleNotiBrand2(this,'${b.label.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
+      <div class="ns2-brand-btn-overlay"></div>
+      <div class="ns2-brand-btn-logo" style="background:${b.bg}">${b.abbr}</div>
+      <span class="ns2-brand-btn-name">${b.label}</span>
     </div>`).join('');
+
+  grid.innerHTML = html;
 }
 
-function toggleNotiBrand(el, label) {
+function toggleNotiAllBrands() {
+  const allLabels = NOTI_ALL_BRANDS.map(b => b.label);
+  const allSelected = allLabels.every(l => notiSelBrands.has(l));
+  allLabels.forEach(l => allSelected ? notiSelBrands.delete(l) : notiSelBrands.add(l));
+  renderNotiAllBrands(document.getElementById('notiBrandSearch')?.value || '');
+}
+
+function toggleNotiBrand2(el, label) {
   if (notiSelBrands.has(label)) {
     notiSelBrands.delete(label);
     el.classList.remove('sel');
-    delete notiBrandMethods[label];
   } else {
     notiSelBrands.add(label);
     el.classList.add('sel');
-    notiBrandMethods[label] = '앱 알림';
   }
-  renderNotiBrandMethods();
+  // 전체 버튼 상태 동기화
+  const allBtn = document.querySelector('.ns2-all-btn');
+  if (allBtn) {
+    const allSel = NOTI_ALL_BRANDS.every(b => notiSelBrands.has(b.label));
+    allBtn.classList.toggle('sel', allSel);
+  }
 }
 
-function renderNotiBrandMethods() {
-  const panel = document.getElementById('notiBrandMethods');
-  if (!panel) return;
-  if (notiSelBrands.size === 0) { panel.style.display = 'none'; return; }
-  panel.style.display = 'block';
-  panel.innerHTML = [...notiSelBrands].map(label => `
-    <div class="noti-brand-method-row">
-      <span style="flex:1;font-size:14px;font-weight:700;color:var(--gray-900)">${label}</span>
-      <select class="noti-brand-method-sel" onchange="notiBrandMethods['${label.replace(/'/g,"\\'")}'] = this.value">
-        <option ${notiBrandMethods[label]==='앱 알림'   ?'selected':''}>앱 알림</option>
-        <option ${notiBrandMethods[label]==='문자(SMS)'?'selected':''}>문자(SMS)</option>
-        <option ${notiBrandMethods[label]==='앱 + 문자'?'selected':''}>앱 + 문자</option>
-      </select>
-    </div>`).join('');
+function searchNotiBrands(kw) {
+  renderNotiAllBrands(kw);
 }
 
-/* 할인율 스크롤 피커 */
-let _notiDiscVal = 30;
+function saveNotiSettings() {
+  showToast('설정이 안전하게 변경되었습니다');
+}
+
+/* 할인율 스크롤 피커 v2 */
+let _notiDiscVal = 20;
+
+function selectNotiDisc2(val) {
+  _notiDiscVal = val;
+  const valEl = document.getElementById('ns2DiscVal');
+  if (valEl) valEl.textContent = val + '%';
+  document.querySelectorAll('.ns2-disc-chip').forEach(c =>
+    c.classList.toggle('sel', parseInt(c.dataset.val) === val));
+  const sel = document.querySelector('.ns2-disc-chip.sel');
+  if (sel) sel.scrollIntoView({ inline:'center', block:'nearest' });
+}
+
+function initNotiSettings2() {
+  // 브랜드 그리드 렌더링
+  renderNotiAllBrands('');
+  // 검색창 초기화
+  const searchEl = document.getElementById('notiBrandSearch');
+  if (searchEl) searchEl.value = '';
+  // 할인율 칩 생성 (최초 1회)
+  const scroll = document.getElementById('ns2DiscScroll');
+  if (scroll && !scroll.children.length) {
+    for (let v = 5; v <= 100; v += 5) {
+      const chip = document.createElement('div');
+      chip.className = 'ns2-disc-chip' + (v === _notiDiscVal ? ' sel' : '');
+      chip.dataset.val = v;
+      chip.textContent = v + '%';
+      chip.onclick = () => selectNotiDisc2(v);
+      scroll.appendChild(chip);
+    }
+    // 선택된 칩으로 스크롤
+    setTimeout(() => {
+      const sel = scroll.querySelector('.ns2-disc-chip.sel');
+      if (sel) sel.scrollIntoView({ inline:'center', block:'nearest' });
+    }, 80);
+  }
+}
+
+/* 이전 호환: selectNotiCat (다른 곳에서 참조될 경우 대비) */
+function selectNotiCat(cat) { /* deprecated — initNotiSettings2 로 대체 */ }
+
+/* 할인율 스크롤 피커 (구버전 호환 스텁) */
 let _notiDiscOpen = false;
-
 function toggleNotiDiscPicker() {
   const picker = document.getElementById('notiDiscPicker');
   if (!picker) return;
   _notiDiscOpen = !_notiDiscOpen;
   if (_notiDiscOpen) {
-    // 처음 열 때 피커 아이템 생성
     if (!picker.children.length) {
       for (let v = 0; v <= 100; v += 5) {
         const div = document.createElement('div');
@@ -5485,6 +5938,334 @@ function selectNotiDisc(val) {
     if (picker) picker.style.display = 'none';
     _notiDiscOpen = false;
   }, 160);
+}
+
+/* ============================================================ VOICE SEARCH MODAL ============================================================ */
+let _vsmState    = 'idle';   // idle | listening | processing | result | error
+let _vsmText     = '';
+let _vsmSilTimer = null;     // 무음 자동종료 타이머
+let _vsmWaveTimer= null;     // 파형 애니메이션 타이머
+let _vsmRecog    = null;     // SpeechRecognition 인스턴스
+
+/* ── 상태 전환 ── */
+function _vsmGo(state, opts) {
+  _vsmState = state;
+  const card    = document.getElementById('vsmCard');
+  const label   = document.getElementById('vsmLabel');
+  const sub     = document.getElementById('vsmSub');
+  const spinner = document.getElementById('vsmSpinner');
+  const micArea = document.getElementById('vsmMicArea');
+  const result  = document.getElementById('vsmResultBox');
+  const actions = document.getElementById('vsmActionRow');
+  const errBox  = document.getElementById('vsmErrorBox');
+  if (!card) return;
+
+  // state class
+  card.className = 'vsm-card state-' + state;
+
+  // 공용 리셋
+  spinner.style.display = 'none';
+  micArea.style.display = '';
+  result.style.display  = 'none';
+  actions.style.display = 'none';
+  errBox.style.display  = 'none';
+
+  if (state === 'idle') {
+    label.textContent = '음성으로 검색';
+    sub.textContent   = '마이크 버튼을 누르고 말씀하세요';
+    _vsmStopWave();
+  }
+  else if (state === 'listening') {
+    label.textContent = '듣고 있어요...';
+    sub.textContent   = '말씀해 주세요. 다시 누르면 종료됩니다';
+    _vsmStartWave();
+  }
+  else if (state === 'processing') {
+    label.textContent = '분석 중...';
+    sub.textContent   = '잠시만 기다려 주세요';
+    spinner.style.display = 'block';
+    micArea.style.display = 'none';
+    _vsmStopWave();
+  }
+  else if (state === 'result') {
+    label.textContent = '검색어 확인';
+    sub.textContent   = '아래 결과로 검색할까요?';
+    micArea.style.display = 'none';
+    const kw = document.getElementById('vsmResultKw');
+    if (kw) kw.textContent = opts?.text || _vsmText;
+    result.style.display  = '';
+    actions.style.display = '';
+    _vsmStopWave();
+  }
+  else if (state === 'error') {
+    label.textContent = '';
+    sub.textContent   = '';
+    micArea.style.display = 'none';
+    const msg = document.getElementById('vsmErrorMsg');
+    if (msg) msg.textContent = opts?.msg || '음성을 인식하지 못했어요';
+    errBox.style.display = '';
+    _vsmStopWave();
+  }
+}
+
+/* ── 파형 애니메이션 (JS 주도 랜덤 높이) ── */
+function _vsmStartWave() {
+  _vsmStopWave();
+  const bars = document.querySelectorAll('#vsmWaveform .vsm-bar');
+  const centerBias = [.3,.5,.7,.9,1,.95,1,.95,1,.9,.7,.5,.3,.4,.6];
+  _vsmWaveTimer = setInterval(() => {
+    bars.forEach((b, i) => {
+      const base = centerBias[i] || .5;
+      const h = Math.max(4, Math.round((6 + Math.random() * 38) * base));
+      b.style.height = h + 'px';
+    });
+  }, 90);
+}
+function _vsmStopWave() {
+  if (_vsmWaveTimer) { clearInterval(_vsmWaveTimer); _vsmWaveTimer = null; }
+  document.querySelectorAll('#vsmWaveform .vsm-bar').forEach(b => b.style.height = '6px');
+}
+
+/* ── 음성 인식 ── */
+function _vsmStartRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    // 브라우저 미지원 → 3초 후 mock 결과
+    _vsmSilTimer = setTimeout(() => _vsmMockResult(), 3000);
+    return;
+  }
+  try {
+    _vsmRecog = new SpeechRecognition();
+    _vsmRecog.lang = 'ko-KR';
+    _vsmRecog.interimResults = true;
+    _vsmRecog.maxAlternatives = 1;
+
+    const sub = document.getElementById('vsmSub');
+
+    _vsmRecog.onresult = e => {
+      const transcript = [...e.results].map(r => r[0].transcript).join('');
+      _vsmText = transcript;
+      if (sub) sub.textContent = '"' + transcript + '"';
+      // 무음 타이머 리셋
+      clearTimeout(_vsmSilTimer);
+      _vsmSilTimer = setTimeout(() => _vsmFinish(), 2500);
+    };
+    _vsmRecog.onend = () => {
+      if (_vsmState === 'listening') _vsmFinish();
+    };
+    _vsmRecog.onerror = e => {
+      if (e.error === 'not-allowed') {
+        _vsmGo('error', { msg:'마이크 사용 권한이 필요합니다. 브라우저 설정을 확인해 주세요.' });
+      } else if (e.error === 'no-speech') {
+        _vsmGo('error', { msg:'음성이 감지되지 않았어요' });
+      } else {
+        _vsmGo('error');
+      }
+    };
+    _vsmRecog.start();
+    // 10초 자동 종료
+    _vsmSilTimer = setTimeout(() => _vsmFinish(), 10000);
+  } catch(err) {
+    _vsmMockResult();
+  }
+}
+
+function _vsmStopRecognition() {
+  clearTimeout(_vsmSilTimer);
+  try { if (_vsmRecog) { _vsmRecog.stop(); _vsmRecog = null; } } catch(_) {}
+}
+
+function _vsmFinish() {
+  _vsmStopRecognition();
+  if (!_vsmText.trim()) {
+    _vsmGo('error', { msg:'음성이 감지되지 않았어요' });
+    return;
+  }
+  _vsmGo('processing');
+  setTimeout(() => _vsmGo('result', { text: _vsmText }), 900);
+}
+
+function _vsmMockResult() {
+  // Web Speech API 미지원 환경 mock
+  const mocks = ['스타벅스 쿠폰', '마트 할인', 'GS25', '이마트 30%'];
+  _vsmText = mocks[Math.floor(Math.random() * mocks.length)];
+  _vsmGo('processing');
+  setTimeout(() => _vsmGo('result', { text: _vsmText }), 900);
+}
+
+/* ── 공개 API ── */
+function openVoiceSearch() {
+  const modal = document.getElementById('voiceSearchModal');
+  if (!modal) return;
+  modal.classList.add('open');
+  document.documentElement.style.overflow = 'hidden';
+  _vsmText = '';
+  _vsmGo('idle');
+}
+
+function closeVoiceSearch() {
+  _vsmStopRecognition();
+  _vsmStopWave();
+  clearTimeout(_vsmSilTimer);
+  const modal = document.getElementById('voiceSearchModal');
+  if (modal) modal.classList.remove('open');
+  document.documentElement.style.overflow = '';
+  _vsmState = 'idle';
+}
+
+function vsmToggleListen() {
+  if (_vsmState === 'idle') {
+    _vsmGo('listening');
+    _vsmStartRecognition();
+  } else if (_vsmState === 'listening') {
+    _vsmStopRecognition();
+    _vsmText
+      ? ( _vsmGo('processing'), setTimeout(() => _vsmGo('result', {text:_vsmText}), 700) )
+      : _vsmGo('idle');
+  }
+}
+
+function vsmDoSearch() {
+  const kw = _vsmText.trim();
+  closeVoiceSearch();
+  if (kw) doSearch(kw);
+}
+
+function vsmRetry() {
+  _vsmText = '';
+  _vsmGo('idle');
+}
+
+/* ============================================================ IMAGE SEARCH MODAL ============================================================ */
+const _ISM_MOCK_KEYWORDS = ['이마트','마트 할인','식품 쿠폰','GS25','편의점'];
+
+function openImgSearch() {
+  const modal = document.getElementById('imgSearchModal');
+  if (!modal) return;
+  modal.classList.add('open');
+  document.documentElement.style.overflow = 'hidden';
+  resetImgSearch();
+  _ismInitDnD();
+}
+
+function closeImgSearch() {
+  const modal = document.getElementById('imgSearchModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  document.documentElement.style.overflow = '';
+}
+
+function _ismShowState(state) {
+  ['Default','Drag','Uploading','Success','Error'].forEach(s => {
+    const el = document.getElementById('ismState' + s);
+    if (el) el.style.display = s.toLowerCase() === state ? '' : 'none';
+  });
+  const dz = document.getElementById('ismDropzone');
+  if (!dz) return;
+  dz.classList.remove('state-default','state-drag','state-uploading','state-success','state-error','hover');
+  dz.classList.add('state-' + state);
+  dz.style.cursor = state === 'uploading' ? 'not-allowed' : 'pointer';
+}
+
+function resetImgSearch() {
+  _ismShowState('default');
+  const result = document.getElementById('ismResultArea');
+  if (result) result.style.display = 'none';
+  const fileInput = document.getElementById('ismFileInput');
+  if (fileInput) fileInput.value = '';
+}
+
+function handleImgFile(file) {
+  if (!file) return;
+  const allowed = ['image/jpeg','image/png','image/webp'];
+  const errMsg = document.getElementById('ismErrorMsg');
+  if (!allowed.includes(file.type)) {
+    if (errMsg) errMsg.textContent = '파일 형식이 올바르지 않습니다 (JPG, PNG, WEBP만 가능)';
+    _ismShowState('error');
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    if (errMsg) errMsg.textContent = '파일 크기가 너무 큽니다 (최대 10MB)';
+    _ismShowState('error');
+    return;
+  }
+  // Start upload animation
+  _ismShowState('uploading');
+  const fill = document.getElementById('ismProgressFill');
+  let progress = 0;
+  const timer = setInterval(() => {
+    progress += 8 + Math.random() * 14;
+    if (fill) fill.style.width = Math.min(progress, 95) + '%';
+    if (progress >= 95) {
+      clearInterval(timer);
+      // Read file for preview
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.getElementById('ismPreviewImg');
+        if (img) img.src = e.target.result;
+        if (fill) fill.style.width = '100%';
+        setTimeout(() => {
+          _ismShowState('success');
+          // Show mock result chips
+          const chips = document.getElementById('ismResultChips');
+          if (chips) {
+            chips.innerHTML = _ISM_MOCK_KEYWORDS.map(kw =>
+              `<span class="ism-result-chip" onclick="doImgSearch('${kw}')">${kw}</span>`
+            ).join('');
+          }
+          const result = document.getElementById('ismResultArea');
+          if (result) result.style.display = '';
+        }, 200);
+      };
+      reader.readAsDataURL(file);
+    }
+  }, 80);
+}
+
+let _ismSearchKw = '마트 할인';
+function doImgSearch(kw) {
+  _ismSearchKw = kw || _ismSearchKw;
+  closeImgSearch();
+  doSearch(_ismSearchKw);
+}
+
+let _ismDnDInited = false;
+function _ismInitDnD() {
+  const dz = document.getElementById('ismDropzone');
+  if (!dz || _ismDnDInited) return;
+  _ismDnDInited = true;
+
+  // Click → file dialog
+  dz.addEventListener('click', e => {
+    if (e.target.closest('button, .ism-retry-btn, .ism-browse-btn')) return;
+    if (dz.classList.contains('state-uploading') || dz.classList.contains('state-success')) return;
+    document.getElementById('ismFileInput')?.click();
+  });
+
+  // Hover feedback
+  dz.addEventListener('mouseenter', () => {
+    if (dz.classList.contains('state-default')) dz.classList.add('hover');
+  });
+  dz.addEventListener('mouseleave', () => dz.classList.remove('hover'));
+
+  // Drag & Drop
+  dz.addEventListener('dragenter', e => { e.preventDefault(); _ismShowState('drag'); });
+  dz.addEventListener('dragover',  e => { e.preventDefault(); });
+  dz.addEventListener('dragleave', e => {
+    if (!dz.contains(e.relatedTarget)) _ismShowState('default');
+  });
+  dz.addEventListener('drop', e => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    file ? handleImgFile(file) : _ismShowState('default');
+  });
+
+  // Paste
+  document.addEventListener('paste', e => {
+    if (!document.getElementById('imgSearchModal')?.classList.contains('open')) return;
+    const file = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith('image/'));
+    if (file) handleImgFile(file);
+  });
 }
 
 /* ============================================================ CAROUSEL — 10초 무한 마퀴 ============================================================ */
@@ -5926,40 +6707,52 @@ function updateRecCarousel(newIdx, instant) {
   if (!track) return;
   const cards = [...track.querySelectorAll('.home-rec-card')];
   const n = cards.length;
-  if (n < 2) return; // fallback: 카드 수 부족 시 일반 슬라이드 유지
+  if (n < 2) return;
+  const origN = Math.round(n / 2); // 원본 카드 수 (클론 제외)
 
   _recIdx = ((newIdx % n) + n) % n;
+  const visIdx = _recIdx % origN; // 현재 시각적으로 active인 원본 카드 인덱스
 
-  // 각 카드에 상태 클래스 적용
+  // 각 카드에 상태 클래스 적용 (원본 위치 기준 거리 계산)
   cards.forEach((card, i) => {
-    const dist = Math.min(Math.abs(i - _recIdx), n - Math.abs(i - _recIdx));
+    const pos  = i % origN;
+    const dist = Math.min(Math.abs(pos - visIdx), origN - Math.abs(pos - visIdx));
     card.classList.remove('rec-active', 'rec-adj', 'rec-far');
     if      (dist === 0) card.classList.add('rec-active');
     else if (dist === 1) card.classList.add('rec-adj');
     else                 card.classList.add('rec-far');
   });
 
-  // 트랙 이동 (instant = 애니메이션 없이 즉시)
-  if (instant) track.style.transition = 'none';
-  track.style.transform = `translateX(${-_recIdx * _REC_STEP}px)`;
-  if (instant) requestAnimationFrame(() => { track.style.transition = ''; });
+  // 트랙 이동
+  if (instant) {
+    // transition:none → 강제 리플로우 → transform 변경 → 다음 프레임에서 복원
+    // (void offsetWidth 없이는 브라우저가 배치 처리해 역방향 애니메이션 발생)
+    track.style.transition = 'none';
+    void track.offsetWidth;   // ← 레이아웃 커밋: transition:none 확정
+    track.style.transform = `translateX(${-_recIdx * _REC_STEP}px)`;
+    void track.offsetWidth;   // ← 새 위치 커밋
+    requestAnimationFrame(() => { track.style.transition = ''; });
+  } else {
+    track.style.transform = `translateX(${-_recIdx * _REC_STEP}px)`;
+  }
 
-  // 빠른 연속 조작 lock
+  // 빠른 연속 조작 lock + 클론 영역 진입 시 원본 위치로 텔레포트
   if (!instant) {
     _recLocked = true;
-    setTimeout(() => { _recLocked = false; }, 450);
+    setTimeout(() => {
+      _recLocked = false;
+      if (_recIdx >= origN) updateRecCarousel(_recIdx - origN, true);
+    }, 450);
   }
 }
 
 function scrollRecCar(dir) {
-  const n = document.querySelectorAll('#homeRecTrack .home-rec-card').length;
   if (dir === null) {
-    // 자동 슬라이드: 끝에서 첫 카드로 순간 이동 후 다음으로
-    if (_recIdx === n - 1) { updateRecCarousel(0, true); return; }
+    // 자동 슬라이드: 항상 다음으로 (클론 영역 진입 후 자동 텔레포트)
     updateRecCarousel(_recIdx + 1);
   } else {
     const next = _recIdx + dir;
-    if (next < 0 || next >= n) return; // 끝 도달 시 클램프
+    if (next < 0) return; // 첫 카드에서 뒤로 클램프
     updateRecCarousel(next);
   }
 }
@@ -5982,66 +6775,71 @@ function initRecCarousel() {
   const track = document.getElementById('homeRecTrack');
   if (!wrap || !track) return;
 
+  if (!_recInited) {
+    _recInited = true;
+
+    // 카드 복제 — 무한 루프용 (원본 카드를 트랙 끝에 복사)
+    const origCards = [...track.querySelectorAll('.home-rec-card')];
+    origCards.forEach(c => track.appendChild(c.cloneNode(true)));
+
+    // ① Hover: 자동 슬라이드 일시정지
+    wrap.addEventListener('mouseenter', stopRecAuto);
+    wrap.addEventListener('mouseleave', () => { if (!_recTimer) startRecAuto(); });
+
+    // ② Drag / Swipe
+    let _dragX    = null;
+    let _wasDrag  = false;
+    let _justDrag = false; // click 시 drag 판별용
+
+    wrap.addEventListener('pointerdown', e => {
+      _dragX   = e.clientX;
+      _wasDrag = false;
+      track.style.transition = 'none';
+      try { wrap.setPointerCapture(e.pointerId); } catch(_) {}
+      stopRecAuto();
+    });
+
+    wrap.addEventListener('pointermove', e => {
+      if (_dragX === null) return;
+      const dx = e.clientX - _dragX;
+      if (Math.abs(dx) > 8) _wasDrag = true;
+      if (_wasDrag) {
+        track.style.transform = `translateX(${-_recIdx * _REC_STEP + dx}px)`;
+      }
+    });
+
+    const endDrag = e => {
+      if (_dragX === null) return;
+      const dx = e.clientX - _dragX;
+      _justDrag = _wasDrag;
+      _dragX = null; _wasDrag = false;
+      track.style.transition = '';
+      if (_justDrag && Math.abs(dx) > 50) {
+        updateRecCarousel(_recIdx + (dx < 0 ? 1 : -1));
+      } else {
+        updateRecCarousel(_recIdx, true); // 스냅백
+      }
+      startRecAuto();
+    };
+    wrap.addEventListener('pointerup',     endDrag);
+    wrap.addEventListener('pointercancel', endDrag);
+
+    // ③ 인접 카드 클릭 → 중앙 이동 (active 카드는 go-detail 그대로)
+    wrap.addEventListener('click', e => {
+      if (_justDrag) { _justDrag = false; e.stopPropagation(); return; }
+      const card = e.target.closest('.home-rec-card');
+      if (!card || card.classList.contains('rec-active')) return;
+      if (card.classList.contains('rec-adj')) {
+        e.stopPropagation(); // ACT go-detail 방지
+        const cards = [...track.querySelectorAll('.home-rec-card')];
+        const idx = cards.indexOf(card);
+        scrollRecCarManual(idx > _recIdx ? 1 : -1);
+      }
+    });
+  }
+
   updateRecCarousel(0, true); // 초기 상태 (애니메이션 없이)
   startRecAuto();
-
-  if (_recInited) return; // 이벤트 리스너는 최초 1회만
-  _recInited = true;
-
-  // ① Hover: 자동 슬라이드 일시정지
-  wrap.addEventListener('mouseenter', stopRecAuto);
-  wrap.addEventListener('mouseleave', () => { if (!_recTimer) startRecAuto(); });
-
-  // ② Drag / Swipe
-  let _dragX    = null;
-  let _wasDrag  = false;
-  let _justDrag = false; // click 시 drag 판별용
-
-  wrap.addEventListener('pointerdown', e => {
-    _dragX   = e.clientX;
-    _wasDrag = false;
-    track.style.transition = 'none';
-    try { wrap.setPointerCapture(e.pointerId); } catch(_) {}
-    stopRecAuto();
-  });
-
-  wrap.addEventListener('pointermove', e => {
-    if (_dragX === null) return;
-    const dx = e.clientX - _dragX;
-    if (Math.abs(dx) > 8) _wasDrag = true;
-    if (_wasDrag) {
-      track.style.transform = `translateX(${-_recIdx * _REC_STEP + dx}px)`;
-    }
-  });
-
-  const endDrag = e => {
-    if (_dragX === null) return;
-    const dx = e.clientX - _dragX;
-    _justDrag = _wasDrag;
-    _dragX = null; _wasDrag = false;
-    track.style.transition = '';
-    if (_justDrag && Math.abs(dx) > 50) {
-      updateRecCarousel(_recIdx + (dx < 0 ? 1 : -1));
-    } else {
-      updateRecCarousel(_recIdx, true); // 스냅백
-    }
-    startRecAuto();
-  };
-  wrap.addEventListener('pointerup',     endDrag);
-  wrap.addEventListener('pointercancel', endDrag);
-
-  // ③ 인접 카드 클릭 → 중앙 이동 (active 카드는 go-detail 그대로)
-  wrap.addEventListener('click', e => {
-    if (_justDrag) { _justDrag = false; e.stopPropagation(); return; }
-    const card = e.target.closest('.home-rec-card');
-    if (!card || card.classList.contains('rec-active')) return;
-    if (card.classList.contains('rec-adj')) {
-      e.stopPropagation(); // ACT go-detail 방지
-      const cards = [...track.querySelectorAll('.home-rec-card')];
-      const idx = cards.indexOf(card);
-      scrollRecCarManual(idx > _recIdx ? 1 : -1);
-    }
-  });
 }
 
 /* ============================================================ EVENT DELEGATION ============================================================ */
@@ -6483,8 +7281,8 @@ function showMypageSub(id) {
   document.querySelectorAll('[data-action="mypage-tab"]').forEach(t => {
     t.classList.toggle('on', t.dataset.tab === id);
   });
-  // 알림설정 탭: 카테고리·브랜드 초기화
-  if (id === 'noti') setTimeout(() => selectNotiCat('mart'), 50);
+  // 알림설정 탭: 브랜드 그리드 + 할인율 초기화
+  if (id === 'noti') setTimeout(() => initNotiSettings2(), 50);
 }
 function highlightMypageMenu(action) {
   document.querySelectorAll('.mypage-menu-item').forEach(el =>
@@ -6541,6 +7339,139 @@ function showToast(msg) {
       <button class="btn-primary" style="font-size:17px" onclick="closeNotiPopup('on')">알림 켜기</button>
       <button class="btn-ghost" style="font-size:15px" onclick="closeNotiPopup('later')">나중에 설정하기</button>
     </div>
+  </div>
+</div>
+
+<!-- ── 이미지 검색 모달 ── -->
+<div id="imgSearchModal" class="ism-overlay" onclick="if(event.target===this)closeImgSearch()">
+  <div class="ism-card">
+    <!-- 헤더 -->
+    <div class="ism-header">
+      <span class="ism-title">📷 이미지로 쿠폰 검색</span>
+      <button class="ism-close" onclick="closeImgSearch()">✕</button>
+    </div>
+
+    <!-- 드롭존 -->
+    <div class="ism-dropzone" id="ismDropzone">
+
+      <!-- ① Default -->
+      <div class="ism-state" id="ismStateDefault">
+        <div class="ism-big-icon">🖼️</div>
+        <div class="ism-main-text">이미지를 끌어다 놓거나 클릭하세요</div>
+        <div class="ism-sub-text">JPG · PNG · WEBP &nbsp;|&nbsp; 최대 10MB</div>
+        <button class="ism-browse-btn" onclick="event.stopPropagation();document.getElementById('ismFileInput').click()">파일 선택</button>
+      </div>
+
+      <!-- ② Drag over -->
+      <div class="ism-state" id="ismStateDrag" style="display:none">
+        <div class="ism-big-icon">📥</div>
+        <div class="ism-main-text">여기에 놓으세요!</div>
+        <div class="ism-drag-badge">✓ 업로드 가능</div>
+      </div>
+
+      <!-- ③ Uploading -->
+      <div class="ism-state" id="ismStateUploading" style="display:none">
+        <div class="ism-spinner"></div>
+        <div class="ism-main-text">분석 중...</div>
+        <div class="ism-sub-text">이미지에서 브랜드를 찾고 있어요</div>
+        <div class="ism-progress-bar"><div class="ism-progress-fill" id="ismProgressFill"></div></div>
+      </div>
+
+      <!-- ④ Success -->
+      <div class="ism-state" id="ismStateSuccess" style="display:none">
+        <div class="ism-preview-wrap">
+          <img id="ismPreviewImg" class="ism-preview-img" alt="업로드된 이미지">
+        </div>
+        <div class="ism-success-bar" style="width:100%">
+          <span class="ism-success-label">✓&nbsp; 분석 완료</span>
+          <button class="ism-retry-btn" onclick="event.stopPropagation();resetImgSearch()">다시 선택</button>
+        </div>
+      </div>
+
+      <!-- ⑤ Error -->
+      <div class="ism-state" id="ismStateError" style="display:none">
+        <div class="ism-error-icon">⚠️</div>
+        <div class="ism-error-text" id="ismErrorMsg">파일 형식이 올바르지 않습니다</div>
+        <div class="ism-error-sub">JPG, PNG, WEBP 파일만 지원합니다</div>
+        <button class="ism-browse-btn" onclick="event.stopPropagation();resetImgSearch()" style="background:#ef4444">다시 시도</button>
+      </div>
+
+    </div><!-- /dropzone -->
+
+    <!-- 숨겨진 파일 input -->
+    <input type="file" id="ismFileInput" accept="image/jpeg,image/png,image/webp" style="display:none"
+      onchange="handleImgFile(this.files[0])">
+
+    <!-- 분석 결과 (success 이후) -->
+    <div class="ism-result-area" id="ismResultArea" style="display:none">
+      <div class="ism-result-title">검색어 추천</div>
+      <div class="ism-result-chips" id="ismResultChips"></div>
+      <button class="btn-primary" style="width:100%;margin-top:16px;min-height:48px;font-size:15px"
+        onclick="doImgSearch()">이 결과로 검색하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 음성 검색 모달 ── -->
+<div id="voiceSearchModal" class="vsm-overlay" onclick="if(event.target===this)closeVoiceSearch()">
+  <div class="vsm-card state-idle" id="vsmCard">
+    <button class="vsm-close" onclick="closeVoiceSearch()">✕</button>
+
+    <!-- ① Idle / Listening 공용: 마이크 버튼 + 펄스 링 -->
+    <div class="vsm-mic-area" id="vsmMicArea">
+      <div class="vsm-ring vsm-ring-1"></div>
+      <div class="vsm-ring vsm-ring-2"></div>
+      <div class="vsm-ring vsm-ring-3"></div>
+      <button class="vsm-mic-btn" id="vsmMicBtn" onclick="vsmToggleListen()">🎤</button>
+    </div>
+
+    <!-- 파형 바 (Listening 상태에서 opacity:1) -->
+    <div class="vsm-waveform" id="vsmWaveform">
+      <div class="vsm-bar" id="vsmB1"></div>
+      <div class="vsm-bar" id="vsmB2"></div>
+      <div class="vsm-bar" id="vsmB3"></div>
+      <div class="vsm-bar" id="vsmB4"></div>
+      <div class="vsm-bar" id="vsmB5"></div>
+      <div class="vsm-bar" id="vsmB6"></div>
+      <div class="vsm-bar" id="vsmB7"></div>
+      <div class="vsm-bar" id="vsmB8"></div>
+      <div class="vsm-bar" id="vsmB9"></div>
+      <div class="vsm-bar" id="vsmB10"></div>
+      <div class="vsm-bar" id="vsmB11"></div>
+      <div class="vsm-bar" id="vsmB12"></div>
+      <div class="vsm-bar" id="vsmB13"></div>
+      <div class="vsm-bar" id="vsmB14"></div>
+      <div class="vsm-bar" id="vsmB15"></div>
+    </div>
+
+    <!-- ② Spinner (Processing) -->
+    <div class="vsm-spinner" id="vsmSpinner" style="display:none"></div>
+
+    <!-- 상태 텍스트 -->
+    <div class="vsm-label" id="vsmLabel">음성으로 검색</div>
+    <div class="vsm-sub"   id="vsmSub">마이크 버튼을 누르고 말씀하세요</div>
+
+    <!-- ③ 결과 (Result) -->
+    <div id="vsmResultBox" class="vsm-result-box" style="display:none;margin-top:20px">
+      <div class="vsm-result-hint">인식된 텍스트</div>
+      <div class="vsm-result-kw" id="vsmResultKw"></div>
+    </div>
+    <div class="vsm-action-row" id="vsmActionRow" style="display:none;margin-top:16px">
+      <button class="vsm-search-btn" onclick="vsmDoSearch()">🔍&nbsp; 검색하기</button>
+      <button class="vsm-retry-btn-sm" onclick="vsmRetry()">다시</button>
+    </div>
+
+    <!-- ④ 에러 -->
+    <div id="vsmErrorBox" style="display:none;margin-top:12px">
+      <div class="vsm-error-icon">🎙️</div>
+      <div class="vsm-error-msg" id="vsmErrorMsg">음성을 인식하지 못했어요</div>
+      <div class="vsm-error-sub">조용한 환경에서 다시 시도하거나 직접 입력해 보세요</div>
+      <div class="vsm-action-row" style="margin-top:0">
+        <button class="vsm-search-btn" onclick="vsmRetry()">🎤&nbsp; 다시 시도</button>
+        <button class="vsm-retry-btn-sm" onclick="closeVoiceSearch()">닫기</button>
+      </div>
+    </div>
+
   </div>
 </div>
 </body>
