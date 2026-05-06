@@ -3283,7 +3283,7 @@ input[type=range].disc-range::-moz-range-thumb {
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <button id="social-login-btn" class="btn-accent" data-action="go-noti-consent" style="font-size:18px;font-weight:700;color:#3A1D00">카카오 계정으로 로그인</button>
+        <button id="social-login-btn" class="btn-accent" data-action="go-signup-complete" style="font-size:18px;font-weight:700;color:#3A1D00">카카오 계정으로 로그인</button>
         <div id="social-login-sub" style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:4px">
           로그인 시 USE 서비스와 계정이 연동됩니다
         </div>
@@ -3610,6 +3610,16 @@ input[type=range].disc-range::-moz-range-thumb {
               <span class="hsb-trend-tag" onclick="doSearch('GS25')">GS25</span>
             </div>
           </div>
+        </div>
+
+        <!-- GPS 알림 배너 — 알림 켜기 클릭 시 팝업 -->
+        <div class="gps-noti-bar" id="homeNotiBar" onclick="showNotiPopup()">
+          <div class="gps-noti-dot"></div>
+          <div class="gps-noti-content">
+            <div class="gps-noti-title">📍 내 주변 쿠폰 알림 받기</div>
+            <div class="gps-noti-sub">지금 위치에서 사용 가능한 할인 쿠폰을 알려드려요</div>
+          </div>
+          <button style="background:white;color:var(--primary);border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0" onclick="event.stopPropagation();showNotiPopup()">알림 켜기</button>
         </div>
 
         <!-- ③ 오늘의 추천 쿠폰 캐러셀 -->
@@ -6905,10 +6915,7 @@ const ACT = {
   'go-signup-complete': ()=>{
     go('signup-complete');
     clearTimeout(S._signupTimer);
-    S._signupTimer = setTimeout(()=>{
-      go('home');
-      setTimeout(showNotiPopup, 400);
-    }, 2500);
+    S._signupTimer = setTimeout(()=>{ go('home'); }, 2500);
   },
   'go-noti-consent': ()=>go('noti-consent'),
   'nav-noti-alert':  ()=>{ showAppPage('noti-alert'); updateSidebar('noti-alert'); setTimeout(initNearbyMap, 150); },
