@@ -7136,13 +7136,18 @@ function initRecCarousel() {
     wrap.addEventListener('pointerup',     endDrag);
     wrap.addEventListener('pointercancel', endDrag);
 
-    // ③ 인접 카드 클릭 → 중앙 이동 (active 카드는 go-detail 그대로)
+    // ③ 인접 카드 클릭 → 중앙 이동 / active 카드 클릭 → 쿠폰 상세 이동
     wrap.addEventListener('click', e => {
       if (_justDrag) { _justDrag = false; e.stopPropagation(); return; }
       const card = e.target.closest('.home-rec-card');
-      if (!card || card.classList.contains('rec-active')) return;
+      if (!card) return;
+      if (card.classList.contains('rec-active')) {
+        const id = card.dataset.id;
+        if (id) ACT['go-detail']?.({ target: { closest: (sel) => sel === '[data-id]' ? card : null } });
+        return;
+      }
       if (card.classList.contains('rec-adj')) {
-        e.stopPropagation(); // ACT go-detail 방지
+        e.stopPropagation();
         const cards = [...track.querySelectorAll('.home-rec-card')];
         const idx = cards.indexOf(card);
         scrollRecCarManual(idx > _recIdx ? 1 : -1);
