@@ -6696,7 +6696,8 @@ let _recIdx   = 0;
 let _recTimer = null;
 let _recLocked = false;
 let _recInited = false;
-const _REC_CW   = 255;              // card width (px) — 1.5× of original 170
+let _recOrigN  = 0;                 // 원본 카드 수 (initRecCarousel에서 설정)
+const _REC_CW   = 255;              // card width (px)
 const _REC_G    = 14;               // gap (px)
 const _REC_STEP = _REC_CW + _REC_G; // 269px per slot
 
@@ -6707,12 +6708,17 @@ function updateRecCarousel(newIdx, instant) {
   const cards = [...track.querySelectorAll('.home-rec-card')];
   const n = cards.length;
   if (n < 2) return;
-  const origN = Math.round(n / 2); // 원본 카드 수 (클론 제외)
 
-  _recIdx = ((newIdx % n) + n) % n;
-  const visIdx = _recIdx % origN; // 현재 시각적으로 active인 원본 카드 인덱스
+  // 트랙 구조: [앞-클론 origN장] [원본 origN장] [뒤-클론 origN장]
+  // origN = _recOrigN (initRecCarousel에서 설정), 없으면 3분의1 추정
+  const origN = _recOrigN || Math.round(n / 3);
 
-  // 각 카드에 상태 클래스 적용 (원본 위치 기준 거리 계산)
+  _recIdx = newIdx;
+
+  // 현재 active인 원본 카드 인덱스 (0..origN-1)
+  const visIdx = ((_recIdx - origN) % origN + origN) % origN;
+
+  // 각 카드에 상태 클래스 적용 (원본 위치 기준 거리 계산, 3그룹 모두 동일)
   cards.forEach((card, i) => {
     const pos  = i % origN;
     const dist = Math.min(Math.abs(pos - visIdx), origN - Math.abs(pos - visIdx));
@@ -6724,36 +6730,35 @@ function updateRecCarousel(newIdx, instant) {
 
   // 트랙 이동
   if (instant) {
-    // transition:none → 강제 리플로우 → transform 변경 → 다음 프레임에서 복원
-    // (void offsetWidth 없이는 브라우저가 배치 처리해 역방향 애니메이션 발생)
+    // transition:none → 강제 리플로우 → transform 변경 → 복원
     track.style.transition = 'none';
-    void track.offsetWidth;   // ← 레이아웃 커밋: transition:none 확정
+    void track.offsetWidth;
     track.style.transform = `translateX(${-_recIdx * _REC_STEP}px)`;
-    void track.offsetWidth;   // ← 새 위치 커밋
+    void track.offsetWidth;
     requestAnimationFrame(() => { track.style.transition = ''; });
   } else {
     track.style.transform = `translateX(${-_recIdx * _REC_STEP}px)`;
   }
 
-  // 빠른 연속 조작 lock + 클론 영역 진입 시 원본 위치로 텔레포트
+  // 애니메이션 후 클론 영역 진입 시 원본 구간으로 텔레포트 (양방향)
   if (!instant) {
     _recLocked = true;
     setTimeout(() => {
       _recLocked = false;
-      if (_recIdx >= origN) updateRecCarousel(_recIdx - origN, true);
+      if (_recIdx < origN) {
+        // 앞-클론 영역 진입 → 뒤-원본 구간으로 점프
+        updateRecCarousel(_recIdx + origN, true);
+      } else if (_recIdx >= 2 * origN) {
+        // 뒤-클론 영역 진입 → 앞-원본 구간으로 점프
+        updateRecCarousel(_recIdx - origN, true);
+      }
     }, 450);
   }
 }
 
 function scrollRecCar(dir) {
-  if (dir === null) {
-    // 자동 슬라이드: 항상 다음으로 (클론 영역 진입 후 자동 텔레포트)
-    updateRecCarousel(_recIdx + 1);
-  } else {
-    const next = _recIdx + dir;
-    if (next < 0) return; // 첫 카드에서 뒤로 클램프
-    updateRecCarousel(next);
-  }
+  // dir===null 이면 자동 슬라이드(우방향), 아니면 사용자 방향 (양방향 무한)
+  updateRecCarousel(_recIdx + (dir === null ? 1 : dir));
 }
 
 function startRecAuto() {
@@ -6777,8 +6782,16 @@ function initRecCarousel() {
   if (!_recInited) {
     _recInited = true;
 
-    // 카드 복제 — 무한 루프용 (원본 카드를 트랙 끝에 복사)
+    // 원본 카드 수집
     const origCards = [...track.querySelectorAll('.home-rec-card')];
+    _recOrigN = origCards.length;
+
+    // 앞에 클론 삽입 (역순 prepend → 결과적으로 정순 배치)
+    // → 트랙: [앞-클론 5장] [원본 5장] [뒤-클론 5장]
+    origCards.slice().reverse().forEach(c => {
+      track.insertBefore(c.cloneNode(true), track.firstChild);
+    });
+    // 뒤에 클론 추가
     origCards.forEach(c => track.appendChild(c.cloneNode(true)));
 
     // ① Hover: 자동 슬라이드 일시정지
@@ -6837,7 +6850,7 @@ function initRecCarousel() {
     });
   }
 
-  updateRecCarousel(0, true); // 초기 상태 (애니메이션 없이)
+  updateRecCarousel(_recOrigN, true); // 원본 첫 카드(_recOrigN)에서 시작 → 양쪽에 클론이 존재
   startRecAuto();
 }
 
