@@ -2128,8 +2128,8 @@ input[type=range].disc-range::-moz-range-thumb {
 .nmap-chip:hover { border-color:var(--primary); color:var(--primary); }
 .nmap-chip.active { background:var(--primary); border-color:var(--primary); color:white; }
 .nmap-chip-open.active { background:#16a34a; border-color:#16a34a; }
-.nmap-body { flex:1; display:flex; min-height:0; overflow:hidden; }
-.nmap-list-panel { width:300px; flex-shrink:0; display:flex; flex-direction:column; background:white; border-right:1.5px solid var(--gray-200); overflow:hidden; }
+.nmap-body { flex:1; display:flex; min-height:0; overflow:hidden; align-items:stretch; }
+.nmap-list-panel { width:300px; flex-shrink:0; display:flex; flex-direction:column; background:white; border-right:1.5px solid var(--gray-200); overflow:hidden; align-self:stretch; }
 .nmap-list-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--gray-200); flex-shrink:0; }
 .nmap-list-count { font-size:13px; font-weight:700; color:var(--gray-700); }
 .nmap-sort-sel { height:28px; padding:0 8px; border:1.5px solid var(--gray-200); border-radius:8px; font-size:12px; font-weight:700; color:var(--gray-700); background:white; outline:none; cursor:pointer; font-family:var(--font); }
@@ -5377,7 +5377,7 @@ function showAppPage(id, skipHistory) {
   S.appPage = id;
   document.querySelectorAll('.app-page').forEach(p=>p.style.display='none');
   const page = document.getElementById('p-'+id);
-  if (page) { page.style.display='block'; page.classList.add('fade-in'); }
+  if (page) { page.style.display = (id === 'noti-alert') ? 'flex' : 'block'; page.classList.add('fade-in'); }
   // 페이지 전환 시 항상 최상단으로 스크롤 리셋
   const mc = document.querySelector('.main-content');
   if (mc) { mc.scrollTop = 0; mc.scrollLeft = 0; }
