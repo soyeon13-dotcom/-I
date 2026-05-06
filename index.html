@@ -5306,7 +5306,7 @@ input[type=range].disc-range::-moz-range-thumb {
 
 <script>
 /* ============================================================ STATE ============================================================ */
-const S = { cur:'splash', hist:[], appPage:'home', appHist:[], carIdx:0, connectMethod:'phone', connectFrom:'easy', authTimer:null, carTimer:null, searchKw:'', connectSvc:'', connectSvcName:'', _signupTimer:null };
+const S = { cur:'splash', hist:[], appPage:'home', appHist:[], carIdx:0, connectMethod:'phone', connectFrom:'easy', authTimer:null, carTimer:null, searchKw:'', connectSvc:'', connectSvcName:'', _signupTimer:null, _notiPopupShown:false };
 
 const downloaded = new Set(['baemin','starbucks']);
 
@@ -6760,6 +6760,8 @@ function fmtBirth(inp) {
 }
 
 function showNotiPopup() {
+  if (S._notiPopupShown) return;
+  S._notiPopupShown = true;
   const el = document.getElementById('notiPopup');
   if (el) el.style.display = 'flex';
 }
