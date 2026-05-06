@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -command \"\\(Get-Content 'C:\\\\Users\\\\COM\\\\Downloads\\\\index \\(19\\).html'\\).Count\")",
+      "Bash(powershell -command ' *)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}
