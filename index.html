@@ -478,7 +478,6 @@ body   { font-family: var(--font); background: #ffffff; color: var(--gray-900); 
   padding:10px 20px 8px;
   background:var(--gray-100);
   border-top:1px solid var(--gray-200);
-  position:sticky; top:0; z-index:1;
 }
 .nsl-icon {
   width:28px; height:28px; border-radius:8px; flex-shrink:0;
@@ -3483,7 +3482,7 @@ input[type=range].disc-range::-moz-range-thumb {
               <span class="nsl-label">배달</span>
               <span class="nsl-badge">2</span>
             </div>
-            <div class="noti-item" onclick="closeNotiDrop()">
+            <div class="noti-item" onclick="closeNotiDrop(); setTimeout(()=>ACT['go-detail']?.({target:{dataset:{id:'baemin'}}}),50)">
               <div class="noti-item-icon" style="background:linear-gradient(135deg,#00c3e3,#0077cc);color:white;font-size:11px;font-weight:900">배민</div>
               <div class="noti-item-body">
                 <div class="noti-item-title">배달의민족 3,000원 할인 — D-2</div>
@@ -3493,7 +3492,7 @@ input[type=range].disc-range::-moz-range-thumb {
                 <div class="noti-item-time">2시간 전</div>
               </div>
             </div>
-            <div class="noti-item" onclick="closeNotiDrop()">
+            <div class="noti-item" onclick="closeNotiDrop(); setTimeout(()=>ACT['go-detail']?.({target:{dataset:{id:'yogiyo'}}}),50)">
               <div class="noti-item-icon" style="background:linear-gradient(135deg,#ff6b35,#ee4d2d);color:white;font-size:11px;font-weight:900">요기요</div>
               <div class="noti-item-body">
                 <div class="noti-item-title">요기요 첫 주문 2,000원 할인</div>
@@ -3528,7 +3527,7 @@ input[type=range].disc-range::-moz-range-thumb {
               <span class="nsl-label">패션·뷰티</span>
               <span class="nsl-badge">1</span>
             </div>
-            <div class="noti-item" onclick="closeNotiDrop()">
+            <div class="noti-item" onclick="closeNotiDrop(); setTimeout(()=>ACT['go-detail']?.({target:{dataset:{id:'oliveyoung'}}}),50)">
               <div class="noti-item-icon" style="background:linear-gradient(135deg,#e91e8c,#c2185b);color:white;font-size:11px;font-weight:900">올영</div>
               <div class="noti-item-body">
                 <div class="noti-item-title">올리브영 5,000원 할인 쿠폰 도착</div>
@@ -6952,7 +6951,6 @@ const ACT = {
       if (nearbySec) nearbySec.style.display = '';
     }
     go('detail');
-    if (ch !== 'online') setTimeout(showBrcPopup, 120);
   },
   'go-barcode':      ()=>go('barcode'),
   'close-brc-popup': ()=>closeBrcPopup(),
