@@ -6241,6 +6241,112 @@ function homeToCpnCard(homeCard) {
   return div;
 }
 
+/* ── 쿠폰 Mock 데이터 ── */
+const MOCK_COUPONS = {
+  emart:      { brand:'이마트',    bg:'linear-gradient(135deg,#f5a623,#e8870a)',
+                disc:'30%', cond:'3만원 이상 결제 시 자동 적용',
+                badge:'오늘 자정 만료', urgency:'오늘 자정 만료 — 지금 바로 사용하세요',
+                expLabel:'2026.05.07 (오늘 만료)', expColor:'var(--danger)',
+                savings:'최대 15,000원', discDetail:'30% 할인 (최대 15,000원)',
+                minAmt:'30,000원 이상', stores:'이마트 전국 매장', dupUse:'불가', provider:'KT 멤버십 혜택',
+                channel:'offline',
+                nearby:[{name:'이마트 영등포점',addr:'서울 영등포구 영중로 15',dist:'0.3km'},{name:'이마트 목동점',addr:'서울 양천구 목동동로 257',dist:'1.1km'},{name:'이마트 은평점',addr:'서울 은평구 연서로 365',dist:'2.4km'},{name:'이마트 마포점',addr:'서울 마포구 월드컵북로 400',dist:'3.0km'},{name:'이마트 상암점',addr:'서울 마포구 성암로 301',dist:'3.8km'}] },
+  baemin:     { brand:'배달의민족', bg:'linear-gradient(135deg,#00c3e3,#0077cc)',
+                disc:'3,000원', cond:'15,000원 이상 주문 시 자동 적용',
+                badge:'D-2 만료', urgency:'이틀 뒤 만료 — 지금 주문하세요',
+                expLabel:'2026.05.09 (D-2)', expColor:'var(--warning)',
+                savings:'최대 3,000원', discDetail:'3,000원 할인',
+                minAmt:'15,000원 이상', stores:'배달의민족 앱 전체', dupUse:'가능', provider:'배달의민족',
+                channel:'online', url:'https://www.baemin.com', urlName:'배달의민족 바로 가기', nearby:[] },
+  starbucks:  { brand:'스타벅스',  bg:'linear-gradient(135deg,#00704a,#1e8449)',
+                disc:'1+1', cond:'조건 없음',
+                badge:'D-7', urgency:'7일 뒤 만료 — 여유있게 사용하세요',
+                expLabel:'2026.05.14 (D-7)', expColor:'var(--gray-500)',
+                savings:'음료 1잔 무료', discDetail:'음료 1잔 증정 (동일 음료)',
+                minAmt:'조건 없음', stores:'스타벅스 전국 매장', dupUse:'불가', provider:'KT 멤버십 혜택',
+                channel:'both', url:'https://www.starbucks.co.kr', urlName:'스타벅스 바로 가기',
+                nearby:[{name:'스타벅스 영등포역점',addr:'서울 영등포구 국회대로 지하1층',dist:'0.2km'},{name:'스타벅스 여의도점',addr:'서울 영등포구 여의대로 24',dist:'1.5km'},{name:'스타벅스 합정점',addr:'서울 마포구 양화로 45',dist:'2.1km'}] },
+  oliveyoung: { brand:'올리브영',  bg:'linear-gradient(135deg,#e91e8c,#c2185b)',
+                disc:'5,000원', cond:'20,000원 이상 구매 시',
+                badge:'D-30', urgency:'30일 남음 — 기간 내 사용하세요',
+                expLabel:'2026.06.06 (D-30)', expColor:'var(--gray-500)',
+                savings:'5,000원', discDetail:'5,000원 할인',
+                minAmt:'20,000원 이상', stores:'올리브영 전국 매장·올리브영몰', dupUse:'가능', provider:'올리브영',
+                channel:'both', url:'https://www.oliveyoung.co.kr', urlName:'올리브영 바로 가기',
+                nearby:[{name:'올리브영 영등포점',addr:'서울 영등포구 영중로 15',dist:'0.4km'},{name:'올리브영 홍대점',addr:'서울 마포구 양화로 188',dist:'1.9km'}] },
+  lottemart:  { brand:'롯데마트',  bg:'linear-gradient(135deg,#cc0000,#990000)',
+                disc:'25%', cond:'2만원 이상 결제 시',
+                badge:'D-5', urgency:'5일 뒤 만료 — 서두르세요',
+                expLabel:'2026.05.12 (D-5)', expColor:'var(--warning)',
+                savings:'최대 10,000원', discDetail:'25% 할인 (최대 10,000원)',
+                minAmt:'20,000원 이상', stores:'롯데마트 전국 매장', dupUse:'불가', provider:'롯데카드 혜택',
+                channel:'offline',
+                nearby:[{name:'롯데마트 영등포점',addr:'서울 영등포구 양평로 240',dist:'0.6km'},{name:'롯데마트 강서점',addr:'서울 강서구 공항대로 390',dist:'2.2km'},{name:'롯데마트 마포점',addr:'서울 마포구 월드컵로 190',dist:'2.9km'}] },
+  gs25:       { brand:'GS25',      bg:'linear-gradient(135deg,#00b050,#007a30)',
+                disc:'1+1', cond:'이번 주말까지',
+                badge:'D-3', urgency:'주말 종료 — 3일 남았어요',
+                expLabel:'2026.05.10 (D-3)', expColor:'var(--warning)',
+                savings:'도시락 1개 무료', discDetail:'도시락 1+1 (동일 제품)',
+                minAmt:'조건 없음', stores:'GS25 전국 매장', dupUse:'불가', provider:'GS리테일',
+                channel:'offline',
+                nearby:[{name:'GS25 영등포역점',addr:'서울 영등포구 영중로 지하',dist:'0.1km'},{name:'GS25 여의도점',addr:'서울 영등포구 여의도동 44',dist:'1.2km'},{name:'GS25 당산점',addr:'서울 영등포구 당산로 162',dist:'1.7km'}] },
+  yogiyo:     { brand:'요기요',    bg:'linear-gradient(135deg,#ff6b35,#ee4d2d)',
+                disc:'2,000원', cond:'신규 가입자 한정',
+                badge:'기간 한정', urgency:'기간 한정 — 첫 주문 시 사용 가능',
+                expLabel:'2026.12.31 (기간 한정)', expColor:'var(--gray-500)',
+                savings:'2,000원', discDetail:'2,000원 할인',
+                minAmt:'없음', stores:'요기요 앱 전체', dupUse:'불가', provider:'요기요',
+                channel:'online', url:'https://www.yogiyo.co.kr', urlName:'요기요 바로 가기', nearby:[] },
+  coupang:    { brand:'쿠팡',      bg:'linear-gradient(135deg,#ef4444,#fca5a5)',
+                disc:'10%', cond:'50,000원 이상 구매 시',
+                badge:'D-7', urgency:'7일 뒤 만료 — 로켓배송 이용 시 사용',
+                expLabel:'2026.05.14 (D-7)', expColor:'var(--gray-500)',
+                savings:'최대 5,000원', discDetail:'10% 할인 (최대 5,000원)',
+                minAmt:'50,000원 이상', stores:'쿠팡 앱 전체', dupUse:'가능', provider:'쿠팡',
+                channel:'online', url:'https://www.coupang.com', urlName:'쿠팡 바로 가기', nearby:[] },
+};
+
+function loadDetail(id) {
+  const c = MOCK_COUPONS[id];
+  if (!c) return;
+  // 페이지 타이틀
+  const navTitle = document.querySelector('#p-detail .pnav-title');
+  if (navTitle) navTitle.textContent = c.brand + ' 쿠폰';
+  // 히어로 카드 배경 + 텍스트
+  const heroCard  = document.querySelector('#p-detail .det-hero-card');
+  if (heroCard)  heroCard.style.background = c.bg;
+  const heroBrand = document.querySelector('#p-detail .det-hero-brand');
+  const heroDisc  = document.querySelector('#p-detail .det-hero-disc');
+  const heroCond  = document.querySelector('#p-detail .det-hero-cond');
+  const heroBadge = document.querySelector('#p-detail .det-hero-badge');
+  if (heroBrand) heroBrand.textContent = c.brand;
+  if (heroDisc)  heroDisc.textContent  = c.disc;
+  if (heroCond)  heroCond.textContent  = c.cond;
+  if (heroBadge) heroBadge.textContent = c.badge;
+  // 긴급도 + 절감액
+  const urgTxt   = document.querySelector('#p-detail .det-urg-txt');
+  const priceVal = document.querySelector('#p-detail .det-price-val');
+  if (urgTxt)   urgTxt.textContent   = c.urgency;
+  if (priceVal) priceVal.textContent = c.savings;
+  // 쿠폰 정보 행 (할인혜택/최소구매/사용가능매장/유효기간/중복사용/제공)
+  const rows = document.querySelectorAll('#p-detail .det-info-card .det-row');
+  const vals = [c.discDetail, c.minAmt, c.stores, c.expLabel, c.dupUse, c.provider];
+  rows.forEach((row, i) => {
+    const valEl = row.querySelector('.det-val');
+    if (valEl && vals[i] !== undefined) {
+      valEl.textContent = vals[i];
+      valEl.style.color = (i === 3) ? c.expColor : '';
+    }
+  });
+  // 주변 사용처
+  const nearbyList = document.getElementById('nearbyList');
+  if (nearbyList) {
+    nearbyList.innerHTML = (!c.nearby || c.nearby.length === 0)
+      ? '<div style="padding:20px;text-align:center;color:var(--gray-400);font-size:14px">온라인 전용 쿠폰입니다</div>'
+      : c.nearby.map(s => `<div style="display:flex;align-items:center;justify-content:space-between;background:var(--gray-100);margin-bottom:8px;border-radius:10px;padding:14px 16px"><div><div style="font-weight:700;font-size:15px">${s.name}</div><div style="font-size:13px;color:var(--gray-500)">${s.addr}</div></div><span style="font-size:13px;font-weight:700;color:var(--primary)">${s.dist}</span></div>`).join('');
+  }
+}
+
 /* ── 검색 결과 브랜드 메타 ── */
 const SRC_BRAND_META = {
   emart:      { label:'이마트',     grad:'linear-gradient(135deg,#f5a623,#e8870a)' },
@@ -8187,6 +8293,7 @@ const ACT = {
       if (nearbySec) nearbySec.style.display = '';
     }
     go('detail');
+    loadDetail(id);
   },
   'go-barcode':      ()=>go('barcode'),
   'close-brc-popup': ()=>closeBrcPopup(),
