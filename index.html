@@ -1343,10 +1343,47 @@ input[type=range].disc-range::-moz-range-thumb {
 /* ============================================================
    SEARCH RESULTS PAGE
    ============================================================ */
-.search-result-bar { display:flex; align-items:center; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
-#searchResultList .cpn-card { word-break:keep-all; overflow-wrap:break-word; }
-.search-kw-badge { display:inline-flex; align-items:center; padding:8px 16px; border-radius:50px; background:var(--primary-lt); color:var(--primary); font-size:16px; font-weight:700; }
-.search-count { font-size:15px; color:var(--gray-500); font-weight:600; }
+.src-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px; gap:12px;
+}
+.src-header-left { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.src-kw-badge { font-size:18px; font-weight:800; color:var(--gray-900); }
+.src-count { font-size:14px; font-weight:600; color:var(--gray-400); }
+.src-sort-sel {
+  height:36px; padding:0 12px; border-radius:8px;
+  border:1.5px solid var(--gray-200); font-size:13px; font-weight:600;
+  color:var(--gray-700); background:white; cursor:pointer; outline:none;
+  font-family:var(--font);
+}
+.src-list { display:flex; flex-direction:column; gap:10px; }
+.src-card {
+  display:flex; align-items:center; gap:16px;
+  background:white; border-radius:18px; padding:16px 20px;
+  box-shadow:0 1px 4px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
+  cursor:pointer; transition:transform .18s, box-shadow .18s;
+  border:1.5px solid var(--gray-100);
+}
+.src-card:hover {
+  transform:translateY(-2px);
+  box-shadow:0 4px 20px rgba(0,0,0,.12);
+  border-color:var(--primary-lt);
+}
+.src-card-logo {
+  width:56px; height:56px; border-radius:14px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:900; color:white; letter-spacing:-.3px;
+}
+.src-card-body { flex:1; min-width:0; }
+.src-card-brand { font-size:12px; font-weight:700; color:var(--gray-400); margin-bottom:3px; }
+.src-card-title { font-size:15px; font-weight:700; color:var(--gray-900); line-height:1.3; margin-bottom:6px; word-break:keep-all; }
+.src-card-meta { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.src-card-cond { font-size:12px; color:var(--gray-400); }
+.src-card-exp { font-size:12px; font-weight:700; }
+.src-card-right { flex-shrink:0; text-align:right; }
+.src-disc-badge { font-size:22px; font-weight:800; color:var(--primary); line-height:1; }
+.src-disc-unit { font-size:11px; font-weight:600; color:var(--gray-400); margin-top:3px; }
+.src-empty { padding:60px 0; text-align:center; color:var(--gray-400); font-size:17px; }
 
 /* ============================================================
    DETAIL PAGE
@@ -5410,45 +5447,25 @@ input[type=range].disc-range::-moz-range-thumb {
 
       <!-- ── SEARCH RESULTS ── -->
       <div id="p-search" class="app-page">
-        <div class="page-nav" style="margin-bottom:12px">
+        <div class="page-nav" style="margin-bottom:16px">
           <button class="pnav-back" data-action="go-back">‹ 뒤로</button>
           <span class="pnav-title">검색 결과</span>
         </div>
-        <!-- 키워드 + 카운트 + 정렬 -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div>
-            <span id="searchKwBadge" style="font-size:17px;font-weight:700;color:var(--gray-900)"></span>
-            <span id="searchCount" style="font-size:14px;color:var(--gray-500);margin-left:8px;font-weight:600"></span>
+        <!-- 헤더: 키워드+카운트 / 정렬 -->
+        <div class="src-header">
+          <div class="src-header-left">
+            <span id="searchKwBadge" class="src-kw-badge"></span>
+            <span id="searchCount" class="src-count"></span>
           </div>
-          <div class="wlt-sort-wrap" style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:14px;color:var(--gray-500);font-weight:600">정렬</span>
-            <select class="wlt-sort-select">
-              <option>마감임박순</option>
-              <option>최대할인순</option>
-              <option>거리순</option>
-              <option>인기순</option>
-            </select>
-          </div>
+          <select id="srcSortSel" class="src-sort-sel" onchange="applySrcSort(this.value)">
+            <option value="expire">마감임박순</option>
+            <option value="disc">최대할인순</option>
+            <option value="dist">거리순</option>
+            <option value="popular">인기순</option>
+          </select>
         </div>
-        <!-- 카테고리 필터 탭 (wallet과 동일) -->
-        <div class="wlt-filter-bar" style="overflow-x:auto;padding-bottom:4px;margin-bottom:12px">
-          <div class="wlt-cat-tabs">
-            <div class="wlt-cat-btn on" data-action="src-filter" data-val="all"><span class="wlt-cat-icon">전체</span><span class="wlt-cat-count" id="srcCntAll">0</span></div>
-            <div class="wlt-cat-btn" data-action="src-filter" data-val="food"><span class="wlt-cat-icon">식품</span><span class="wlt-cat-count" id="srcCntFood">0</span></div>
-            <div class="wlt-cat-btn" data-action="src-filter" data-val="fashion"><span class="wlt-cat-icon">패션</span><span class="wlt-cat-count" id="srcCntFashion">0</span></div>
-            <div class="wlt-cat-btn" data-action="src-filter" data-val="appliance"><span class="wlt-cat-icon">가전</span><span class="wlt-cat-count" id="srcCntAppliance">0</span></div>
-            <div class="wlt-cat-btn" data-action="src-filter" data-val="culture"><span class="wlt-cat-icon">문화생활</span><span class="wlt-cat-count" id="srcCntCulture">0</span></div>
-          </div>
-        </div>
-        <!-- 상태 탭 (wallet과 동일) -->
-        <div class="wallet-tabs">
-          <div class="wlt-tab on" data-action="src-tab" data-status="all">전체</div>
-          <div class="wlt-tab" data-action="src-tab" data-status="available">지금 사용 가능</div>
-          <div class="wlt-tab" data-action="src-tab" data-status="expire">만료 임박</div>
-          <div class="wlt-tab" data-action="src-tab" data-status="downloaded">다운로드 완료</div>
-        </div>
-        <!-- 결과 그리드 (wallet-grid와 동일) -->
-        <div id="searchResultList" class="wallet-grid"></div>
+        <!-- 결과 리스트 -->
+        <div id="searchResultList" class="src-list"></div>
       </div>
 
     </main>
@@ -6041,61 +6058,134 @@ function homeToCpnCard(homeCard) {
   return div;
 }
 
+/* ── 검색 결과 브랜드 메타 ── */
+const SRC_BRAND_META = {
+  emart:      { label:'이마트',     grad:'linear-gradient(135deg,#f5a623,#e8870a)' },
+  baemin:     { label:'배달의민족', grad:'linear-gradient(135deg,#00c3e3,#0077cc)' },
+  starbucks:  { label:'스타벅스',   grad:'linear-gradient(135deg,#00704a,#1e8449)' },
+  gs25:       { label:'GS25',       grad:'linear-gradient(135deg,#0066b3,#1e90ff)' },
+  coupang:    { label:'쿠팡',       grad:'linear-gradient(135deg,#ef4444,#fca5a5)' },
+  oliveyoung: { label:'올리브영',   grad:'linear-gradient(135deg,#059669,#34d399)' },
+  lottemart:  { label:'롯데마트',   grad:'linear-gradient(135deg,#e53935,#ff7043)' },
+  twosome:    { label:'투썸플레이스',grad:'linear-gradient(135deg,#8b5e3c,#c49a6c)' },
+  yogiyo:     { label:'요기요',     grad:'linear-gradient(135deg,#f97316,#fbbf24)' },
+  mcdonalds:  { label:'맥도날드',   grad:'linear-gradient(135deg,#ffc300,#ff6900)' },
+  musinsa:    { label:'무신사',     grad:'linear-gradient(135deg,#1a1a1a,#555)' },
+  kt:         { label:'KT',         grad:'linear-gradient(135deg,#e8001d,#ff4d6d)' },
+};
+let _srcData = [];
+
 function doSearch(kw) {
   if (!kw.trim()) return;
   S.searchKw = kw.trim();
   showAppPage('search'); updateSidebar('');
-  const badge = document.getElementById('searchKwBadge');
-  if (badge) badge.textContent = '"' + S.searchKw + '"';
   const kwLow = S.searchKw.toLowerCase();
 
-  /* 홈 카드 검색 — 브랜드명·쿠폰제목 기준 */
-  const homeMatched = [...document.querySelectorAll('#homeSections .home-cpn-card')]
+  /* 홈 카드에서 데이터 추출 */
+  const homeItems = [...document.querySelectorAll('#homeSections .home-cpn-card')]
     .filter(c => {
       const brand = (c.querySelector('.hcc-brand')?.textContent || '').toLowerCase();
       const title = (c.querySelector('.hcc-title')?.textContent || '').toLowerCase();
       return brand.includes(kwLow) || title.includes(kwLow);
     })
-    .map(c => homeToCpnCard(c));
-  const homeIds = new Set(homeMatched.map(c => c.dataset.id));
+    .map(c => ({
+      id:    c.dataset.id || '',
+      brand: c.querySelector('.hcc-brand')?.textContent || '',
+      disc:  c.querySelector('.hcc-disc')?.textContent  || '',
+      title: c.querySelector('.hcc-title')?.textContent || '',
+      cond:  c.querySelector('.hcc-cond')?.textContent  || '',
+      exp:   c.querySelector('.hcc-exp')?.textContent   || '',
+      svc:   c.dataset.svc || '',
+    }));
+  const homeIds = new Set(homeItems.map(d => d.id));
 
-  /* 지갑 카드 검색 — 브랜드명·쿠폰제목 기준, 홈 결과와 중복 제거 */
-  const walletMatched = [...document.querySelectorAll('#walletGrid .cpn-card')]
+  /* 지갑 카드에서 데이터 추출 (중복 제거) */
+  const walletItems = [...document.querySelectorAll('#walletGrid .cpn-card')]
     .filter(c => {
       if (homeIds.has(c.dataset.id)) return false;
-      const brand = (c.querySelector('.cpn-brand')?.textContent || '').toLowerCase();
+      const brand = (c.querySelector('.cpn-brand,  .cpn-vis-brand')?.textContent || '').toLowerCase();
       const title = (c.querySelector('.cpn-title')?.textContent || '').toLowerCase();
       return brand.includes(kwLow) || title.includes(kwLow);
-    });
+    })
+    .map(c => ({
+      id:    c.dataset.id || '',
+      brand: c.querySelector('.cpn-brand, .cpn-vis-brand')?.textContent || '',
+      disc:  c.querySelector('.cpn-vis-disc')?.textContent || '',
+      title: c.querySelector('.cpn-title')?.textContent || '',
+      cond:  c.querySelector('.cpn-cond')?.textContent  || '',
+      exp:   c.querySelector('.cpn-exp')?.textContent   || '',
+      svc:   c.dataset.svc || '',
+    }));
 
-  srcAllCards = [...homeMatched, ...walletMatched];
-  // 카테고리 탭 초기화 (전체 on)
-  document.querySelectorAll('[data-action="src-filter"]').forEach(b => b.classList.toggle('on', b.dataset.val === 'all'));
-  document.querySelectorAll('[data-action="src-tab"]').forEach(b => b.classList.toggle('on', b.dataset.status === 'all'));
-  // 카운트 업데이트
-  const cats = ['food','fashion','appliance','culture'];
-  const ids  = {food:'srcCntFood',fashion:'srcCntFashion',appliance:'srcCntAppliance',culture:'srcCntCulture'};
-  const el = document.getElementById('srcCntAll');
-  if (el) el.textContent = srcAllCards.length;
-  cats.forEach(cat => {
-    const n = srcAllCards.filter(c => (c.dataset.cat||'') === cat).length;
-    const cel = document.getElementById(ids[cat]);
-    if (cel) cel.textContent = n;
+  _srcData = [...homeItems, ...walletItems];
+
+  /* 정렬 드롭다운 초기화 */
+  const sortSel = document.getElementById('srcSortSel');
+  if (sortSel) sortSel.value = 'expire';
+
+  /* 기본 정렬: 마감임박순 */
+  _srcData.sort((a, b) => {
+    const parse = s => { const m = s.match(/D-(\d+)/); return m ? parseInt(m[1]) : (s.includes('오늘') ? 0 : 999); };
+    return parse(a.exp) - parse(b.exp);
   });
-  renderSrcGrid(srcAllCards);
+
+  /* 헤더 업데이트 */
+  const badge = document.getElementById('searchKwBadge');
+  const cnt   = document.getElementById('searchCount');
+  if (badge) badge.textContent = '"' + S.searchKw + '" 검색 결과';
+  if (cnt)   cnt.textContent   = _srcData.length + '개';
+
+  renderSrcList(_srcData);
 }
 
-function renderSrcGrid(cards) {
+function renderSrcList(data) {
   const list = document.getElementById('searchResultList');
-  const cnt  = document.getElementById('searchCount');
   if (!list) return;
-  list.innerHTML = '';
-  if (cards.length === 0) {
-    list.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--gray-400);font-size:18px;grid-column:1/-1">검색 결과가 없습니다</div>';
-  } else {
-    cards.forEach(c => list.appendChild(c.cloneNode(true)));
+  if (data.length === 0) {
+    list.innerHTML = '<div class="src-empty">검색 결과가 없습니다</div>';
+    return;
   }
-  if (cnt) cnt.textContent = cards.length + '개 결과';
+  list.innerHTML = data.map(d => {
+    const meta = SRC_BRAND_META[d.id] || { label: d.brand || d.id, grad: 'linear-gradient(135deg,var(--primary),var(--secondary))' };
+    const initials = meta.label.slice(0, 3);
+    const expNum = (() => { const m = d.exp.match(/D-(\d+)/); return m ? parseInt(m[1]) : (d.exp.includes('오늘') ? 0 : 999); })();
+    const expClass = expNum <= 1 ? 'exp-red' : expNum <= 5 ? 'exp-org' : 'exp-gry';
+    const discText = d.disc || '-';
+    const condText = d.cond || '';
+    const expLabel = d.exp  || '';
+    return `<div class="src-card" onclick="showAppPage('detail');updateSidebar('');loadDetail('${d.id}')">
+      <div class="src-card-logo" style="background:${meta.grad}">${initials}</div>
+      <div class="src-card-body">
+        <div class="src-card-brand">${meta.label}</div>
+        <div class="src-card-title">${d.title}</div>
+        <div class="src-card-meta">
+          ${condText ? `<span class="src-card-cond">${condText}</span>` : ''}
+          ${expLabel ? `<span class="src-card-exp ${expClass}">${expLabel}</span>` : ''}
+        </div>
+      </div>
+      <div class="src-card-right">
+        <div class="src-disc-badge">${discText}</div>
+        <div class="src-disc-unit">할인</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function applySrcSort(val) {
+  const sorted = [..._srcData];
+  if (val === 'disc') {
+    sorted.sort((a, b) => {
+      const parse = s => parseInt((s || '').replace(/[^0-9]/g, '')) || 0;
+      return parse(b.disc) - parse(a.disc);
+    });
+  } else if (val === 'expire') {
+    sorted.sort((a, b) => {
+      const parse = s => { const m = (s||'').match(/D-(\d+)/); return m ? parseInt(m[1]) : (s.includes('오늘') ? 0 : 999); };
+      return parse(a.exp) - parse(b.exp);
+    });
+  }
+  /* dist, popular: 프로토타입 — 현재 순서 유지 */
+  renderSrcList(sorted);
 }
 
 /* ============================================================ BARCODE INSTANT POPUP ============================================================ */
