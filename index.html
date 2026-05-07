@@ -2314,51 +2314,81 @@ input[type=range].disc-range::-moz-range-thumb {
 
 /* ============================================================
    GPS 맵 페이지 v3 — 검색/필터 + 리스트 + 지도 + 정보팝업
+
+   레이어 구조 (아래→위 z-index 순서):
+   ┌──────────────────────────────────────────┐ z:500 ← nmap-topbar (position:fixed)
+   ├──────────────────────────────────────────┤
+   │  nmap-list-panel  │  nmap-map-panel      │ z:1~50
+   │  (리스트 스크롤)   │  (지도/마커)         │
+   └──────────────────────────────────────────┘
+   · 앱 헤더: z:100  (topbar와 y축 위치가 다르므로 충돌 없음)
+   · 정보 팝업 오버레이: z:3000 (topbar 위에 표시)
    ============================================================ */
+
+/* 맵 페이지 컨테이너 — 높이 전체, 내부 스크롤 격리 */
 #p-noti-alert {
+  /* topbar가 fixed이므로 flex 첫 자식 없음 → body만 stretch */
   display:flex; flex-direction:column;
   height:100%; padding:0; overflow:hidden;
+  /* 바디 스크롤이 이 컨테이너 밖으로 전파되지 않도록 */
+  overscroll-behavior:none;
 }
+
+/* 맵 활성 시 main-content: 패딩·스크롤 완전 차단 */
 .main-content:has(#p-noti-alert.active) {
-  padding:0 !important; overflow:hidden !important;
+  padding:0 !important;
+  overflow:hidden !important;
   height:calc(100vh - var(--header-h));
-  /* 부모 컨테이너 스크롤·터치 완전 차단 — topbar 흔들림 방지 */
   overscroll-behavior:none;
   touch-action:none;
 }
 
-/* ── nmap-topbar: 항상 상단 고정 레이어 ──
-   · position:sticky + top:0  : flex 컨테이너 내 상단 고정
-   · z-index:500               : 지도 마커(z:1~100), 바텀시트(z:50~200) 보다 항상 위
-   · will-change:transform     : GPU 독립 합성 레이어 → 지도 리렌더 시 흔들림 차단
-   · box-shadow                : 지도 레이어와 시각 분리
-   · padding-top safe-area     : iOS 노치·Dynamic Island 대응
-   · touch-action:pan-x pan-y  : 검색창 터치가 지도로 전파되지 않도록 격리
-─────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   nmap-topbar — position:fixed 로 지도 레이어와 완전 분리
+   ──────────────────────────────────────────────────────────
+   · position:fixed           : 문서 흐름에서 완전히 분리
+                                지도 드래그/스크롤/리렌더링과 무관하게 고정
+   · top:var(--header-h)      : 앱 헤더(68px) 바로 아래에 배치
+   · left:0; right:0          : 사이드바 없음(--sidebar-w:0) → 전체 폭
+   · z-index:500              : 지도 마커(z≈400), 바텀시트(z=200),
+                                현재위치버튼(z=100) 모두 아래
+   · will-change:transform    : GPU 독립 합성 레이어 → 재페인트 격리
+   · box-shadow               : 지도 영역과 시각적 분리
+   · padding-top safe-area    : iOS 노치 / Dynamic Island 대응
+   · touch-action:pan-x pan-y : topbar 터치 이벤트가 지도로 전파되지 않음
+   ══════════════════════════════════════════════════════════ */
 .nmap-topbar {
-  /* 레이아웃 고정 */
-  flex-shrink:0;
-  position:sticky; top:0;
+  /* ① 핵심: 뷰포트 기준 고정 위치 */
+  position: fixed;
+  top: var(--header-h);       /* 앱 헤더 바로 아래 */
+  left: 0;                    /* --sidebar-w = 0px (사이드바 없음) */
+  right: 0;
+  z-index: 500;               /* 지도·마커·바텀시트 모두 상위 */
 
-  /* 패딩 — iOS safe-area(노치) 대응 */
-  padding:12px 16px 10px;
-  padding-top:calc(12px + env(safe-area-inset-top, 0px));
+  /* ② iOS 노치 / safe-area 대응 */
+  padding: 12px 16px 10px;
+  padding-top: calc(12px + env(safe-area-inset-top, 0px));
 
-  /* 배경 · 시각 분리 */
-  background:white;
-  border-bottom:1.5px solid var(--gray-200);
-  box-shadow:0 2px 16px rgba(0,0,0,.10);
+  /* ③ 배경·시각 분리 */
+  background: white;
+  border-bottom: 1.5px solid var(--gray-200);
+  box-shadow: 0 2px 20px rgba(0,0,0,.12);
 
-  /* 레이어 우선순위 */
-  z-index:500;
+  /* ④ GPU 독립 합성 레이어 — 지도 리렌더링 시 topbar 재페인트 차단 */
+  will-change: transform;
+  transform: translateZ(0);   /* GPU 레이어 강제 생성 */
 
-  /* GPU 합성 레이어 분리 → 지도/리스트 스크롤 중 재페인트 방지 */
-  will-change:transform;
+  /* ⑤ 터치 이벤트 격리 */
+  touch-action: pan-x pan-y;
 
-  /* 터치 이벤트를 지도로 전파하지 않음 */
-  touch-action:pan-x pan-y;
+  /* ⑥ 내부 레이아웃 */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 
-  display:flex; flex-direction:column; gap:10px;
+  /* ⑦ 반응형: 폭 유지 */
+  box-sizing: border-box;
+  width: 100%;
 }
 .nmap-search-wrap { position:relative; }
 .nmap-search-box {
@@ -2389,7 +2419,13 @@ input[type=range].disc-range::-moz-range-thumb {
 .nmap-chip:hover { border-color:var(--primary); color:var(--primary); }
 .nmap-chip.active { background:var(--primary); border-color:var(--primary); color:white; }
 .nmap-chip-open.active { background:#16a34a; border-color:#16a34a; }
-.nmap-body { flex:1; display:flex; min-height:0; overflow:hidden; align-items:stretch; }
+/* nmap-body: topbar가 fixed라 흐름에서 제거됨 → padding-top으로 topbar 높이만큼 보정
+   --nmap-topbar-h 는 initNearbyMap()에서 topbar.offsetHeight로 측정하여 동적 설정 */
+.nmap-body {
+  flex:1; display:flex; min-height:0; overflow:hidden; align-items:stretch;
+  padding-top: var(--nmap-topbar-h, 104px); /* topbar fixed 높이 보정 (기본값 104px) */
+  box-sizing: border-box;
+}
 .nmap-list-panel { width:300px; flex-shrink:0; display:flex; flex-direction:column; background:white; border-right:1.5px solid var(--gray-200); overflow:hidden; align-self:stretch; }
 .nmap-list-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--gray-200); flex-shrink:0; }
 .nmap-list-count { font-size:13px; font-weight:700; color:var(--gray-700); }
@@ -2427,11 +2463,11 @@ input[type=range].disc-range::-moz-range-thumb {
 .nmap-skel-line.w70{width:70%} .nmap-skel-line.w50{width:50%} .nmap-skel-line.w60{width:60%} .nmap-skel-line.w40{width:40%} .nmap-skel-line.w80{width:80%} .nmap-skel-line.w55{width:55%}
 @keyframes nmapSkelShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 .nmap-empty { padding:48px 20px; text-align:center; color:var(--gray-400); }
-/* 지도 패널 — 오버스크롤이 부모로 전파되지 않도록 격리 */
+/* 지도 패널 — 오버스크롤·터치 이벤트를 내부에서만 처리 */
 .nmap-map-panel {
   flex:1; min-width:0; position:relative; overflow:hidden;
-  overscroll-behavior:contain;        /* 지도 경계에서 스크롤 전파 차단 */
-  touch-action:pan-x pan-y pinch-zoom; /* 멀티터치 줌/드래그는 지도 내에서만 처리 */
+  overscroll-behavior:contain;
+  touch-action:pan-x pan-y pinch-zoom;
 }
 #nearbyMap { width:100%; height:100%; z-index:1; }
 .nmap-rezone-btn { position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:100; background:white; border:1.5px solid var(--primary); border-radius:20px; padding:7px 16px; font-size:13px; font-weight:700; color:var(--primary); cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,.15); transition:all .15s; font-family:var(--font); white-space:nowrap; }
@@ -2502,14 +2538,17 @@ input[type=range].disc-range::-moz-range-thumb {
 .nmap-mob-badge { background:var(--danger); color:white; font-size:11px; font-weight:700; padding:1px 6px; border-radius:10px; }
 @media (max-width:700px) {
   .nmap-list-panel { display:none; width:100%; }
-  /* 모바일 리스트 패널: 절대위치지만 topbar 아래부터 시작 (inset 대신 top 지정 불가 → z-index로만 처리) */
+  /* 모바일 리스트 패널: padding-top만큼 내려온 body 안에서 absolute stretch */
   .nmap-list-panel.mob-show { display:flex; position:absolute; inset:0; z-index:50; }
   .nmap-map-panel.mob-hide { display:none; }
   .nmap-mobile-tabs { display:flex; }
-  /* 모바일 바텀탭 높이만큼 padding, iOS 홈바(safe-area-inset-bottom) 추가 대응 */
+  /* iOS 홈바 대응: 바텀탭 + safe-area */
   #p-noti-alert { padding-bottom:calc(64px + env(safe-area-inset-bottom, 0px)); }
-  /* 모바일에서 topbar 좌우 패딩 축소 */
+  /* 모바일 topbar: 좌우 패딩 축소 */
   .nmap-topbar { padding-left:12px; padding-right:12px; }
+  /* 태블릿/모바일 키보드 활성화 시 topbar 위치 유지:
+     모바일 브라우저는 viewport height를 줄이는 방향으로 키보드를 처리 →
+     position:fixed는 새 viewport 기준으로 top을 계산하므로 자동으로 유지됨 */
 }
 /* 기존 호환 */
 .map-store-pin { background:var(--primary); color:white; border-radius:20px; padding:5px 10px; font-size:12px; font-weight:700; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,.3); border:2px solid white; cursor:pointer; }
@@ -5920,6 +5959,17 @@ function initNearbyMap() {
   if (!window.L) return;
   const el = document.getElementById('nearbyMap');
   if (!el) return;
+
+  /* ── topbar 높이 측정 → CSS 변수 설정 ──
+     position:fixed인 .nmap-topbar가 흐름에서 제거됐으므로
+     .nmap-body에 padding-top으로 같은 높이를 보정해야 함.
+     폰트 로딩·패딩 합산 후 실제 offsetHeight를 측정해 적용. */
+  const topbar = document.querySelector('.nmap-topbar');
+  if (topbar) {
+    const h = topbar.offsetHeight;
+    document.documentElement.style.setProperty('--nmap-topbar-h', h + 'px');
+  }
+
   if (nearbyMap) { setTimeout(() => nearbyMap.invalidateSize(), 120); nmapRenderList(NMAP_STORES); return; }
 
   nearbyMap = L.map('nearbyMap', { zoomControl:true }).setView([37.5270, 126.8960], 15);
