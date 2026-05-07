@@ -2821,13 +2821,14 @@ input[type=range].disc-range::-moz-range-thumb {
 }
 .ob-noti-brand-info { flex:1; min-width:0; }
 .ob-noti-brand-name { font-size:14px; font-weight:700; color:var(--gray-900); }
-.ob-noti-method { display:flex; gap:5px; margin-top:6px; flex-wrap:wrap; }
-.ob-noti-method-btn {
-  padding:4px 10px; border-radius:50px; border:1.5px solid var(--gray-200);
-  font-size:11px; font-weight:700; color:var(--gray-500);
-  background:white; cursor:pointer; transition:all .15s; font-family:var(--font);
+.ob-noti-method-sel {
+  margin-top:6px; height:30px; padding:0 8px;
+  border:1.5px solid var(--gray-200); border-radius:8px;
+  font-size:12px; font-weight:700; color:var(--gray-700);
+  background:white; cursor:pointer; outline:none;
+  font-family:var(--font); transition:border-color .15s;
 }
-.ob-noti-method-btn.sel { border-color:var(--primary); background:var(--primary-lt); color:var(--primary); }
+.ob-noti-method-sel:focus { border-color:var(--primary); }
 .ob-noti-toggle {
   width:46px; height:26px; border-radius:13px; border:none;
   background:var(--gray-200); position:relative; cursor:pointer;
@@ -7129,18 +7130,18 @@ function obStep5HTML() {
   }
   brands.slice(0, 8).forEach(b => {
     if (OB_STATE.notiEnabled[b.id] === undefined) OB_STATE.notiEnabled[b.id] = true;
-    if (!OB_STATE.notiMethod[b.id]) OB_STATE.notiMethod[b.id] = 'push';
+    if (!OB_STATE.notiMethod[b.id]) OB_STATE.notiMethod[b.id] = 'app+sms';
   });
-  const methodLabel = m => m === 'push' ? '푸시' : m === 'sms' ? 'SMS' : '이메일';
   const rows = brands.slice(0, 8).map(b => `
     <div class="ob-noti-brand-row">
       <div class="ob-noti-brand-logo" style="background:${b.bg}">${b.label.slice(0,2)}</div>
       <div class="ob-noti-brand-info">
         <div class="ob-noti-brand-name">${b.label}</div>
-        <div class="ob-noti-method">
-          ${['push','sms','email'].map(m => `<button class="ob-noti-method-btn${OB_STATE.notiMethod[b.id]===m?' sel':''}"
-            onclick="obSetMethod('${b.id}','${m}')">${methodLabel(m)}</button>`).join('')}
-        </div>
+        <select class="ob-noti-method-sel" onchange="obSetMethod('${b.id}',this.value)">
+          <option value="app"     ${OB_STATE.notiMethod[b.id]==='app'    ?'selected':''}>앱</option>
+          <option value="sms"     ${OB_STATE.notiMethod[b.id]==='sms'    ?'selected':''}>문자</option>
+          <option value="app+sms" ${OB_STATE.notiMethod[b.id]==='app+sms'?'selected':''}>앱+문자</option>
+        </select>
       </div>
       <button class="ob-noti-toggle${OB_STATE.notiEnabled[b.id]?' on':''}" id="obToggle_${b.id}"
         onclick="obToggleNoti('${b.id}')"></button>
@@ -7166,16 +7167,7 @@ function obStep5HTML() {
 }
 function obSetMethod(brandId, method) {
   OB_STATE.notiMethod[brandId] = method;
-  // 해당 row만 업데이트
-  const rows = document.querySelectorAll('#obModalBody .ob-noti-brand-row');
-  rows.forEach(row => {
-    const toggle = row.querySelector('.ob-noti-toggle');
-    if (!toggle || toggle.id !== 'obToggle_' + brandId) return;
-    const methodLabel = m => m === 'push' ? '푸시' : m === 'sms' ? 'SMS' : '이메일';
-    row.querySelectorAll('.ob-noti-method-btn').forEach(btn => {
-      btn.classList.toggle('sel', btn.textContent === methodLabel(method));
-    });
-  });
+  // 드롭다운 선택값은 onchange로 이미 반영되므로 추가 DOM 업데이트 불필요
 }
 function obToggleNoti(brandId) {
   OB_STATE.notiEnabled[brandId] = !OB_STATE.notiEnabled[brandId];
