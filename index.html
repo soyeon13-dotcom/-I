@@ -1692,6 +1692,91 @@ input[type=range].disc-range::-moz-range-thumb {
   cursor:pointer; font-family:var(--font); padding:4px;
 }
 
+/* ── 알림 설정 테이블 레이아웃 ── */
+/* 테이블 전체 래퍼 (테두리 + 라운드) */
+.ns2-table-wrap {
+  border:1.5px solid var(--gray-200); border-radius:14px;
+  overflow:hidden; margin-bottom:16px;
+}
+/* 컬럼 비율: 로고 | 브랜드명 | 알림설정 | 알림방식 */
+.ns2-table-header,
+.ns2-table-row {
+  display:grid;
+  grid-template-columns:60px 1fr 130px 170px;
+  align-items:center;
+}
+/* 고정 헤더 */
+.ns2-table-header {
+  background:#f9fafb; border-bottom:1.5px solid var(--gray-200);
+  padding:10px 20px; position:sticky; top:0; z-index:1;
+}
+.ns2-th {
+  font-size:12px; font-weight:700; color:var(--gray-400);
+  text-align:left; letter-spacing:.3px;
+}
+.ns2-th.center { text-align:center; }
+/* 스크롤 가능한 바디 */
+.ns2-table-body {
+  max-height:288px; overflow-y:auto;
+  scrollbar-width:thin; scrollbar-color:var(--gray-300) transparent;
+}
+.ns2-table-body::-webkit-scrollbar { width:5px; }
+.ns2-table-body::-webkit-scrollbar-thumb { background:var(--gray-300); border-radius:3px; }
+/* 브랜드 행 */
+.ns2-table-row {
+  padding:12px 20px;
+  border-bottom:1px solid var(--gray-100);
+  transition:background .15s;
+}
+.ns2-table-row:last-child { border-bottom:none; }
+.ns2-table-row:hover { background:var(--primary-lt); }
+/* 브랜드 로고 — 원형 */
+.ns2-tbl-logo {
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:900; color:white;
+  letter-spacing:-.3px; line-height:1.2; text-align:center; padding:2px;
+}
+/* 브랜드명 */
+.ns2-tbl-name {
+  font-size:14px; font-weight:700; color:var(--gray-900);
+}
+/* 알림 설정 토글 셀 — 가운데 정렬 */
+.ns2-tbl-toggle-cell {
+  display:flex; justify-content:center; align-items:center;
+}
+/* 알림 방식 드롭다운 */
+.ns2-method-sel {
+  width:140px; height:36px; padding:0 28px 0 12px;
+  border:1.5px solid var(--gray-200); border-radius:8px;
+  font-size:13px; font-weight:600; color:var(--gray-700);
+  background:white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E") no-repeat right 10px center;
+  appearance:none; -webkit-appearance:none;
+  outline:none; cursor:pointer; font-family:var(--font);
+  transition:border-color .15s;
+}
+.ns2-method-sel:focus { border-color:var(--primary); }
+
+/* ── 하단 GPS / 유사추천 카드 그리드 ── */
+.ns2-bottom-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+}
+.ns2-bottom-card {
+  display:flex; align-items:center; gap:14px;
+  background:#f9fafb; border:1.5px solid var(--gray-200); border-radius:14px;
+  padding:16px 18px; transition:border-color .15s;
+}
+.ns2-bottom-card:hover { border-color:var(--primary-lt); }
+.ns2-bottom-icon {
+  width:40px; height:40px; border-radius:50%;
+  background:var(--primary-lt); color:var(--primary);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+}
+.ns2-bottom-info { flex:1; }
+.ns2-bottom-lbl { font-size:13px; font-weight:700; color:var(--gray-800); }
+.ns2-bottom-sub { font-size:11px; color:var(--gray-400); margin-top:2px; }
+
 /* ── 할인율 개별 토글 ── */
 .disc-rate-list { display:flex; flex-direction:column; gap:0; }
 .disc-rate-row {
@@ -4716,15 +4801,20 @@ input[type=range].disc-range::-moz-range-thumb {
             <div id="mps-noti" class="mps" style="display:block">
               <div class="mps-card">
 
-                <!-- ── 헤더: 타이틀 + 3개 액션 버튼 ── -->
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap">
-                  <div class="mps-title" style="margin-bottom:0">알림 설정</div>
+                <!-- ── ① 상단 헤더: 타이틀 + 서브 설명 + 3개 액션 버튼 ── -->
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap">
+                  <div>
+                    <div class="mps-title" style="margin-bottom:4px">알림 설정</div>
+                    <div style="font-size:13px;color:var(--gray-400);font-weight:500">
+                      선택한 브랜드의 쿠폰이 등록되거나 조건에 맞을 때 알려드려요.
+                    </div>
+                  </div>
                   <div class="ns2-action-row">
                     <!-- 1. 알림 추가하기 -->
                     <button class="ns2-add-btn" onclick="openAddBrandFlow()">＋ 알림 추가하기</button>
                     <!-- 2. 할인율 설정 -->
                     <button class="ns2-disc-set-btn" onclick="openDiscPanel()">할인율 설정</button>
-                    <!-- 3. 알림받기 마스터 토글 -->
+                    <!-- 3. 알림받기 마스터 ON/OFF -->
                     <button class="ns2-noti-toggle-btn on" id="notiMasterToggle" onclick="toggleNotiMasterBtn(this)">
                       <span class="nmt-dot"></span>알림받기
                     </button>
@@ -4732,59 +4822,54 @@ input[type=range].disc-range::-moz-range-thumb {
                 </div>
 
                 <div class="noti-off-msg" id="notiOffMsg" style="display:none">알림이 꺼져 있습니다.</div>
+
+                <!-- ── notiSettings: visibility:hidden으로 크기 유지하며 ON/OFF ── -->
                 <div id="notiSettings" class="noti-settings">
 
-                  <!-- ① 브랜드 검색창 -->
-                  <div class="ns2-search-wrap">
-                    <span class="ns2-search-icon">🔍</span>
-                    <input class="ns2-search-input" type="text" id="notiBrandSearch"
-                      placeholder="브랜드 검색..." oninput="searchNotiBrands(this.value)">
-                  </div>
+                  <!-- ── ② 브랜드 알림 설정 테이블 ── -->
+                  <div class="ns2-table-wrap">
 
-                  <!-- ② 브랜드 그리드 — 고정 높이 + 내부 스크롤 -->
-                  <div class="ns2-brand-list-wrap">
-                    <div class="ns2-brand-grid" id="ns2BrandGrid"></div>
-                  </div>
-
-                  <!-- ③ 알림 방식 드롭다운 + 최소 할인율 표시 -->
-                  <div class="ns2-ctrl-row">
-                    <div class="ns2-noti-wrap">
-                      <div class="ns2-noti-lbl">알림 방식</div>
-                      <select class="ns2-noti-sel" id="ns2NotiSel">
-                        <option value="">알림 설정</option>
-                        <option value="app">앱 알림</option>
-                        <option value="sms">문자(SMS)</option>
-                        <option value="both" selected>앱 + 문자</option>
-                      </select>
+                    <!-- 테이블 헤더 (고정) -->
+                    <div class="ns2-table-header">
+                      <div class="ns2-th">브랜드</div>
+                      <div class="ns2-th">브랜드명</div>
+                      <div class="ns2-th center">알림 설정</div>
+                      <div class="ns2-th">알림 방식</div>
                     </div>
-                    <div class="ns2-disc-wrap">
-                      <div class="ns2-disc-lbl">최소 할인율</div>
-                      <div class="ns2-disc-row">
-                        <span class="ns2-disc-val" id="ns2DiscVal">20%</span>
-                      </div>
-                    </div>
-                  </div>
 
-                  <!-- ④ 추가 설정: GPS + 유사 카테고리 추천 -->
-                  <div class="ns2-extra-section" id="ns2ExtraSection">
-                    <div class="ns2-extra-row">
-                      <div class="ns2-extra-info">
-                        <div class="ns2-extra-lbl">📍 GPS 위치 기반 알림</div>
-                        <div class="ns2-extra-sub">근처 매장 쿠폰을 즉시 알려드려요</div>
+                    <!-- 테이블 바디 (고정 높이 + 내부 스크롤) -->
+                    <div class="ns2-table-body" id="ns2TableBody">
+                      <!-- JS renderNs2Table()로 동적 렌더링 -->
+                    </div>
+
+                  </div><!-- /ns2-table-wrap -->
+
+                  <!-- ── ③ 하단 추가 알림 옵션: GPS + 유사 추천 ── -->
+                  <div class="ns2-bottom-grid">
+
+                    <!-- GPS 위치 알림 카드 -->
+                    <div class="ns2-bottom-card">
+                      <div class="ns2-bottom-icon">📍</div>
+                      <div class="ns2-bottom-info">
+                        <div class="ns2-bottom-lbl">GPS 위치 알림</div>
+                        <div class="ns2-bottom-sub">근처 매장 쿠폰 즉시 알림</div>
                       </div>
-                      <!-- ob-noti-toggle 클래스 재사용 (온보딩과 동일한 토글 스위치) -->
                       <button class="ob-noti-toggle on" id="ns2GpsToggle"
                         onclick="toggleNs2Extra('gps',this)"></button>
                     </div>
-                    <div class="ns2-extra-row">
-                      <div class="ns2-extra-info">
-                        <div class="ns2-extra-lbl">💡 유사 카테고리 추천 알림</div>
-                        <div class="ns2-extra-sub">관심 카테고리 기반 추가 혜택 추천</div>
+
+                    <!-- 유사 카테고리 추천 카드 -->
+                    <div class="ns2-bottom-card">
+                      <div class="ns2-bottom-icon">🏷️</div>
+                      <div class="ns2-bottom-info">
+                        <div class="ns2-bottom-lbl">유사 카테고리 추천</div>
+                        <div class="ns2-bottom-sub">관심 카테고리 기반 추가 추천</div>
                       </div>
                       <button class="ob-noti-toggle on" id="ns2SimToggle"
                         onclick="toggleNs2Extra('similar',this)"></button>
                     </div>
-                  </div>
+
+                  </div><!-- /ns2-bottom-grid -->
 
                 </div><!-- /notiSettings -->
               </div>
@@ -6549,15 +6634,82 @@ const NS2_STATE = {
   masterOn:  true,  // 전체 알림 마스터 토글
 };
 
+/* ── 브랜드별 알림 테이블 데이터 (프리셋 6개) ── */
+/* on: 알림 ON/OFF | method: 'both'=앱+문자 / 'app'=앱 / 'sms'=문자 */
+let NS2_TABLE_BRANDS = [
+  { id:'gs25',       label:'GS25',    abbr:'GS25', bg:'linear-gradient(135deg,#00a651,#007a3d)', on:true,  method:'both' },
+  { id:'oliveyoung', label:'올리브영', abbr:'OY',   bg:'linear-gradient(135deg,#e91e8c,#c2185b)', on:true,  method:'app'  },
+  { id:'coupang',    label:'쿠팡',    abbr:'쿠팡',  bg:'linear-gradient(135deg,#ef4444,#e53e3e)', on:true,  method:'both' },
+  { id:'cgv',        label:'CGV',     abbr:'CGV',  bg:'linear-gradient(135deg,#d40000,#a00000)',  on:true,  method:'app'  },
+  { id:'lottemart',  label:'롯데마트', abbr:'롯데', bg:'linear-gradient(135deg,#cc0000,#990000)',  on:true,  method:'sms'  },
+  { id:'starbucks',  label:'스타벅스', abbr:'SBX',  bg:'linear-gradient(135deg,#00704a,#1e8449)', on:true,  method:'both' },
+];
+
+/* ── 테이블 렌더링 ── */
+function renderNs2Table() {
+  const body = document.getElementById('ns2TableBody');
+  if (!body) return;
+
+  if (NS2_TABLE_BRANDS.length === 0) {
+    body.innerHTML = `<div style="padding:40px;text-align:center;color:var(--gray-400);font-size:14px;font-weight:600">
+      알림 설정된 브랜드가 없습니다.<br>
+      <span style="font-size:12px;color:var(--gray-300)">"＋ 알림 추가하기"로 브랜드를 추가해보세요.</span>
+    </div>`;
+    return;
+  }
+
+  body.innerHTML = NS2_TABLE_BRANDS.map((b, i) => {
+    const methodLabel = { both:'앱+문자', app:'앱', sms:'문자' }[b.method] || '앱+문자';
+    return `
+    <!-- 브랜드 행 #${i}: ${b.label} -->
+    <div class="ns2-table-row" id="ns2Row_${b.id}">
+
+      <!-- 1. 브랜드 로고 -->
+      <div>
+        <div class="ns2-tbl-logo" style="background:${b.bg}">${b.abbr}</div>
+      </div>
+
+      <!-- 2. 브랜드명 -->
+      <div class="ns2-tbl-name">${b.label}</div>
+
+      <!-- 3. 알림 설정 ON/OFF 토글 -->
+      <div class="ns2-tbl-toggle-cell">
+        <button class="ob-noti-toggle${b.on ? ' on' : ''}" id="ns2Tog_${b.id}"
+          onclick="toggleBrandNoti('${b.id}')"></button>
+      </div>
+
+      <!-- 4. 알림 방식 드롭다운 -->
+      <div>
+        <select class="ns2-method-sel" id="ns2Mth_${b.id}"
+          onchange="setBrandMethod('${b.id}', this.value)">
+          <option value="both" ${b.method==='both' ?'selected':''}>앱+문자</option>
+          <option value="app"  ${b.method==='app'  ?'selected':''}>앱</option>
+          <option value="sms"  ${b.method==='sms'  ?'selected':''}>문자</option>
+        </select>
+      </div>
+
+    </div>`;
+  }).join('');
+}
+
+/* ── 개별 브랜드 알림 토글 ── */
+function toggleBrandNoti(id) {
+  const brand = NS2_TABLE_BRANDS.find(b => b.id === id);
+  if (!brand) return;
+  brand.on = !brand.on;
+  const btn = document.getElementById('ns2Tog_' + id);
+  if (btn) btn.classList.toggle('on', brand.on);
+}
+
+/* ── 알림 방식 변경 ── */
+function setBrandMethod(id, val) {
+  const brand = NS2_TABLE_BRANDS.find(b => b.id === id);
+  if (brand) brand.method = val;
+}
+
 function initNotiSettings2() {
-  /* 브랜드 그리드 렌더링 */
-  renderNotiAllBrands('');
-  /* 검색창 초기화 */
-  const searchEl = document.getElementById('notiBrandSearch');
-  if (searchEl) searchEl.value = '';
-  /* 최소 할인율 표시 동기화 */
-  const valEl = document.getElementById('ns2DiscVal');
-  if (valEl) valEl.textContent = NS2_STATE.discMin + '%';
+  /* 테이블 렌더링 */
+  renderNs2Table();
   /* GPS / 유사추천 토글 상태 복원 */
   const gpsBtn = document.getElementById('ns2GpsToggle');
   const simBtn = document.getElementById('ns2SimToggle');
@@ -7289,14 +7441,24 @@ function obFinish() {
     const simBtn = document.getElementById('ns2SimToggle');
     if (gpsBtn) gpsBtn.classList.toggle('on', NS2_STATE.gpsOn);
     if (simBtn) simBtn.classList.toggle('on', NS2_STATE.similarOn);
-    /* 선택된 브랜드를 notiSelBrands에 추가 */
+    /* 선택된 브랜드를 NS2_TABLE_BRANDS에 추가 (중복 제외) */
+    const existingIds = new Set(NS2_TABLE_BRANDS.map(b => b.id));
+    let added = 0;
     OB_STATE.brands.forEach(id => {
+      if (existingIds.has(id)) return; // 이미 존재하면 스킵
       const brand = Object.values(OB_BRANDS_BY_CAT).flat().find(b => b.id === id);
-      if (brand) notiSelBrands.add(brand.label);
+      if (brand) {
+        NS2_TABLE_BRANDS.push({
+          id: brand.id, label: brand.label,
+          abbr: brand.label.slice(0, 3),
+          bg: brand.bg, on: true, method: 'both',
+        });
+        added++;
+      }
     });
     closeOnboardingModal();
-    renderNotiAllBrands('');
-    showToast('알림 브랜드가 추가되었습니다');
+    renderNs2Table(); // 테이블 갱신
+    showToast(added > 0 ? added + '개 브랜드 알림이 추가되었습니다' : '이미 등록된 브랜드입니다');
     return;
   }
   closeOnboardingModal();
@@ -8330,16 +8492,26 @@ function toggleNotiMaster(val) {
   /* offMsg는 사용하지 않음 (레이아웃 변화 방지) */
   if (offMsg) offMsg.style.display = 'none';
   if (toggleBtn) toggleBtn.classList.toggle('on', isOn);
-  /* OFF 시 GPS / 유사추천 토글도 시각적으로 비활성화 */
+  /* OFF 시 GPS / 유사추천 토글 + 모든 브랜드 행 토글 시각적 비활성화 */
   const gpsBtn = document.getElementById('ns2GpsToggle');
   const simBtn = document.getElementById('ns2SimToggle');
   if (!isOn) {
     if (gpsBtn) gpsBtn.classList.remove('on');
     if (simBtn) simBtn.classList.remove('on');
+    /* 모든 브랜드 행 토글 OFF */
+    NS2_TABLE_BRANDS.forEach(b => {
+      const btn = document.getElementById('ns2Tog_' + b.id);
+      if (btn) btn.classList.remove('on');
+    });
   } else {
     /* ON 복귀 시 이전 상태 복원 */
     if (gpsBtn) gpsBtn.classList.toggle('on', NS2_STATE.gpsOn);
     if (simBtn) simBtn.classList.toggle('on', NS2_STATE.similarOn);
+    /* 브랜드별 저장된 상태 복원 */
+    NS2_TABLE_BRANDS.forEach(b => {
+      const btn = document.getElementById('ns2Tog_' + b.id);
+      if (btn) btn.classList.toggle('on', b.on);
+    });
   }
 }
 
