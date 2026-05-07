@@ -2692,18 +2692,17 @@ input[type=range].disc-range::-moz-range-thumb {
 /* ── 5단계 온보딩 모달 ── */
 .ob-modal-overlay {
   position:fixed; inset:0; background:rgba(0,0,0,.55);
-  display:flex; align-items:flex-end; justify-content:center;
-  z-index:10000; animation:fadeIn .2s ease;
+  display:flex; align-items:center; justify-content:center;
+  z-index:10000; animation:fadeIn .2s ease; padding:20px; box-sizing:border-box;
 }
 .ob-modal-card {
-  background:white; border-radius:28px 28px 0 0;
-  width:100%; max-width:480px; max-height:90vh;
+  background:white; border-radius:24px;
+  width:100%; max-width:440px; height:600px;
   display:flex; flex-direction:column;
-  box-shadow:0 -8px 40px rgba(0,0,0,.2);
-  animation:slideUp .32s cubic-bezier(0,0,.2,1);
+  box-shadow:0 12px 48px rgba(0,0,0,.28);
+  animation:popIn .28s cubic-bezier(0,0,.2,1);
   overflow:hidden;
 }
-@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
 
 /* 헤더 */
 .ob-modal-header {
@@ -2788,26 +2787,12 @@ input[type=range].disc-range::-moz-range-thumb {
 .ob-brand-name { font-size:13px; font-weight:700; color:var(--gray-700); }
 .ob-brand-chip.sel .ob-brand-name { color:var(--primary); }
 
-/* Step 4: 할인율 슬라이더 */
-.ob-disc-preview { text-align:center; margin-bottom:28px; }
-.ob-disc-big { font-size:60px; font-weight:800; color:var(--primary); line-height:1; display:inline-flex; align-items:baseline; gap:4px; }
-.ob-disc-big-num { display:inline; }
-.ob-disc-pct { font-size:28px; font-weight:700; color:var(--primary); }
-.ob-disc-hint { font-size:14px; color:var(--gray-500); margin-top:10px; font-weight:500; }
-.ob-disc-range {
-  width:100%; -webkit-appearance:none; height:8px;
-  border-radius:4px; outline:none; cursor:pointer; margin-bottom:16px;
-  background:linear-gradient(to right, var(--primary) 0%, var(--primary) 30%, var(--gray-200) 30%, var(--gray-200) 100%);
+/* Step 4: 원형 게이지 */
+.ob-gauge-wrap {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; height:100%; gap:12px; user-select:none;
 }
-.ob-disc-range::-webkit-slider-thumb {
-  -webkit-appearance:none; width:28px; height:28px; border-radius:50%;
-  background:var(--primary); box-shadow:0 2px 8px rgba(15,65,166,.3); cursor:pointer;
-}
-.ob-disc-range::-moz-range-thumb {
-  width:28px; height:28px; border-radius:50%; border:none;
-  background:var(--primary); box-shadow:0 2px 8px rgba(15,65,166,.3); cursor:pointer;
-}
-.ob-disc-ticks { display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:var(--gray-400); margin-top:4px; }
+.ob-gauge-svg { touch-action:none; cursor:pointer; overflow:visible; }
 
 /* Step 5: 알림 설정 */
 .ob-noti-brand-row {
@@ -7029,8 +7014,8 @@ function obRender() {
                   (s === 2 && OB_STATE.cats.size > 0) ||
                   s >= 3;
   btn.disabled = !canNext;
-  // 슬라이더 초기 배경
-  if (s === 4) { const r = document.getElementById('obDiscRange'); if (r) obUpdateDisc(r); }
+  // 게이지 초기화
+  if (s === 4) setTimeout(obInitGauge, 10);
 }
 
 /* Step 1 — 연령대 */
@@ -7093,23 +7078,84 @@ function obToggleBrand(id) {
   if (chip) chip.classList.toggle('sel', OB_STATE.brands.has(id));
 }
 
-/* Step 4 — 할인율 슬라이더 */
-function obStep4HTML() {
-  const v = OB_STATE.disc;
-  return `<div class="ob-disc-preview">
-    <div class="ob-disc-big"><span class="ob-disc-big-num" id="obDiscNum">${v}</span><span class="ob-disc-pct">%</span></div>
-    <div class="ob-disc-hint">이상 할인율 쿠폰만 알림 받기</div>
-  </div>
-  <input type="range" class="ob-disc-range" id="obDiscRange" min="0" max="100" step="5" value="${v}"
-    oninput="OB_STATE.disc=+this.value; obUpdateDisc(this)">
-  <div class="ob-disc-ticks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>`;
-}
-function obUpdateDisc(input) {
-  const pct = +input.value;
-  input.style.background = `linear-gradient(to right,var(--primary) 0%,var(--primary) ${pct}%,var(--gray-200) ${pct}%,var(--gray-200) 100%)`;
-  const num = document.getElementById('obDiscNum');
-  if (num) num.textContent = pct;
-}
+/* Step 4 — 원형 게이지 */
+(function(){
+  const CX=110, CY=112, R=82, START=150, SWEEP=270;
+  const CIRC = 2*Math.PI*R;
+  const GAUGE_LEN = SWEEP/360*CIRC;
+
+  function _gaugeData(v) {
+    const pct = v/100;
+    const fillLen = pct*GAUGE_LEN;
+    const hRad = (START + pct*SWEEP)*Math.PI/180;
+    return { fillLen, gapLen:CIRC-fillLen, hx:CX+R*Math.cos(hRad), hy:CY+R*Math.sin(hRad) };
+  }
+
+  window.obStep4HTML = function() {
+    const v = OB_STATE.disc;
+    const {fillLen, gapLen, hx, hy} = _gaugeData(v);
+    const trackLen = GAUGE_LEN.toFixed(1), trackGap = (CIRC-GAUGE_LEN).toFixed(1);
+    return `<div class="ob-gauge-wrap">
+      <svg class="ob-gauge-svg" id="obGaugeSvg" viewBox="0 0 220 200" width="220" height="200">
+        <circle cx="${CX}" cy="${CY}" r="${R}" fill="none"
+          stroke="#e5e7eb" stroke-width="20" stroke-linecap="round"
+          stroke-dasharray="${trackLen} ${trackGap}"
+          transform="rotate(${START},${CX},${CY})"/>
+        <circle id="obGaugeFill" cx="${CX}" cy="${CY}" r="${R}" fill="none"
+          stroke="var(--primary)" stroke-width="20" stroke-linecap="round"
+          stroke-dasharray="${fillLen.toFixed(1)} ${gapLen.toFixed(1)}"
+          transform="rotate(${START},${CX},${CY})"/>
+        <circle id="obGaugeHandle" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="13"
+          fill="white" stroke="var(--primary)" stroke-width="3.5"/>
+        <text id="obGaugeNum" x="${CX}" y="${CY-4}" text-anchor="middle"
+          dominant-baseline="middle" fill="var(--primary)"
+          font-size="54" font-weight="800" font-family="Pretendard,sans-serif">${v}</text>
+        <text x="${CX}" y="${CY+36}" text-anchor="middle" fill="#9ca3af"
+          font-size="20" font-weight="600" font-family="Pretendard,sans-serif">%</text>
+      </svg>
+      <div style="font-size:14px;color:var(--gray-500);font-weight:500;text-align:center">이상 할인율 쿠폰만 알림 받기</div>
+    </div>`;
+  };
+
+  window.obInitGauge = function() {
+    const svg = document.getElementById('obGaugeSvg');
+    if (!svg) return;
+
+    function update(v) {
+      v = Math.max(0, Math.min(100, Math.round(v/5)*5));
+      OB_STATE.disc = v;
+      const {fillLen, gapLen, hx, hy} = _gaugeData(v);
+      const fill   = document.getElementById('obGaugeFill');
+      const handle = document.getElementById('obGaugeHandle');
+      const num    = document.getElementById('obGaugeNum');
+      if (fill)   fill.setAttribute('stroke-dasharray', `${fillLen.toFixed(1)} ${gapLen.toFixed(1)}`);
+      if (handle) { handle.setAttribute('cx', hx.toFixed(1)); handle.setAttribute('cy', hy.toFixed(1)); }
+      if (num)    num.textContent = v;
+    }
+
+    function ptrToVal(cx, cy) {
+      const rect = svg.getBoundingClientRect();
+      const sx = 220/rect.width, sy = 200/rect.height;
+      const dx = (cx-rect.left)*sx - CX;
+      const dy = (cy-rect.top)*sy  - CY;
+      let ang = Math.atan2(dy,dx)*180/Math.PI;
+      if (ang < 0) ang += 360;
+      let rel = ang - START;
+      if (rel < 0) rel += 360;
+      if (rel > SWEEP) rel = rel < SWEEP+(360-SWEEP)/2 ? SWEEP : 0;
+      return rel/SWEEP*100;
+    }
+
+    let drag = false;
+    svg.addEventListener('mousedown',  e => { drag=true;  update(ptrToVal(e.clientX,e.clientY)); });
+    document.addEventListener('mousemove', e => { if(drag) update(ptrToVal(e.clientX,e.clientY)); });
+    document.addEventListener('mouseup',   () => { drag=false; });
+    svg.addEventListener('touchstart', e => { e.preventDefault(); drag=true; update(ptrToVal(e.touches[0].clientX,e.touches[0].clientY)); },{passive:false});
+    document.addEventListener('touchmove', e => { if(drag){e.preventDefault();update(ptrToVal(e.touches[0].clientX,e.touches[0].clientY));}},{passive:false});
+    document.addEventListener('touchend',  () => { drag=false; });
+    update(OB_STATE.disc);
+  };
+})();
 
 /* Step 5 — 알림 설정 */
 function obStep5HTML() {
